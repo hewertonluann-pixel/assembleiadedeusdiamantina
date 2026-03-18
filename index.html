@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Assembleia de Deus - Ministério de Diamantina</title>
+  <meta name="description" content="Site oficial da Igreja Assembleia de Deus Ministério de Diamantina, MG. Cultos, agenda, ministérios e transmissões ao vivo." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- HEADER / NAV -->
+  <header class="header" id="header">
+    <div class="container nav-container">
+      <a href="#home" class="logo">
+        <img src="img/logo.png" alt="Logo AD Diamantina" onerror="this.style.display='none'" />
+        <div class="logo-text">
+          <span class="logo-title">Assembleia de Deus</span>
+          <span class="logo-sub">Ministério de Diamantina</span>
+        </div>
+      </a>
+      <nav class="nav" id="nav">
+        <ul class="nav-list">
+          <li><a href="#home" class="nav-link">Início</a></li>
+          <li><a href="#sobre" class="nav-link">A Igreja</a></li>
+          <li><a href="#cultos" class="nav-link">Cultos</a></li>
+          <li><a href="#ministerios" class="nav-link">Ministérios</a></li>
+          <li><a href="#midia" class="nav-link">Mídia</a></li>
+          <li><a href="#contato" class="nav-link">Contato</a></li>
+        </ul>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+      <p class="hero-verse">"Porque Deus amou o mundo de tal maneira..." — João 3:16</p>
+      <h1 class="hero-title">Bem-vindo à<br/>Assembleia de Deus<br/>Ministério de Diamantina</h1>
+      <p class="hero-sub">Uma comunidade de fé, amor e esperança no coração de Diamantina, MG.</p>
+      <div class="hero-buttons">
+        <a href="#cultos" class="btn btn-primary">Ver Horários de Culto</a>
+        <a href="https://www.youtube.com/@assembleiadedeusdiamantina" target="_blank" class="btn btn-outline">
+          <i class="fab fa-youtube"></i> Assistir ao Vivo
+        </a>
+      </div>
+    </div>
+    <div class="hero-scroll"><i class="fas fa-chevron-down"></i></div>
+  </section>
+
+  <!-- PRÓXIMOS CULTOS RÁPIDOS -->
+  <section class="cultos-rapidos">
+    <div class="container">
+      <div class="cultos-grid">
+        <div class="culto-card">
+          <i class="fas fa-sun"></i>
+          <div>
+            <strong>Domingo Manhã</strong>
+            <span>08h30</span>
+          </div>
+        </div>
+        <div class="culto-card">
+          <i class="fas fa-moon"></i>
+          <div>
+            <strong>Domingo Noite</strong>
+            <span>19h00</span>
+          </div>
+        </div>
+        <div class="culto-card">
+          <i class="fas fa-star"></i>
+          <div>
+            <strong>Terça-feira</strong>
+            <span>19h00</span>
+          </div>
+        </div>
+        <div class="culto-card">
+          <i class="fas fa-bible"></i>
+          <div>
+            <strong>Quinta-feira</strong>
+            <span>19h00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOBRE A IGREJA -->
+  <section class="sobre" id="sobre">
+    <div class="container sobre-grid">
+      <div class="sobre-img">
+        <img src="img/igreja.jpg" alt="Igreja Assembleia de Deus Diamantina" onerror="this.outerHTML='<div class=sobre-img-placeholder><i class=fas fa-church></i></div>'" />
+      </div>
+      <div class="sobre-texto">
+        <span class="section-tag">Conheça nossa história</span>
+        <h2 class="section-title">A Igreja</h2>
+        <p>A Assembleia de Deus Ministério de Diamantina foi fundada em 07 de julho de 2009, com o propósito de proclamar o evangelho de Jesus Cristo no coração de Diamantina e região.</p>
+        <p>Sob a liderança do Pr. Airton Vitorino da Silva, nossa igreja cresce em fé, servindo à comunidade com amor, palavra e oração.</p>
+        <div class="sobre-valores">
+          <div class="valor">
+            <i class="fas fa-cross"></i>
+            <div>
+              <strong>Missão</strong>
+              <p>Pregar o Evangelho e fazer discípulos de Jesus Cristo.</p>
+            </div>
+          </div>
+          <div class="valor">
+            <i class="fas fa-eye"></i>
+            <div>
+              <strong>Visão</strong>
+              <p>Ser uma igreja que transforma vidas e impacta Diamantina.</p>
+            </div>
+          </div>
+          <div class="valor">
+            <i class="fas fa-heart"></i>
+            <div>
+              <strong>Valores</strong>
+              <p>Fé, família, comunhão e serviço ao próximo.</p>
+            </div>
+          </div>
+        </div>
+        <a href="#contato" class="btn btn-primary">Entre em contato</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CULTOS E AGENDA -->
+  <section class="cultos" id="cultos">
+    <div class="container">
+      <span class="section-tag center">Venha nos visitar</span>
+      <h2 class="section-title center">Cultos e Agenda</h2>
+      <div class="cultos-cards">
+        <div class="culto-info-card">
+          <div class="culto-icon"><i class="fas fa-church"></i></div>
+          <h3>Culto de Celebração</h3>
+          <p><i class="fas fa-calendar-day"></i> Domingos</p>
+          <p><i class="fas fa-clock"></i> 08h30 e 19h00</p>
+          <p>Louvor, adoração e pregação da Palavra.</p>
+        </div>
+        <div class="culto-info-card">
+          <div class="culto-icon"><i class="fas fa-pray"></i></div>
+          <h3>Culto de Oração</h3>
+          <p><i class="fas fa-calendar-day"></i> Terças-feiras</p>
+          <p><i class="fas fa-clock"></i> 19h00</p>
+          <p>Intercessão e busca pela presença de Deus.</p>
+        </div>
+        <div class="culto-info-card">
+          <div class="culto-icon"><i class="fas fa-book-open"></i></div>
+          <h3>Estudo Bíblico</h3>
+          <p><i class="fas fa-calendar-day"></i> Quintas-feiras</p>
+          <p><i class="fas fa-clock"></i> 19h00</p>
+          <p>Aprofundamento na Palavra de Deus.</p>
+        </div>
+      </div>
+      <div class="agenda-box">
+        <h3><i class="fas fa-calendar-alt"></i> Próximos Eventos</h3>
+        <ul class="agenda-lista" id="agenda-lista">
+          <li>
+            <span class="agenda-data">23<br/>Mar</span>
+            <div class="agenda-info">
+              <strong>Santa Ceia</strong>
+              <span>Domingo, 19h00 — Sede Central</span>
+            </div>
+          </li>
+          <li>
+            <span class="agenda-data">30<br/>Mar</span>
+            <div class="agenda-info">
+              <strong>Congresso de Jovens</strong>
+              <span>Sábado, 18h00 — Sede Central</span>
+            </div>
+          </li>
+          <li>
+            <span class="agenda-data">06<br/>Abr</span>
+            <div class="agenda-info">
+              <strong>Culto da Família</strong>
+              <span>Domingo, 08h30 — Sede Central</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- MINISTÉRIOS -->
+  <section class="ministerios" id="ministerios">
+    <div class="container">
+      <span class="section-tag center">Encontre seu lugar</span>
+      <h2 class="section-title center">Nossos Ministérios</h2>
+      <div class="ministerios-grid">
+        <div class="ministerio-card">
+          <div class="ministerio-icon" style="background:#1A3A8F"><i class="fas fa-male"></i></div>
+          <h3>Homens (UHOMAD)</h3>
+          <p>Formando homens de caráter, fé e compromisso com Deus e a família.</p>
+        </div>
+        <div class="ministerio-card">
+          <div class="ministerio-icon" style="background:#8B1A6B"><i class="fas fa-female"></i></div>
+          <h3>Mulheres (UMAD)</h3>
+          <p>Mulheres fortalecidas pela Palavra, servindo com excelência e amor.</p>
+        </div>
+        <div class="ministerio-card">
+          <div class="ministerio-icon" style="background:#D4A017"><i class="fas fa-fire"></i></div>
+          <h3>Jovens (UMADEPA)</h3>
+          <p>Uma geração apaixonada por Deus, transformando Diamantina.</p>
+        </div>
+        <div class="ministerio-card">
+          <div class="ministerio-icon" style="background:#2E8B57"><i class="fas fa-child"></i></div>
+          <h3>Infantil</h3>
+          <p>Ensinando as crianças a conhecer e amar a Jesus desde pequenas.</p>
+        </div>
+        <div class="ministerio-card">
+          <div class="ministerio-icon" style="background:#C0392B"><i class="fas fa-music"></i></div>
+          <h3>Louvor e Adoração</h3>
+          <p>Conduzindo a igreja à presença de Deus através da música.</p>
+        </div>
+        <div class="ministerio-card">
+          <div class="ministerio-icon" style="background:#1A7A8F"><i class="fas fa-hands-helping"></i></div>
+          <h3>Social e Missões</h3>
+          <p>Levando amor e assistência à comunidade de Diamantina e além.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MÍDIA / TRANSMISSÕES -->
+  <section class="midia" id="midia">
+    <div class="container">
+      <span class="section-tag center">Onde você estiver</span>
+      <h2 class="section-title center">Assista às Pregações</h2>
+      <div class="midia-grid">
+        <div class="midia-video">
+          <div class="video-embed">
+            <iframe
+              src="https://www.youtube.com/embed?listType=user_uploads&list=assembleiadedeusdiamantina&index=1"
+              title="Transmissões AD Diamantina"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+        <div class="midia-redes">
+          <h3>Siga nossas redes</h3>
+          <a href="https://www.instagram.com/assembleiadedeusm.diamantina/" target="_blank" class="rede-card instagram">
+            <i class="fab fa-instagram"></i>
+            <div>
+              <strong>Instagram</strong>
+              <span>@assembleiadedeusm.diamantina</span>
+            </div>
+          </a>
+          <a href="https://www.facebook.com/Assembleiadedeusdiamantina/" target="_blank" class="rede-card facebook">
+            <i class="fab fa-facebook"></i>
+            <div>
+              <strong>Facebook</strong>
+              <span>Assembleia de Deus M. Diamantina</span>
+            </div>
+          </a>
+          <a href="https://www.youtube.com/@assembleiadedeusdiamantina" target="_blank" class="rede-card youtube">
+            <i class="fab fa-youtube"></i>
+            <div>
+              <strong>YouTube</strong>
+              <span>Assista ao vivo e pregações</span>
+            </div>
+          </a>
+          <a href="https://wa.me/5538999999999" target="_blank" class="rede-card whatsapp">
+            <i class="fab fa-whatsapp"></i>
+            <div>
+              <strong>WhatsApp</strong>
+              <span>Fale conosco agora</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PEDIDO DE ORAÇÃO -->
+  <section class="oracao">
+    <div class="container oracao-content">
+      <div class="oracao-texto">
+        <h2>Precisa de Oração?</h2>
+        <p>Nossa equipe de intercessores está pronta para orar por você. Envie seu pedido e acreditamos que Deus vai agir!</p>
+      </div>
+      <a href="#contato" class="btn btn-light">Enviar Pedido de Oração</a>
+    </div>
+  </section>
+
+  <!-- CONTATO -->
+  <section class="contato" id="contato">
+    <div class="container contato-grid">
+      <div class="contato-info">
+        <span class="section-tag">Fale conosco</span>
+        <h2 class="section-title">Contato</h2>
+        <div class="info-item">
+          <i class="fas fa-map-marker-alt"></i>
+          <div>
+            <strong>Endereço</strong>
+            <p>Rua Getúlio Vargas, 235 – Vila Operária<br/>Diamantina – MG, CEP 39.100-000</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <i class="fas fa-clock"></i>
+          <div>
+            <strong>Horários de Atendimento</strong>
+            <p>Segunda a Sexta: 08h00 às 12h00<br/>Cultos conforme programação</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <i class="fas fa-map"></i>
+          <div>
+            <strong>Como Chegar</strong>
+            <p><a href="https://maps.google.com/?q=Rua+Getúlio+Vargas,235,Diamantina,MG" target="_blank">Ver no Google Maps →</a></p>
+          </div>
+        </div>
+        <div class="mapa">
+          <iframe
+            src="https://maps.google.com/maps?q=Rua+Get%C3%BAlio+Vargas,+235,+Diamantina,+MG&output=embed"
+            width="100%" height="220" style="border:0;border-radius:12px;" allowfullscreen loading="lazy">
+          </iframe>
+        </div>
+      </div>
+      <div class="contato-form">
+        <h3>Envie uma mensagem</h3>
+        <form id="form-contato" onsubmit="enviarFormulario(event)">
+          <div class="form-group">
+            <label for="nome">Nome *</label>
+            <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required />
+          </div>
+          <div class="form-group">
+            <label for="email">E-mail *</label>
+            <input type="email" id="email" name="email" placeholder="seu@email.com" required />
+          </div>
+          <div class="form-group">
+            <label for="telefone">Telefone</label>
+            <input type="tel" id="telefone" name="telefone" placeholder="(38) 99999-9999" />
+          </div>
+          <div class="form-group">
+            <label for="assunto">Assunto</label>
+            <select id="assunto" name="assunto">
+              <option value="informacoes">Informações gerais</option>
+              <option value="oracao">Pedido de oração</option>
+              <option value="ministerios">Ministérios</option>
+              <option value="outros">Outros</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="mensagem">Mensagem *</label>
+            <textarea id="mensagem" name="mensagem" rows="4" placeholder="Escreva sua mensagem..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary w-full">Enviar Mensagem <i class="fas fa-paper-plane"></i></button>
+          <div id="form-feedback" class="form-feedback"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <div class="logo">
+          <div class="logo-text">
+            <span class="logo-title" style="color:#fff">Assembleia de Deus</span>
+            <span class="logo-sub" style="color:#D4A017">Ministério de Diamantina</span>
+          </div>
+        </div>
+        <p>Pregando o Evangelho e servindo a comunidade desde 2009.</p>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/assembleiadedeusm.diamantina/" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.facebook.com/Assembleiadedeusdiamantina/" target="_blank"><i class="fab fa-facebook"></i></a>
+          <a href="https://www.youtube.com/@assembleiadedeusdiamantina" target="_blank"><i class="fab fa-youtube"></i></a>
+          <a href="https://wa.me/5538999999999" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Links Rápidos</h4>
+        <ul>
+          <li><a href="#home">Início</a></li>
+          <li><a href="#sobre">A Igreja</a></li>
+          <li><a href="#cultos">Cultos e Agenda</a></li>
+          <li><a href="#ministerios">Ministérios</a></li>
+          <li><a href="#midia">Mídia</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Cultos</h4>
+        <ul>
+          <li>Domingo — 08h30 e 19h00</li>
+          <li>Terça-feira — 19h00</li>
+          <li>Quinta-feira — 19h00</li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Endereço</h4>
+        <p>Rua Getúlio Vargas, 235<br/>Vila Operária<br/>Diamantina – MG<br/>CEP 39.100-000</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Assembleia de Deus Ministério de Diamantina. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- WHATSAPP FLUTUANTE -->
+  <a href="https://wa.me/5538999999999" target="_blank" class="whatsapp-float" aria-label="Fale pelo WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <!-- PIX MODAL -->
+  <div class="pix-btn-wrapper">
+    <button class="btn-pix" onclick="document.getElementById('pix-modal').style.display='flex'" aria-label="Contribuir via PIX">
+      <i class="fas fa-hand-holding-heart"></i> Contribuir / Dízimo
+    </button>
+  </div>
+  <div class="pix-modal" id="pix-modal" onclick="this.style.display='none'">
+    <div class="pix-modal-box" onclick="event.stopPropagation()">
+      <button class="pix-close" onclick="document.getElementById('pix-modal').style.display='none'">&times;</button>
+      <h3><i class="fas fa-hand-holding-heart"></i> Contribua com a obra de Deus</h3>
+      <p>Use o PIX abaixo para enviar sua oferta ou dízimo:</p>
+      <div class="pix-key">
+        <strong>Chave PIX (CNPJ):</strong>
+        <span id="pix-chave">10.955.024/0001-58</span>
+        <button onclick="copiarPix()"><i class="fas fa-copy"></i> Copiar</button>
+      </div>
+      <p class="pix-obs">Assembleia de Deus — Ministério de Diamantina/MG</p>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
