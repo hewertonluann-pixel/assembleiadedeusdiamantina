@@ -1017,7 +1017,7 @@ function renderCongs() {
         <button class="btn btn-ghost" style="font-size:0.8rem;" onclick="editCong('${c.id}')">
           <i class="fas fa-edit"></i> Editar
         </button>
-        <button class="btn btn-danger" style="font-size:0.8rem;margin-left:auto;" onclick="deleteCong('${c.id}','${(c.nome||'').replace(/'/g,'\\'')}')">
+                  <button class="btn btn-danger" style="font-size:0.8rem;margin-left:auto;" onclick="deleteCong('${c.id}','${encodeURIComponent(c.nome||'')}')" title="Excluir">
           <i class="fas fa-trash"></i>
         </button>
       </div>
@@ -1048,7 +1048,8 @@ window.editCong = function(id) {
   if(c) openCongModal(c);
 };
 
-window.deleteCong = async function(id, _nome) { const nome = decodeURIComponent(_nome); {
+window.deleteCong = async function(id, _nome) {
+    const nome = decodeURIComponent(_nome);
   if(!confirm(`Excluir a congregação "${nome}"? Esta ação não pode ser desfeita.`)) return;
   try {
     await deleteDoc(doc(db,'congregacoes',id));
