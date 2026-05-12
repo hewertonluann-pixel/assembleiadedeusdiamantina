@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Congregações — Assembleia de Deus · Ministério de Diamantina</title>
+  <meta name="description" content="Conheça as congregações da Assembleia de Deus Ministério de Diamantina. Veja fotos, endereços e saiba como chegar em cada ponto de pregação." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      color: #1a1a2e;
+      background: #fff;
+      line-height: 1.7;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    ul { list-style: none; }
+
+    :root {
+      --primary: #1A3A8F;
+      --primary-dark: #122a6e;
+      --gold: #D4A017;
+      --light: #f4f6fc;
+      --gray: #6b7280;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(26,58,143,0.10);
+      --transition: 0.3s ease;
+    }
+
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px; border-radius: 50px;
+      font-weight: 600; font-size: 0.97rem;
+      cursor: pointer; transition: var(--transition);
+      border: 2px solid transparent;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+    .btn-outline { background: transparent; color: #fff; border-color: rgba(255,255,255,0.7); }
+    .btn-outline:hover { background: rgba(255,255,255,0.12); }
+
+    .section-tag {
+      display: inline-block;
+      background: rgba(26,58,143,0.08);
+      color: var(--primary);
+      font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 4px 14px; border-radius: 50px;
+      margin-bottom: 12px;
+    }
+    .section-tag.center { display: block; text-align: center; }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      color: var(--primary);
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+    .section-title.center { text-align: center; }
+
+    .header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 16px rgba(26,58,143,0.08);
+      transition: var(--transition);
+    }
+    .nav-container {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding-top: 14px; padding-bottom: 14px;
+    }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo img { height: 48px; width: auto; }
+    .logo-text { display: flex; flex-direction: column; }
+    .logo-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: var(--primary); line-height: 1.2; }
+    .logo-sub { font-size: 0.73rem; color: var(--gold); font-weight: 600; letter-spacing: 0.5px; }
+    .nav-list { display: flex; gap: 6px; }
+    .nav-link {
+      padding: 7px 14px; border-radius: 50px;
+      font-size: 0.9rem; font-weight: 500;
+      color: #333; transition: var(--transition);
+    }
+    .nav-link:hover, .nav-link.active { background: var(--primary); color: #fff; }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 4px;
+    }
+    .hamburger span { display: block; width: 25px; height: 2.5px; background: var(--primary); border-radius: 2px; transition: var(--transition); }
+
+    .page-hero {
+      padding-top: 80px;
+      min-height: 340px;
+      background: linear-gradient(135deg, #0f1f5c 0%, #1A3A8F 55%, #2d5ac8 100%);
+      display: flex; align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url('https://picsum.photos/seed/diamantina-church/1400/500') center/cover no-repeat;
+      opacity: 0.10;
+    }
+    .page-hero-content { position: relative; z-index: 1; padding: 60px 0 56px; }
+    .page-hero-content .section-tag { background: rgba(212,160,23,0.18); color: var(--gold); }
+    .page-hero-content h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      color: #fff; line-height: 1.15; margin-bottom: 16px;
+    }
+    .page-hero-content p { color: rgba(255,255,255,0.78); max-width: 560px; font-size: 1rem; }
+    .breadcrumb {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 20px; font-size: 0.82rem;
+      color: rgba(255,255,255,0.55);
+    }
+    .breadcrumb a { color: rgba(255,255,255,0.55); transition: var(--transition); }
+    .breadcrumb a:hover { color: var(--gold); }
+    .breadcrumb i { font-size: 0.65rem; }
+
+    .stats-bar { background: var(--primary); }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+    .stat-item {
+      padding: 22px 24px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; gap: 14px; color: #fff;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-item i { font-size: 1.6rem; opacity: 0.75; color: var(--gold); }
+    .stat-item strong { display: block; font-size: 1.4rem; line-height: 1; font-family: 'Playfair Display', serif; }
+    .stat-item span { font-size: 0.8rem; opacity: 0.75; }
+
+    .congregacoes-section { padding: 90px 0 100px; background: var(--light); }
+    .section-intro { text-align: center; max-width: 620px; margin: 0 auto 56px; }
+    .section-intro p { color: var(--gray); }
+
+    .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+
+    .cong-card {
+      background: #fff; border-radius: 18px;
+      box-shadow: var(--shadow); overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .cong-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(26,58,143,0.16); }
+
+    .cong-card-img { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: #dce3f3; }
+    .cong-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .cong-card:hover .cong-card-img img { transform: scale(1.05); }
+
+    .cong-badge {
+      position: absolute; top: 14px; left: 14px;
+      background: var(--primary); color: #fff;
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 50px;
+    }
+
+    .cong-card-body { padding: 26px 26px 28px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+    .cong-card-body h3 { font-family: 'Playfair Display', serif; font-size: 1.18rem; color: var(--primary); line-height: 1.3; }
+
+    .cong-address { display: flex; flex-direction: column; gap: 6px; color: var(--gray); font-size: 0.88rem; }
+    .cong-address-line { display: flex; align-items: flex-start; gap: 8px; }
+    .cong-address-line i { color: var(--gold); font-size: 0.9rem; margin-top: 3px; flex-shrink: 0; }
+
+    .cong-horario {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.85rem; color: var(--gray);
+      padding: 8px 14px; background: var(--light); border-radius: 8px;
+    }
+    .cong-horario i { color: var(--primary); }
+
+    .cong-card-body .btn-map {
+      margin-top: auto;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 20px; border-radius: 50px;
+      background: var(--primary); color: #fff;
+      font-size: 0.9rem; font-weight: 600;
+      transition: var(--transition); border: none; cursor: pointer;
+    }
+    .cong-card-body .btn-map:hover {
+      background: var(--primary-dark); transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(26,58,143,0.25);
+    }
+
+    .cta-section {
+      padding: 80px 0;
+      background: linear-gradient(135deg, var(--primary) 0%, #2d5ac8 100%);
+      text-align: center;
+    }
+    .cta-section h2 { font-family: 'Playfair Display', serif; color: #fff; font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin-bottom: 14px; }
+    .cta-section p { color: rgba(255,255,255,0.78); max-width: 500px; margin: 0 auto 32px; }
+    .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    .footer { background: #0e1f4d; padding: 72px 0 0; color: rgba(255,255,255,0.75); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 40px; padding-bottom: 48px; }
+    .footer-col p { font-size: 0.88rem; line-height: 1.7; margin-bottom: 20px; }
+    .footer-col h4 { color: #fff; font-size: 1rem; margin-bottom: 16px; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 8px; }
+    .footer-col ul li, .footer-col ul a { font-size: 0.88rem; }
+    .footer-col ul a:hover { color: var(--gold); }
+    .footer-social { display: flex; gap: 12px; }
+    .footer-social a {
+      width: 38px; height: 38px; background: rgba(255,255,255,0.1);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1rem; transition: var(--transition);
+    }
+    .footer-social a:hover { background: var(--gold); color: var(--primary); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding: 20px 24px; text-align: center; font-size: 0.82rem; color: rgba(255,255,255,0.45); }
+
+    .whatsapp-float {
+      position: fixed; bottom: 28px; right: 28px; z-index: 998;
+      background: #25d366; color: #fff;
+      width: 58px; height: 58px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; box-shadow: 0 4px 16px rgba(37,211,102,0.4);
+      transition: var(--transition); animation: pulse-wp 2.5s infinite;
+    }
+    .whatsapp-float:hover { transform: scale(1.1); }
+    @keyframes pulse-wp {
+      0%,100%{box-shadow:0 4px 16px rgba(37,211,102,0.4)}
+      50%{box-shadow:0 4px 28px rgba(37,211,102,0.7)}
+    }
+
+    @media (max-width: 960px) { .cards-grid { grid-template-columns: repeat(2, 1fr); } .footer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 768px) {
+      .nav { display: none; position: absolute; top: 72px; left: 0; right: 0; background: #fff; padding: 16px 24px 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+      .nav.open { display: block; }
+      .nav-list { flex-direction: column; gap: 4px; }
+      .nav-link { display: block; padding: 10px 14px; }
+      .hamburger { display: flex; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .cards-grid { grid-template-columns: 1fr; }
+      .stat-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+      .stat-item:last-child { border-bottom: none; }
+    }
+
+    .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .fade-in.visible { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .fade-in { opacity: 1; transform: none; transition: none; }
+      .whatsapp-float { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header" id="header">
+    <div class="container nav-container">
+      <a href="index.html" class="logo" aria-label="Voltar para a página inicial">
+        <img src="img/logo.png" alt="Logo AD Diamantina" onerror="this.style.display='none'" />
+        <div class="logo-text">
+          <span class="logo-title">Assembleia de Deus</span>
+          <span class="logo-sub">Ministério de Diamantina</span>
+        </div>
+      </a>
+      <nav class="nav" id="nav" aria-label="Navegação principal">
+        <ul class="nav-list">
+          <li><a href="index.html#home"        class="nav-link">Início</a></li>
+          <li><a href="index.html#sobre"       class="nav-link">A Igreja</a></li>
+          <li><a href="index.html#cultos"      class="nav-link">Cultos</a></li>
+          <li><a href="index.html#ministerios" class="nav-link">Ministérios</a></li>
+          <li><a href="index.html#midia"       class="nav-link">Mídia</a></li>
+          <li><a href="congregacoes.html"      class="nav-link active">Congregações</a></li>
+          <li><a href="index.html#contato"     class="nav-link">Contato</a></li>
+        </ul>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <section class="page-hero" aria-label="Cabeçalho da página de congregações">
+    <div class="container page-hero-content">
+      <nav class="breadcrumb" aria-label="Trilha de navegação">
+        <a href="index.html">Início</a>
+        <i class="fas fa-chevron-right"></i>
+        <span>Congregações</span>
+      </nav>
+      <span class="section-tag">Ministério de Diamantina</span>
+      <h1>Nossas Congregações</h1>
+      <p>Pontos de pregação e comunhão espalhados pela região. Encontre a unidade mais próxima de você e venha nos visitar.</p>
+    </div>
+  </section>
+
+  <div class="stats-bar" role="region" aria-label="Dados do ministério">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <i class="fas fa-church" aria-hidden="true"></i>
+          <div><strong>06</strong><span>Congregações</span></div>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          <div><strong>MG</strong><span>Minas Gerais</span></div>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+          <div><strong>2009</strong><span>Fundação</span></div>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-user-tie" aria-hidden="true"></i>
+          <div><strong>Pr. Airton</strong><span>Liderança</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="congregacoes-section" id="congregacoes" aria-labelledby="titulo-congregacoes">
+    <div class="container">
+      <div class="section-intro">
+        <span class="section-tag center">Encontre-nos</span>
+        <h2 class="section-title center" id="titulo-congregacoes">Pontos de Pregação</h2>
+        <p>Clique em <strong>"Como chegar"</strong> para abrir o mapa diretamente no endereço da congregação.</p>
+      </div>
+
+      <div class="cards-grid">
+
+        <article class="cong-card fade-in">
+          <div class="cong-card-img">
+            <img src="https://picsum.photos/seed/ad-diamantina-sede/800/500" alt="Fachada da Sede Central — Assembleia de Deus Diamantina" width="800" height="500" loading="lazy" />
+            <span class="cong-badge">Sede Central</span>
+          </div>
+          <div class="cong-card-body">
+            <h3>Sede Central — Diamantina</h3>
+            <div class="cong-address">
+              <div class="cong-address-line">
+                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                <span>Rua Getúlio Vargas, 235 — Vila Operária<br/>Diamantina – MG · CEP 39.100-000</span>
+              </div>
+            </div>
+            <div class="cong-horario">
+              <i class="fas fa-clock" aria-hidden="true"></i>
+              Dom 08h30 e 19h · Ter 19h · Qui 19h
+            </div>
+            <a class="btn-map" href="https://www.google.com/maps/search/?api=1&query=Rua+Get%C3%BAlio+Vargas+235+Vila+Oper%C3%A1ria+Diamantina+MG" target="_blank" rel="noopener noreferrer" aria-label="Como chegar na Sede Central">
+              <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
+            </a>
+          </div>
+        </article>
+
+        <article class="cong-card fade-in">
+          <div class="cong-card-img">
+            <img src="https://picsum.photos/seed/ad-datas/800/500" alt="Congregação de Datas" width="800" height="500" loading="lazy" />
+            <span class="cong-badge">Congregação 02</span>
+          </div>
+          <div class="cong-card-body">
+            <h3>Congregação de Datas</h3>
+            <div class="cong-address">
+              <div class="cong-address-line">
+                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                <span>Rua Principal, s/n — Centro<br/>Datas – MG</span>
+              </div>
+            </div>
+            <div class="cong-horario">
+              <i class="fas fa-clock" aria-hidden="true"></i>
+              Dom 19h · Qua 19h
+            </div>
+            <a class="btn-map" href="https://www.google.com/maps/search/?api=1&query=Rua+Principal+Centro+Datas+MG" target="_blank" rel="noopener noreferrer" aria-label="Como chegar na Congregação de Datas">
+              <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
+            </a>
+          </div>
+        </article>
+
+        <article class="cong-card fade-in">
+          <div class="cong-card-img">
+            <img src="https://picsum.photos/seed/ad-gouveia/800/500" alt="Congregação de Gouveia" width="800" height="500" loading="lazy" />
+            <span class="cong-badge">Congregação 03</span>
+          </div>
+          <div class="cong-card-body">
+            <h3>Congregação de Gouveia</h3>
+            <div class="cong-address">
+              <div class="cong-address-line">
+                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                <span>Avenida da Igreja, 100 — Centro<br/>Gouveia – MG</span>
+              </div>
+            </div>
+            <div class="cong-horario">
+              <i class="fas fa-clock" aria-hidden="true"></i>
+              Dom 19h · Sex 19h
+            </div>
+            <a class="btn-map" href="https://www.google.com/maps/search/?api=1&query=Avenida+da+Igreja+100+Centro+Gouveia+MG" target="_blank" rel="noopener noreferrer" aria-label="Como chegar na Congregação de Gouveia">
+              <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
+            </a>
+          </div>
+        </article>
+
+        <article class="cong-card fade-in">
+          <div class="cong-card-img">
+            <img src="https://picsum.photos/seed/ad-serro/800/500" alt="Congregação do Serro" width="800" height="500" loading="lazy" />
+            <span class="cong-badge">Congregação 04</span>
+          </div>
+          <div class="cong-card-body">
+            <h3>Congregação do Serro</h3>
+            <div class="cong-address">
+              <div class="cong-address-line">
+                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                <span>Rua Coronel Bentes, 45 — Centro<br/>Serro – MG</span>
+              </div>
+            </div>
+            <div class="cong-horario">
+              <i class="fas fa-clock" aria-hidden="true"></i>
+              Dom 19h · Ter 19h
+            </div>
+            <a class="btn-map" href="https://www.google.com/maps/search/?api=1&query=Rua+Coronel+Bentes+45+Centro+Serro+MG" target="_blank" rel="noopener noreferrer" aria-label="Como chegar na Congregação do Serro">
+              <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
+            </a>
+          </div>
+        </article>
+
+        <article class="cong-card fade-in">
+          <div class="cong-card-img">
+            <img src="https://picsum.photos/seed/ad-milho-verde/800/500" alt="Congregação de Milho Verde" width="800" height="500" loading="lazy" />
+            <span class="cong-badge">Congregação 05</span>
+          </div>
+          <div class="cong-card-body">
+            <h3>Congregação de Milho Verde</h3>
+            <div class="cong-address">
+              <div class="cong-address-line">
+                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                <span>Rua da Esperança, 12 — Milho Verde<br/>Serro – MG</span>
+              </div>
+            </div>
+            <div class="cong-horario">
+              <i class="fas fa-clock" aria-hidden="true"></i>
+              Dom 18h · Qui 19h
+            </div>
+            <a class="btn-map" href="https://www.google.com/maps/search/?api=1&query=Rua+da+Esperan%C3%A7a+12+Milho+Verde+Serro+MG" target="_blank" rel="noopener noreferrer" aria-label="Como chegar na Congregação de Milho Verde">
+              <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
+            </a>
+          </div>
+        </article>
+
+        <article class="cong-card fade-in">
+          <div class="cong-card-img">
+            <img src="https://picsum.photos/seed/ad-biribiri/800/500" alt="Congregação de Biribiri" width="800" height="500" loading="lazy" />
+            <span class="cong-badge">Congregação 06</span>
+          </div>
+          <div class="cong-card-body">
+            <h3>Congregação de Biribiri</h3>
+            <div class="cong-address">
+              <div class="cong-address-line">
+                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                <span>Rua da Comunidade, s/n — Biribiri<br/>Diamantina – MG</span>
+              </div>
+            </div>
+            <div class="cong-horario">
+              <i class="fas fa-clock" aria-hidden="true"></i>
+              Sáb 18h · Dom 09h
+            </div>
+            <a class="btn-map" href="https://www.google.com/maps/search/?api=1&query=Biribiri+Diamantina+MG" target="_blank" rel="noopener noreferrer" aria-label="Como chegar na Congregação de Biribiri">
+              <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
+            </a>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section" aria-label="Chamada para ação">
+    <div class="container">
+      <h2>Sua congregação não está na lista?</h2>
+      <p>Entre em contato conosco e ajude-nos a manter as informações sempre atualizadas.</p>
+      <div class="cta-buttons">
+        <a href="index.html#contato" class="btn btn-primary"><i class="fas fa-envelope"></i> Fale conosco</a>
+        <a href="https://wa.me/5538999999999" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <div class="logo" style="margin-bottom:16px">
+          <div class="logo-text">
+            <span class="logo-title" style="color:#fff">Assembleia de Deus</span>
+            <span class="logo-sub" style="color:#D4A017">Ministério de Diamantina</span>
+          </div>
+        </div>
+        <p>Pregando o Evangelho e servindo a comunidade desde 2009.</p>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/assembleiadedeusm.diamantina/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.facebook.com/Assembleiadedeusdiamantina/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+          <a href="https://www.youtube.com/@assembleiadedeusdiamantina" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="https://wa.me/5538999999999" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Links Rápidos</h4>
+        <ul>
+          <li><a href="index.html#home">Início</a></li>
+          <li><a href="index.html#sobre">A Igreja</a></li>
+          <li><a href="index.html#cultos">Cultos e Agenda</a></li>
+          <li><a href="index.html#ministerios">Ministérios</a></li>
+          <li><a href="index.html#midia">Mídia</a></li>
+          <li><a href="congregacoes.html">Congregações</a></li>
+          <li><a href="index.html#contato">Contato</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Cultos</h4>
+        <ul>
+          <li>Domingo — 08h30 e 19h00</li>
+          <li>Terça-feira — 19h00</li>
+          <li>Quinta-feira — 19h00</li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Endereço</h4>
+        <p>Rua Getúlio Vargas, 235<br/>Vila Operária<br/>Diamantina – MG<br/>CEP 39.100-000</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Assembleia de Deus Ministério de Diamantina. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/5538999999999" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale pelo WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const nav = document.getElementById('nav');
+    hamburger.addEventListener('click', () => {
+      nav.classList.toggle('open');
+      hamburger.setAttribute('aria-expanded', nav.classList.contains('open'));
+    });
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => nav.classList.remove('open'));
+    });
+
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      header.style.boxShadow = window.scrollY > 40
+        ? '0 4px 24px rgba(26,58,143,0.15)'
+        : '0 2px 16px rgba(26,58,143,0.08)';
+    });
+
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          fadeObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    fadeEls.forEach(el => fadeObserver.observe(el));
+  </script>
+</body>
+</html>
