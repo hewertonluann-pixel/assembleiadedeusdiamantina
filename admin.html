@@ -1048,7 +1048,7 @@ window.editCong = function(id) {
   if(c) openCongModal(c);
 };
 
-window.deleteCong = async function(id, nome) {
+window.deleteCong = async function(id, _nome) { const nome = decodeURIComponent(_nome); {
   if(!confirm(`Excluir a congregação "${nome}"? Esta ação não pode ser desfeita.`)) return;
   try {
     await deleteDoc(doc(db,'congregacoes',id));
