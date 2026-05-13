@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-      <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -148,6 +148,31 @@
     .section-intro p { color: var(--gray); }
 
     .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+
+    /* Skeleton loader */
+    .skeleton-card {
+      background: #fff; border-radius: 18px;
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .skeleton-img { aspect-ratio: 16/10; background: #e0e7f3; }
+    .skeleton-body { padding: 26px; display: flex; flex-direction: column; gap: 14px; }
+    .skeleton-line {
+      height: 14px; border-radius: 6px; background: #e0e7f3;
+      animation: shimmer 1.4s infinite;
+    }
+    .skeleton-line.short { width: 55%; }
+    .skeleton-line.medium { width: 75%; }
+    @keyframes shimmer {
+      0%,100% { opacity: 1; } 50% { opacity: 0.45; }
+    }
+
+    /* Estado de erro */
+    .error-state {
+      grid-column: 1 / -1; text-align: center;
+      padding: 48px 24px; color: var(--gray);
+    }
+    .error-state i { font-size: 2.5rem; color: #c0392b; margin-bottom: 12px; }
+    .error-state p { margin-top: 8px; font-size: 0.95rem; }
 
     .cong-card {
       background: #fff; border-radius: 18px;
@@ -299,12 +324,16 @@
     </div>
   </section>
 
+  <!-- Stats bar: dados carregados do Firestore -->
   <div class="stats-bar" role="region" aria-label="Dados do ministério">
     <div class="container">
       <div class="stats-grid">
         <div class="stat-item">
           <i class="fas fa-church" aria-hidden="true"></i>
-          <div><strong>06</strong><span>Congregações</span></div>
+          <div>
+            <strong id="stat-total">—</strong>
+            <span>Congregações</span>
+          </div>
         </div>
         <div class="stat-item">
           <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
@@ -312,11 +341,17 @@
         </div>
         <div class="stat-item">
           <i class="fas fa-calendar-alt" aria-hidden="true"></i>
-          <div><strong>2009</strong><span>Fundação</span></div>
+          <div>
+            <strong id="stat-fundacao">—</strong>
+            <span>Fundação</span>
+          </div>
         </div>
         <div class="stat-item">
           <i class="fas fa-user-tie" aria-hidden="true"></i>
-          <div><strong>Pr. Airton</strong><span>Liderança</span></div>
+          <div>
+            <strong id="stat-lider">—</strong>
+            <span>Liderança</span>
+          </div>
         </div>
       </div>
     </div>
@@ -330,146 +365,33 @@
         <p>Clique em <strong>"Como chegar"</strong> para abrir o mapa diretamente no endereço da congregação.</p>
       </div>
 
-      <div class="cards-grid">
-
-        <article class="cong-card fade-in">
-          <div class="cong-card-img">
-            <img src="https://picsum.photos/seed/ad-diamantina-sede/800/500" alt="Fachada da Sede Central — Assembleia de Deus Diamantina" width="800" height="500" loading="lazy" />
-            <span class="cong-badge">Sede Central</span>
+      <!-- Cards gerados dinamicamente pelo JavaScript -->
+      <div class="cards-grid" id="cards-grid">
+        <!-- Skeletons exibidos enquanto carrega -->
+        <div class="skeleton-card">
+          <div class="skeleton-img"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line medium"></div>
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line medium"></div>
           </div>
-          <div class="cong-card-body">
-            <h3>Sede Central — Diamantina</h3>
-            <div class="cong-address">
-              <div class="cong-address-line">
-                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                <span>Rua Getúlio Vargas, 235 — Vila Operária<br/>Diamantina – MG · CEP 39.100-000</span>
-              </div>
-            </div>
-            <div class="cong-horario">
-              <i class="fas fa-clock" aria-hidden="true"></i>
-              Dom 08h30 e 19h · Ter 19h · Qui 19h
-            </div>
-            <a class="btn-map" href="https://www.google.com/maps/search/?api=1&query=Rua+Get%C3%BAlio+Vargas+235+Vila+Oper%C3%A1ria+Diamantina+MG" target="_blank" rel="noopener noreferrer" aria-label="Como chegar na Sede Central">
-              <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
-            </a>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-img"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line medium"></div>
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line medium"></div>
           </div>
-        </article>
-
-        <article class="cong-card fade-in">
-          <div class="cong-card-img">
-            <img src="https://picsum.photos/seed/ad-datas/800/500" alt="Congregação de Datas" width="800" height="500" loading="lazy" />
-            <span class="cong-badge">Congregação 02</span>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-img"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line medium"></div>
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line medium"></div>
           </div>
-          <div class="cong-card-body">
-            <h3>Congregação de Datas</h3>
-            <div class="cong-address">
-              <div class="cong-address-line">
-                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                <span>Rua Principal, s/n — Centro<br/>Datas – MG</span>
-              </div>
-            </div>
-            <div class="cong-horario">
-              <i class="fas fa-clock" aria-hidden="true"></i>
-              Dom 19h · Qua 19h
-            </div>
-            <a class="btn-map" href="https://www.google.com/maps/search/?api=1&query=Rua+Principal+Centro+Datas+MG" target="_blank" rel="noopener noreferrer" aria-label="Como chegar na Congregação de Datas">
-              <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
-            </a>
-          </div>
-        </article>
-
-        <article class="cong-card fade-in">
-          <div class="cong-card-img">
-            <img src="https://picsum.photos/seed/ad-gouveia/800/500" alt="Congregação de Gouveia" width="800" height="500" loading="lazy" />
-            <span class="cong-badge">Congregação 03</span>
-          </div>
-          <div class="cong-card-body">
-            <h3>Congregação de Gouveia</h3>
-            <div class="cong-address">
-              <div class="cong-address-line">
-                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                <span>Avenida da Igreja, 100 — Centro<br/>Gouveia – MG</span>
-              </div>
-            </div>
-            <div class="cong-horario">
-              <i class="fas fa-clock" aria-hidden="true"></i>
-              Dom 19h · Sex 19h
-            </div>
-            <a class="btn-map" href="https://www.google.com/maps/search/?api=1&query=Avenida+da+Igreja+100+Centro+Gouveia+MG" target="_blank" rel="noopener noreferrer" aria-label="Como chegar na Congregação de Gouveia">
-              <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
-            </a>
-          </div>
-        </article>
-
-        <article class="cong-card fade-in">
-          <div class="cong-card-img">
-            <img src="https://picsum.photos/seed/ad-serro/800/500" alt="Congregação do Serro" width="800" height="500" loading="lazy" />
-            <span class="cong-badge">Congregação 04</span>
-          </div>
-          <div class="cong-card-body">
-            <h3>Congregação do Serro</h3>
-            <div class="cong-address">
-              <div class="cong-address-line">
-                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                <span>Rua Coronel Bentes, 45 — Centro<br/>Serro – MG</span>
-              </div>
-            </div>
-            <div class="cong-horario">
-              <i class="fas fa-clock" aria-hidden="true"></i>
-              Dom 19h · Ter 19h
-            </div>
-            <a class="btn-map" href="https://www.google.com/maps/search/?api=1&query=Rua+Coronel+Bentes+45+Centro+Serro+MG" target="_blank" rel="noopener noreferrer" aria-label="Como chegar na Congregação do Serro">
-              <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
-            </a>
-          </div>
-        </article>
-
-        <article class="cong-card fade-in">
-          <div class="cong-card-img">
-            <img src="https://picsum.photos/seed/ad-milho-verde/800/500" alt="Congregação de Milho Verde" width="800" height="500" loading="lazy" />
-            <span class="cong-badge">Congregação 05</span>
-          </div>
-          <div class="cong-card-body">
-            <h3>Congregação de Milho Verde</h3>
-            <div class="cong-address">
-              <div class="cong-address-line">
-                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                <span>Rua da Esperança, 12 — Milho Verde<br/>Serro – MG</span>
-              </div>
-            </div>
-            <div class="cong-horario">
-              <i class="fas fa-clock" aria-hidden="true"></i>
-              Dom 18h · Qui 19h
-            </div>
-            <a class="btn-map" href="https://www.google.com/maps/search/?api=1&query=Rua+da+Esperan%C3%A7a+12+Milho+Verde+Serro+MG" target="_blank" rel="noopener noreferrer" aria-label="Como chegar na Congregação de Milho Verde">
-              <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
-            </a>
-          </div>
-        </article>
-
-        <article class="cong-card fade-in">
-          <div class="cong-card-img">
-            <img src="https://picsum.photos/seed/ad-biribiri/800/500" alt="Congregação de Biribiri" width="800" height="500" loading="lazy" />
-            <span class="cong-badge">Congregação 06</span>
-          </div>
-          <div class="cong-card-body">
-            <h3>Congregação de Biribiri</h3>
-            <div class="cong-address">
-              <div class="cong-address-line">
-                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                <span>Rua da Comunidade, s/n — Biribiri<br/>Diamantina – MG</span>
-              </div>
-            </div>
-            <div class="cong-horario">
-              <i class="fas fa-clock" aria-hidden="true"></i>
-              Sáb 18h · Dom 09h
-            </div>
-            <a class="btn-map" href="https://www.google.com/maps/search/?api=1&query=Biribiri+Diamantina+MG" target="_blank" rel="noopener noreferrer" aria-label="Como chegar na Congregação de Biribiri">
-              <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
-            </a>
-          </div>
-        </article>
-
+        </div>
       </div>
     </div>
   </section>
@@ -480,7 +402,7 @@
       <p>Entre em contato conosco e ajude-nos a manter as informações sempre atualizadas.</p>
       <div class="cta-buttons">
         <a href="index.html#contato" class="btn btn-primary"><i class="fas fa-envelope"></i> Fale conosco</a>
-        <a href="https://wa.me/5538999999999" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+        <a id="cta-whatsapp" href="https://wa.me/5538999999999" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fab fa-whatsapp"></i> WhatsApp</a>
       </div>
     </div>
   </section>
@@ -496,10 +418,10 @@
         </div>
         <p>Pregando o Evangelho e servindo a comunidade desde 2009.</p>
         <div class="footer-social">
-          <a href="https://www.instagram.com/assembleiadedeusm.diamantina/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="https://www.facebook.com/Assembleiadedeusdiamantina/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-          <a href="https://www.youtube.com/@assembleiadedeusdiamantina" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-          <a href="https://wa.me/5538999999999" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          <a id="footer-instagram" href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a id="footer-facebook"  href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+          <a id="footer-youtube"   href="#" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          <a id="footer-whatsapp"  href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         </div>
       </div>
       <div class="footer-col">
@@ -516,15 +438,13 @@
       </div>
       <div class="footer-col">
         <h4>Cultos</h4>
-        <ul>
-          <li>Domingo — 08h30 e 19h00</li>
-          <li>Terça-feira — 19h00</li>
-          <li>Quinta-feira — 19h00</li>
+        <ul id="footer-cultos">
+          <li>Carregando…</li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>Endereço</h4>
-        <p>Rua Getúlio Vargas, 235<br/>Vila Operária<br/>Diamantina – MG<br/>CEP 39.100-000</p>
+        <p id="footer-endereco">Carregando…</p>
       </div>
     </div>
     <div class="footer-bottom">
@@ -532,11 +452,188 @@
     </div>
   </footer>
 
-  <a href="https://wa.me/5538999999999" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale pelo WhatsApp">
+  <a id="whatsapp-float" href="https://wa.me/5538999999999" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale pelo WhatsApp">
     <i class="fab fa-whatsapp"></i>
   </a>
 
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import {
+      getFirestore, collection, getDocs, doc, getDoc, orderBy, query
+    } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+    // ─── Configuração do Firebase (substituir com suas credenciais reais) ───
+    const firebaseConfig = {
+      apiKey:            "FIREBASE_API_KEY",
+      authDomain:        "FIREBASE_AUTH_DOMAIN",
+      projectId:         "FIREBASE_PROJECT_ID",
+      storageBucket:     "FIREBASE_STORAGE_BUCKET",
+      messagingSenderId: "FIREBASE_MESSAGING_SENDER_ID",
+      appId:             "FIREBASE_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    // ─── Utilitários ────────────────────────────────────────────────────────
+
+    /** Gera URL de imagem automática caso o campo `foto` seja omitido */
+    function imgFallback(seed) {
+      return `https://picsum.photos/seed/${encodeURIComponent(seed)}/800/500`;
+    }
+
+    /** Monta URL do Google Maps a partir do campo `maps` */
+    function mapsUrl(maps) {
+      if (!maps) return '#';
+      if (maps.startsWith('http')) return maps;
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(maps)}`;
+    }
+
+    /** Renderiza um card de congregação */
+    function renderCard(cong, index) {
+      const foto   = cong.foto || imgFallback(cong.nome || `congregacao-${index}`);
+      const badge  = cong.badge || `Congregação ${String(index).padStart(2, '0')}`;
+      const link   = mapsUrl(cong.maps);
+      const cidade = cong.cidade ? `<br/>${cong.cidade}` : '';
+
+      const article = document.createElement('article');
+      article.className = 'cong-card fade-in';
+      article.innerHTML = `
+        <div class="cong-card-img">
+          <img src="${foto}"
+               alt="${cong.nome}"
+               width="800" height="500" loading="lazy"
+               onerror="this.src='${imgFallback(cong.nome)}'" />
+          <span class="cong-badge">${badge}</span>
+        </div>
+        <div class="cong-card-body">
+          <h3>${cong.nome}</h3>
+          <div class="cong-address">
+            <div class="cong-address-line">
+              <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+              <span>${cong.endereco}${cidade}</span>
+            </div>
+          </div>
+          ${cong.horario ? `
+          <div class="cong-horario">
+            <i class="fas fa-clock" aria-hidden="true"></i>
+            ${cong.horario}
+          </div>` : ''}
+          <a class="btn-map"
+             href="${link}"
+             target="_blank" rel="noopener noreferrer"
+             aria-label="Como chegar em ${cong.nome}">
+            <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
+          </a>
+        </div>`;
+      return article;
+    }
+
+    /** Ativa animação fade-in via IntersectionObserver */
+    function observeFadeIn(container) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => entry.target.classList.add('visible'), i * 80);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      container.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    }
+
+    // ─── Carrega congregações ────────────────────────────────────────────────
+    async function carregarCongregacoes() {
+      const grid = document.getElementById('cards-grid');
+      try {
+        const q    = query(collection(db, 'congregacoes'), orderBy('ordem'));
+        const snap = await getDocs(q);
+
+        grid.innerHTML = ''; // remove skeletons
+
+        if (snap.empty) {
+          grid.innerHTML = `
+            <div class="error-state">
+              <i class="fas fa-church"></i>
+              <p>Nenhuma congregação cadastrada ainda.</p>
+            </div>`;
+          document.getElementById('stat-total').textContent = '0';
+          return;
+        }
+
+        let index = 1;
+        snap.forEach(docSnap => {
+          const card = renderCard(docSnap.data(), index++);
+          grid.appendChild(card);
+        });
+
+        document.getElementById('stat-total').textContent =
+          String(snap.size).padStart(2, '0');
+
+        observeFadeIn(grid);
+
+      } catch (err) {
+        console.error('Erro ao carregar congregações:', err);
+        grid.innerHTML = `
+          <div class="error-state">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Não foi possível carregar as congregações. Tente novamente mais tarde.</p>
+          </div>`;
+      }
+    }
+
+    // ─── Carrega dados gerais do site (home + contato + redes) ─────────────
+    async function carregarDadosSite() {
+      try {
+        // Dados da home (fundação, liderança, cultos)
+        const homeDoc = await getDoc(doc(db, 'site', 'home'));
+        if (homeDoc.exists()) {
+          const h = homeDoc.data();
+          if (h.fundacao)  document.getElementById('stat-fundacao').textContent = h.fundacao;
+          if (h.lideranca) document.getElementById('stat-lider').textContent    = h.lideranca;
+
+          // Horários de culto no footer
+          if (Array.isArray(h.cultos) && h.cultos.length) {
+            const ul = document.getElementById('footer-cultos');
+            ul.innerHTML = h.cultos
+              .map(c => `<li>${c.label} — ${c.hora}</li>`)
+              .join('');
+          }
+        }
+
+        // Endereço de contato no footer
+        const contatoDoc = await getDoc(doc(db, 'site', 'contato'));
+        if (contatoDoc.exists()) {
+          const c = contatoDoc.data();
+          document.getElementById('footer-endereco').innerHTML =
+            `${c.rua || ''}<br/>${c.bairro || ''}<br/>${c.cidade || ''}<br/>${c.cep || ''}`;
+        }
+
+        // Redes sociais
+        const redesDoc = await getDoc(doc(db, 'site', 'redes'));
+        if (redesDoc.exists()) {
+          const r = redesDoc.data();
+          const wp = r.whatsapp ? `https://wa.me/${r.whatsapp}` : '#';
+          if (r.instagram) document.getElementById('footer-instagram').href = r.instagram;
+          if (r.facebook)  document.getElementById('footer-facebook').href  = r.facebook;
+          if (r.youtube)   document.getElementById('footer-youtube').href   = r.youtube;
+          document.getElementById('footer-whatsapp').href = wp;
+          document.getElementById('whatsapp-float').href  = wp;
+          document.getElementById('cta-whatsapp').href    = wp;
+        }
+
+      } catch (err) {
+        console.error('Erro ao carregar dados do site:', err);
+      }
+    }
+
+    // ─── Inicialização ───────────────────────────────────────────────────────
+    Promise.all([carregarCongregacoes(), carregarDadosSite()]);
+  </script>
+
   <script>
+    // Menu hamburguer
     const hamburger = document.getElementById('hamburger');
     const nav = document.getElementById('nav');
     hamburger.addEventListener('click', () => {
@@ -547,23 +644,13 @@
       link.addEventListener('click', () => nav.classList.remove('open'));
     });
 
+    // Sombra no scroll
     const header = document.getElementById('header');
     window.addEventListener('scroll', () => {
       header.style.boxShadow = window.scrollY > 40
         ? '0 4px 24px rgba(26,58,143,0.15)'
         : '0 2px 16px rgba(26,58,143,0.08)';
     });
-
-    const fadeEls = document.querySelectorAll('.fade-in');
-    const fadeObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => entry.target.classList.add('visible'), i * 80);
-          fadeObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12 });
-    fadeEls.forEach(el => fadeObserver.observe(el));
   </script>
 </body>
 </html>
