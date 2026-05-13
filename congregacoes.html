@@ -324,7 +324,6 @@
     </div>
   </section>
 
-  <!-- Stats bar: dados carregados do Firestore -->
   <div class="stats-bar" role="region" aria-label="Dados do ministério">
     <div class="container">
       <div class="stats-grid">
@@ -365,9 +364,7 @@
         <p>Clique em <strong>"Como chegar"</strong> para abrir o mapa diretamente no endereço da congregação.</p>
       </div>
 
-      <!-- Cards gerados dinamicamente pelo JavaScript -->
       <div class="cards-grid" id="cards-grid">
-        <!-- Skeletons exibidos enquanto carrega -->
         <div class="skeleton-card">
           <div class="skeleton-img"></div>
           <div class="skeleton-body">
@@ -463,34 +460,28 @@
       getFirestore, collection, getDocs, doc, getDoc, orderBy, query
     } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-    // ─── Configuração do Firebase (substituir com suas credenciais reais) ───
     const firebaseConfig = {
-      apiKey:            "FIREBASE_API_KEY",
-      authDomain:        "FIREBASE_AUTH_DOMAIN",
-      projectId:         "FIREBASE_PROJECT_ID",
-      storageBucket:     "FIREBASE_STORAGE_BUCKET",
-      messagingSenderId: "FIREBASE_MESSAGING_SENDER_ID",
-      appId:             "FIREBASE_APP_ID"
+      apiKey:            "AIzaSyBtMB9qs34H8qMjaA_XavJdrUSpOASYBos",
+      authDomain:        "ad-diamantina.firebaseapp.com",
+      projectId:         "ad-diamantina",
+      storageBucket:     "ad-diamantina.firebasestorage.app",
+      messagingSenderId: "430449368435",
+      appId:             "1:430449368435:web:c2d94116f9761fd4c87906"
     };
 
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
 
-    // ─── Utilitários ────────────────────────────────────────────────────────
-
-    /** Gera URL de imagem automática caso o campo `foto` seja omitido */
     function imgFallback(seed) {
       return `https://picsum.photos/seed/${encodeURIComponent(seed)}/800/500`;
     }
 
-    /** Monta URL do Google Maps a partir do campo `maps` */
     function mapsUrl(maps) {
       if (!maps) return '#';
       if (maps.startsWith('http')) return maps;
       return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(maps)}`;
     }
 
-    /** Renderiza um card de congregação */
     function renderCard(cong, index) {
       const foto   = cong.foto || imgFallback(cong.nome || `congregacao-${index}`);
       const badge  = cong.badge || `Congregação ${String(index).padStart(2, '0')}`;
@@ -530,7 +521,6 @@
       return article;
     }
 
-    /** Ativa animação fade-in via IntersectionObserver */
     function observeFadeIn(container) {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry, i) => {
@@ -543,14 +533,13 @@
       container.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     }
 
-    // ─── Carrega congregações ────────────────────────────────────────────────
     async function carregarCongregacoes() {
       const grid = document.getElementById('cards-grid');
       try {
         const q    = query(collection(db, 'congregacoes'), orderBy('ordem'));
         const snap = await getDocs(q);
 
-        grid.innerHTML = ''; // remove skeletons
+        grid.innerHTML = '';
 
         if (snap.empty) {
           grid.innerHTML = `
@@ -583,17 +572,14 @@
       }
     }
 
-    // ─── Carrega dados gerais do site (home + contato + redes) ─────────────
     async function carregarDadosSite() {
       try {
-        // Dados da home (fundação, liderança, cultos)
         const homeDoc = await getDoc(doc(db, 'site', 'home'));
         if (homeDoc.exists()) {
           const h = homeDoc.data();
           if (h.fundacao)  document.getElementById('stat-fundacao').textContent = h.fundacao;
           if (h.lideranca) document.getElementById('stat-lider').textContent    = h.lideranca;
 
-          // Horários de culto no footer
           if (Array.isArray(h.cultos) && h.cultos.length) {
             const ul = document.getElementById('footer-cultos');
             ul.innerHTML = h.cultos
@@ -602,7 +588,6 @@
           }
         }
 
-        // Endereço de contato no footer
         const contatoDoc = await getDoc(doc(db, 'site', 'contato'));
         if (contatoDoc.exists()) {
           const c = contatoDoc.data();
@@ -610,7 +595,6 @@
             `${c.rua || ''}<br/>${c.bairro || ''}<br/>${c.cidade || ''}<br/>${c.cep || ''}`;
         }
 
-        // Redes sociais
         const redesDoc = await getDoc(doc(db, 'site', 'redes'));
         if (redesDoc.exists()) {
           const r = redesDoc.data();
@@ -628,12 +612,10 @@
       }
     }
 
-    // ─── Inicialização ───────────────────────────────────────────────────────
     Promise.all([carregarCongregacoes(), carregarDadosSite()]);
   </script>
 
   <script>
-    // Menu hamburguer
     const hamburger = document.getElementById('hamburger');
     const nav = document.getElementById('nav');
     hamburger.addEventListener('click', () => {
@@ -644,7 +626,6 @@
       link.addEventListener('click', () => nav.classList.remove('open'));
     });
 
-    // Sombra no scroll
     const header = document.getElementById('header');
     window.addEventListener('scroll', () => {
       header.style.boxShadow = window.scrollY > 40
