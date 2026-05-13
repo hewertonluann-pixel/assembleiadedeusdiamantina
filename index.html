@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-      <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
 </head>
 <body>
 
@@ -31,7 +31,7 @@
           <li><a href="#cultos" class="nav-link">Cultos</a></li>
           <li><a href="#ministerios" class="nav-link">Ministérios</a></li>
           <li><a href="#midia" class="nav-link">Mídia</a></li>
-                    <li><a href="congregacoes.html" class="nav-link">Congregações</a></li>
+          <li><a href="congregacoes.html" class="nav-link">Congregações</a></li>
           <li><a href="#contato" class="nav-link">Contato</a></li>
         </ul>
       </nav>
@@ -45,12 +45,12 @@
   <section class="hero" id="home">
     <div class="hero-overlay"></div>
     <div class="container hero-content">
-      <p class="hero-verse">"Porque Deus amou o mundo de tal maneira..." — João 3:16</p>
-      <h1 class="hero-title">Bem-vindo à<br/>Assembleia de Deus<br/>Ministério de Diamantina</h1>
-      <p class="hero-sub">Uma comunidade de fé, amor e esperança no coração de Diamantina, MG.</p>
+      <p class="hero-verse" id="hero-verse">"Porque Deus amou o mundo de tal maneira..." — João 3:16</p>
+      <h1 class="hero-title" id="hero-title">Bem-vindo à<br/>Assembleia de Deus<br/>Ministério de Diamantina</h1>
+      <p class="hero-sub" id="hero-subtitle">Uma comunidade de fé, amor e esperança no coração de Diamantina, MG.</p>
       <div class="hero-buttons">
         <a href="#cultos" class="btn btn-primary">Ver Horários de Culto</a>
-        <a href="https://www.youtube.com/@assembleiadedeusdiamantina" target="_blank" class="btn btn-outline">
+        <a href="https://www.youtube.com/@assembleiadedeusdiamantina" target="_blank" class="btn btn-outline" id="hero-yt-btn">
           <i class="fab fa-youtube"></i> Assistir ao Vivo
         </a>
       </div>
@@ -61,35 +61,12 @@
   <!-- PRÓXIMOS CULTOS RÁPIDOS -->
   <section class="cultos-rapidos">
     <div class="container">
-      <div class="cultos-grid">
-        <div class="culto-card">
-          <i class="fas fa-sun"></i>
-          <div>
-            <strong>Domingo Manhã</strong>
-            <span>08h30</span>
-          </div>
-        </div>
-        <div class="culto-card">
-          <i class="fas fa-moon"></i>
-          <div>
-            <strong>Domingo Noite</strong>
-            <span>19h00</span>
-          </div>
-        </div>
-        <div class="culto-card">
-          <i class="fas fa-star"></i>
-          <div>
-            <strong>Terça-feira</strong>
-            <span>19h00</span>
-          </div>
-        </div>
-        <div class="culto-card">
-          <i class="fas fa-bible"></i>
-          <div>
-            <strong>Quinta-feira</strong>
-            <span>19h00</span>
-          </div>
-        </div>
+      <div class="cultos-grid" id="cultos-rapidos-grid">
+        <!-- fallback enquanto carrega -->
+        <div class="culto-card"><i class="fas fa-sun"></i><div><strong>Domingo Manhã</strong><span>08h30</span></div></div>
+        <div class="culto-card"><i class="fas fa-moon"></i><div><strong>Domingo Noite</strong><span>19h00</span></div></div>
+        <div class="culto-card"><i class="fas fa-star"></i><div><strong>Terça-feira</strong><span>19h00</span></div></div>
+        <div class="culto-card"><i class="fas fa-bible"></i><div><strong>Quinta-feira</strong><span>19h00</span></div></div>
       </div>
     </div>
   </section>
@@ -103,8 +80,8 @@
       <div class="sobre-texto">
         <span class="section-tag">Conheça nossa história</span>
         <h2 class="section-title">A Igreja</h2>
-        <p>A Assembleia de Deus Ministério de Diamantina foi fundada em 07 de julho de 2009, com o propósito de proclamar o evangelho de Jesus Cristo no coração de Diamantina e região.</p>
-        <p>Sob a liderança do Pr. Airton Vitorino da Silva, nossa igreja cresce em fé, servindo à comunidade com amor, palavra e oração.</p>
+        <p id="sobre-p1">A Assembleia de Deus Ministério de Diamantina foi fundada em 07 de julho de 2009, com o propósito de proclamar o evangelho de Jesus Cristo no coração de Diamantina e região.</p>
+        <p id="sobre-p2">Sob a liderança do Pr. Airton Vitorino da Silva, nossa igreja cresce em fé, servindo à comunidade com amor, palavra e oração.</p>
         <div class="sobre-valores">
           <div class="valor">
             <i class="fas fa-cross"></i>
@@ -138,7 +115,8 @@
     <div class="container">
       <span class="section-tag center">Venha nos visitar</span>
       <h2 class="section-title center">Cultos e Agenda</h2>
-      <div class="cultos-cards">
+      <div class="cultos-cards" id="cultos-cards">
+        <!-- fallback enquanto carrega -->
         <div class="culto-info-card">
           <div class="culto-icon"><i class="fas fa-church"></i></div>
           <h3>Culto de Celebração</h3>
@@ -164,27 +142,7 @@
       <div class="agenda-box">
         <h3><i class="fas fa-calendar-alt"></i> Próximos Eventos</h3>
         <ul class="agenda-lista" id="agenda-lista">
-          <li>
-            <span class="agenda-data">23<br/>Mar</span>
-            <div class="agenda-info">
-              <strong>Santa Ceia</strong>
-              <span>Domingo, 19h00 — Sede Central</span>
-            </div>
-          </li>
-          <li>
-            <span class="agenda-data">30<br/>Mar</span>
-            <div class="agenda-info">
-              <strong>Congresso de Jovens</strong>
-              <span>Sábado, 18h00 — Sede Central</span>
-            </div>
-          </li>
-          <li>
-            <span class="agenda-data">06<br/>Abr</span>
-            <div class="agenda-info">
-              <strong>Culto da Família</strong>
-              <span>Domingo, 08h30 — Sede Central</span>
-            </div>
-          </li>
+          <!-- populado pelo Firestore -->
         </ul>
       </div>
     </div>
@@ -195,7 +153,8 @@
     <div class="container">
       <span class="section-tag center">Encontre seu lugar</span>
       <h2 class="section-title center">Nossos Ministérios</h2>
-      <div class="ministerios-grid">
+      <div class="ministerios-grid" id="ministerios-grid">
+        <!-- populado pelo Firestore; fallback abaixo caso vazio -->
         <div class="ministerio-card">
           <div class="ministerio-icon" style="background:#1A3A8F"><i class="fas fa-male"></i></div>
           <h3>Homens (UHOMAD)</h3>
@@ -239,6 +198,7 @@
         <div class="midia-video">
           <div class="video-embed">
             <iframe
+              id="yt-iframe"
               src="https://www.youtube.com/embed?listType=user_uploads&list=assembleiadedeusdiamantina&index=1"
               title="Transmissões AD Diamantina"
               frameborder="0"
@@ -249,28 +209,28 @@
         </div>
         <div class="midia-redes">
           <h3>Siga nossas redes</h3>
-          <a href="https://www.instagram.com/assembleiadedeusm.diamantina/" target="_blank" class="rede-card instagram">
+          <a href="https://www.instagram.com/assembleiadedeusm.diamantina/" target="_blank" class="rede-card instagram" id="link-instagram">
             <i class="fab fa-instagram"></i>
             <div>
               <strong>Instagram</strong>
-              <span>@assembleiadedeusm.diamantina</span>
+              <span id="label-instagram">@assembleiadedeusm.diamantina</span>
             </div>
           </a>
-          <a href="https://www.facebook.com/Assembleiadedeusdiamantina/" target="_blank" class="rede-card facebook">
+          <a href="https://www.facebook.com/Assembleiadedeusdiamantina/" target="_blank" class="rede-card facebook" id="link-facebook">
             <i class="fab fa-facebook"></i>
             <div>
               <strong>Facebook</strong>
-              <span>Assembleia de Deus M. Diamantina</span>
+              <span id="label-facebook">Assembleia de Deus M. Diamantina</span>
             </div>
           </a>
-          <a href="https://www.youtube.com/@assembleiadedeusdiamantina" target="_blank" class="rede-card youtube">
+          <a href="https://www.youtube.com/@assembleiadedeusdiamantina" target="_blank" class="rede-card youtube" id="link-youtube">
             <i class="fab fa-youtube"></i>
             <div>
               <strong>YouTube</strong>
               <span>Assista ao vivo e pregações</span>
             </div>
           </a>
-          <a href="https://wa.me/5538999999999" target="_blank" class="rede-card whatsapp">
+          <a href="https://wa.me/5538999999999" target="_blank" class="rede-card whatsapp" id="link-whatsapp">
             <i class="fab fa-whatsapp"></i>
             <div>
               <strong>WhatsApp</strong>
@@ -303,7 +263,7 @@
           <i class="fas fa-map-marker-alt"></i>
           <div>
             <strong>Endereço</strong>
-            <p>Rua Getúlio Vargas, 235 – Vila Operária<br/>Diamantina – MG, CEP 39.100-000</p>
+            <p id="contato-endereco">Rua Getúlio Vargas, 235 – Vila Operária<br/>Diamantina – MG, CEP 39.100-000</p>
           </div>
         </div>
         <div class="info-item">
@@ -317,11 +277,12 @@
           <i class="fas fa-map"></i>
           <div>
             <strong>Como Chegar</strong>
-            <p><a href="https://maps.google.com/?q=Rua+Getúlio+Vargas,235,Diamantina,MG" target="_blank">Ver no Google Maps →</a></p>
+            <p><a href="https://maps.google.com/?q=Rua+Getúlio+Vargas,235,Diamantina,MG" target="_blank" id="link-maps-texto">Ver no Google Maps →</a></p>
           </div>
         </div>
         <div class="mapa">
           <iframe
+            id="mapa-iframe"
             src="https://maps.google.com/maps?q=Rua+Get%C3%BAlio+Vargas,+235,+Diamantina,+MG&output=embed"
             width="100%" height="220" style="border:0;border-radius:12px;" allowfullscreen loading="lazy">
           </iframe>
@@ -374,10 +335,10 @@
         </div>
         <p>Pregando o Evangelho e servindo a comunidade desde 2009.</p>
         <div class="footer-social">
-          <a href="https://www.instagram.com/assembleiadedeusm.diamantina/" target="_blank"><i class="fab fa-instagram"></i></a>
-          <a href="https://www.facebook.com/Assembleiadedeusdiamantina/" target="_blank"><i class="fab fa-facebook"></i></a>
-          <a href="https://www.youtube.com/@assembleiadedeusdiamantina" target="_blank"><i class="fab fa-youtube"></i></a>
-          <a href="https://wa.me/5538999999999" target="_blank"><i class="fab fa-whatsapp"></i></a>
+          <a href="https://www.instagram.com/assembleiadedeusm.diamantina/" target="_blank" id="footer-instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.facebook.com/Assembleiadedeusdiamantina/" target="_blank" id="footer-facebook"><i class="fab fa-facebook"></i></a>
+          <a href="https://www.youtube.com/@assembleiadedeusdiamantina" target="_blank" id="footer-youtube"><i class="fab fa-youtube"></i></a>
+          <a href="https://wa.me/5538999999999" target="_blank" id="footer-whatsapp"><i class="fab fa-whatsapp"></i></a>
         </div>
       </div>
       <div class="footer-col">
@@ -388,13 +349,13 @@
           <li><a href="#cultos">Cultos e Agenda</a></li>
           <li><a href="#ministerios">Ministérios</a></li>
           <li><a href="#midia">Mídia</a></li>
-                      <li><a href="congregacoes.html">Congregações</a></li>
-                        <li><a href="#contato">Contato</a></li>
+          <li><a href="congregacoes.html">Congregações</a></li>
+          <li><a href="#contato">Contato</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>Cultos</h4>
-        <ul>
+        <ul id="footer-cultos">
           <li>Domingo — 08h30 e 19h00</li>
           <li>Terça-feira — 19h00</li>
           <li>Quinta-feira — 19h00</li>
@@ -402,7 +363,7 @@
       </div>
       <div class="footer-col">
         <h4>Endereço</h4>
-        <p>Rua Getúlio Vargas, 235<br/>Vila Operária<br/>Diamantina – MG<br/>CEP 39.100-000</p>
+        <p id="footer-endereco">Rua Getúlio Vargas, 235<br/>Vila Operária<br/>Diamantina – MG<br/>CEP 39.100-000</p>
       </div>
     </div>
     <div class="footer-bottom">
@@ -411,7 +372,7 @@
   </footer>
 
   <!-- WHATSAPP FLUTUANTE -->
-  <a href="https://wa.me/5538999999999" target="_blank" class="whatsapp-float" aria-label="Fale pelo WhatsApp">
+  <a href="https://wa.me/5538999999999" target="_blank" class="whatsapp-float" aria-label="Fale pelo WhatsApp" id="whatsapp-float">
     <i class="fab fa-whatsapp"></i>
   </a>
 
@@ -436,5 +397,211 @@
   </div>
 
   <script src="js/main.js"></script>
+
+  <!-- ══ FIREBASE DYNAMIC CONTENT ══ -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, collection, getDocs, orderBy, query }
+      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtMB9qs34H8qMjaA_XavJdrUSpOASYBos",
+      authDomain: "ad-diamantina.firebaseapp.com",
+      projectId: "ad-diamantina",
+      storageBucket: "ad-diamantina.firebasestorage.app",
+      messagingSenderId: "430449368435",
+      appId: "1:430449368435:web:c2d94116f9761fd4c87906"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+    function setText(id, val) {
+      const el = document.getElementById(id);
+      if (el && val) el.textContent = val;
+    }
+    function setHref(id, val) {
+      const el = document.getElementById(id);
+      if (el && val) el.href = val;
+    }
+    function setIframeSrc(id, val) {
+      const el = document.getElementById(id);
+      if (el && val) el.src = val;
+    }
+
+    // ── Ícones padrão para a barra rápida de cultos ──────────────────────────
+    const ICONS = ['fa-sun','fa-moon','fa-star','fa-bible','fa-pray','fa-book-open'];
+
+    // ── 1. HOME (hero + sobre + cultos) ──────────────────────────────────────
+    async function loadHome() {
+      try {
+        const snap = await getDoc(doc(db, 'site', 'home'));
+        const d = snap.data();
+        if (!d) return;
+
+        // Hero
+        if (d.verse)    setText('hero-verse', d.verse);
+        if (d.title)    document.getElementById('hero-title').innerHTML = d.title.replace(/\n/g, '<br/>');
+        if (d.subtitle) setText('hero-subtitle', d.subtitle);
+
+        // Sobre
+        if (d.sobre_p1) setText('sobre-p1', d.sobre_p1);
+        if (d.sobre_p2) setText('sobre-p2', d.sobre_p2);
+
+        // Cultos — barra rápida
+        if (d.cultos && d.cultos.length) {
+          const grid = document.getElementById('cultos-rapidos-grid');
+          grid.innerHTML = d.cultos.map((c, i) => `
+            <div class="culto-card">
+              <i class="fas ${ICONS[i % ICONS.length]}"></i>
+              <div><strong>${c.label || ''}</strong><span>${c.hora || ''}</span></div>
+            </div>`).join('');
+        }
+
+        // Cultos — cards detalhados (seção cultos)
+        if (d.cultos && d.cultos.length) {
+          const cardIcons = ['fa-church','fa-pray','fa-book-open','fa-star','fa-bible','fa-hands'];
+          const container = document.getElementById('cultos-cards');
+          container.innerHTML = d.cultos.map((c, i) => `
+            <div class="culto-info-card">
+              <div class="culto-icon"><i class="fas ${cardIcons[i % cardIcons.length]}"></i></div>
+              <h3>${c.label || ''}</h3>
+              <p><i class="fas fa-clock"></i> ${c.hora || ''}</p>
+            </div>`).join('');
+        }
+
+        // Cultos — footer
+        if (d.cultos && d.cultos.length) {
+          const footerCultos = document.getElementById('footer-cultos');
+          footerCultos.innerHTML = d.cultos.map(c => `<li>${c.label} — ${c.hora}</li>`).join('');
+        }
+
+      } catch (e) { console.warn('loadHome:', e); }
+    }
+
+    // ── 2. AGENDA ────────────────────────────────────────────────────────────
+    async function loadAgenda() {
+      try {
+        const snap = await getDoc(doc(db, 'site', 'agenda'));
+        const eventos = snap.data()?.eventos;
+        if (!eventos || !eventos.length) return;
+
+        const lista = document.getElementById('agenda-lista');
+        lista.innerHTML = eventos.map(ev => {
+          const partes = (ev.data || '').split('/');
+          const dia = partes[0] || '—';
+          const mesNum = parseInt(partes[1]);
+          const meses = ['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+          const mes = meses[mesNum] || (partes[1] || '');
+          return `
+            <li>
+              <span class="agenda-data">${dia}<br/>${mes}</span>
+              <div class="agenda-info">
+                <strong>${ev.titulo || ''}</strong>
+                <span>${ev.local ? ev.local : ''}</span>
+              </div>
+            </li>`;
+        }).join('');
+      } catch (e) { console.warn('loadAgenda:', e); }
+    }
+
+    // ── 3. MINISTÉRIOS ───────────────────────────────────────────────────────
+    const MIN_CORES = ['#1A3A8F','#8B1A6B','#D4A017','#2E8B57','#C0392B','#1A7A8F','#7B3FA0','#B5500B'];
+
+    async function loadMins() {
+      try {
+        const snap = await getDoc(doc(db, 'site', 'ministerios'));
+        const lista = snap.data()?.lista;
+        if (!lista || !lista.length) return;
+
+        const grid = document.getElementById('ministerios-grid');
+        grid.innerHTML = lista.map((m, i) => `
+          <div class="ministerio-card">
+            <div class="ministerio-icon" style="background:${MIN_CORES[i % MIN_CORES.length]}">
+              <i class="fas ${m.icone ? (m.icone.startsWith('fa-') ? m.icone : 'fa-'+m.icone) : 'fa-church'}"></i>
+            </div>
+            <h3>${m.nome || ''}</h3>
+            <p>${m.desc || ''}</p>
+          </div>`).join('');
+      } catch (e) { console.warn('loadMins:', e); }
+    }
+
+    // ── 4. REDES SOCIAIS ─────────────────────────────────────────────────────
+    async function loadRedes() {
+      try {
+        const snap = await getDoc(doc(db, 'site', 'redes'));
+        const d = snap.data();
+        if (!d) return;
+
+        // Seção mídia
+        if (d.instagram) {
+          setHref('link-instagram', d.instagram);
+          const handle = d.instagram.replace(/\/$/, '').split('/').pop();
+          setText('label-instagram', '@' + handle);
+        }
+        if (d.facebook)  setHref('link-facebook', d.facebook);
+        if (d.youtube) {
+          setHref('link-youtube', d.youtube);
+          setHref('hero-yt-btn', d.youtube);
+          // Extrai canal para o iframe
+          const canal = d.youtube.replace(/\/$/, '').split('@').pop();
+          if (canal) setIframeSrc('yt-iframe',
+            `https://www.youtube.com/embed?listType=user_uploads&list=${canal}&index=1`);
+        }
+        if (d.whatsapp) {
+          const num = d.whatsapp.replace(/\D/g, '');
+          const waUrl = `https://wa.me/${num}`;
+          setHref('link-whatsapp', waUrl);
+          setHref('whatsapp-float', waUrl);
+          // formulário de contato também usa whatsapp
+          window._waNum = num;
+        }
+
+        // Footer
+        if (d.instagram) setHref('footer-instagram', d.instagram);
+        if (d.facebook)  setHref('footer-facebook',  d.facebook);
+        if (d.youtube)   setHref('footer-youtube',   d.youtube);
+        if (d.whatsapp) {
+          const num = d.whatsapp.replace(/\D/g, '');
+          setHref('footer-whatsapp', `https://wa.me/${num}`);
+        }
+
+      } catch (e) { console.warn('loadRedes:', e); }
+    }
+
+    // ── 5. CONTATO & MAPA ────────────────────────────────────────────────────
+    async function loadContato() {
+      try {
+        const snap = await getDoc(doc(db, 'site', 'contato'));
+        const d = snap.data();
+        if (!d) return;
+
+        if (d.rua || d.bairro || d.cidade || d.cep) {
+          const linha1 = [d.rua, d.bairro].filter(Boolean).join(' – ');
+          const linha2 = [d.cidade, d.cep ? 'CEP ' + d.cep : ''].filter(Boolean).join(', ');
+          const html = [linha1, linha2].filter(Boolean).join('<br/>');
+          const el = document.getElementById('contato-endereco');
+          if (el) el.innerHTML = html;
+
+          const footerEl = document.getElementById('footer-endereco');
+          if (footerEl) footerEl.innerHTML =
+            [d.rua, d.bairro, d.cidade, d.cep ? 'CEP ' + d.cep : ''].filter(Boolean).join('<br/>');
+
+          // Link "Ver no Google Maps"
+          const q = [d.rua, d.bairro, d.cidade].filter(Boolean).join(', ');
+          const linkEl = document.getElementById('link-maps-texto');
+          if (linkEl) linkEl.href = `https://maps.google.com/?q=${encodeURIComponent(q)}`;
+        }
+
+        if (d.maps) setIframeSrc('mapa-iframe', d.maps);
+
+      } catch (e) { console.warn('loadContato:', e); }
+    }
+
+    // ── Disparar tudo em paralelo ─────────────────────────────────────────────
+    Promise.all([loadHome(), loadAgenda(), loadMins(), loadRedes(), loadContato()]);
+  </script>
+
 </body>
 </html>
