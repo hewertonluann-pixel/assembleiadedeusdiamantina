@@ -182,7 +182,7 @@
     }
     .cong-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(26,58,143,0.16); }
 
-    .cong-card-img { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: #dce3f3; }
+    .cong-card-img { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: #dce3f3; cursor: pointer; }
     .cong-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
     .cong-card:hover .cong-card-img img { transform: scale(1.05); }
 
@@ -208,15 +208,31 @@
     }
     .cong-horario i { color: var(--primary); }
 
-    .cong-card-body .btn-map {
+    /* ── Botões do card ── */
+    .cong-card-actions {
       margin-top: auto;
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 12px 20px; border-radius: 50px;
-      background: var(--primary); color: #fff;
-      font-size: 0.9rem; font-weight: 600;
-      transition: var(--transition); border: none; cursor: pointer;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
-    .cong-card-body .btn-map:hover {
+    .cong-card-actions a {
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      padding: 11px 14px; border-radius: 50px;
+      font-size: 0.85rem; font-weight: 600;
+      transition: var(--transition); border: none; cursor: pointer;
+      text-align: center;
+    }
+    .btn-perfil {
+      background: var(--gold); color: #fff;
+    }
+    .btn-perfil:hover {
+      background: #b8880f; transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(212,160,23,0.3);
+    }
+    .btn-map {
+      background: var(--primary); color: #fff;
+    }
+    .btn-map:hover {
       background: var(--primary-dark); transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(26,58,143,0.25);
     }
@@ -361,7 +377,7 @@
       <div class="section-intro">
         <span class="section-tag center">Encontre-nos</span>
         <h2 class="section-title center" id="titulo-congregacoes">Pontos de Pregação</h2>
-        <p>Clique em <strong>"Como chegar"</strong> para abrir o mapa diretamente no endereço da congregação.</p>
+        <p>Clique em <strong>"Ver perfil"</strong> para conhecer a história, dirigente e galeria de fotos de cada congregação.</p>
       </div>
 
       <div class="cards-grid" id="cards-grid">
@@ -482,24 +498,27 @@
       return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(maps)}`;
     }
 
-    function renderCard(cong, index) {
+    function renderCard(docId, cong, index) {
       const foto   = cong.foto || imgFallback(cong.nome || `congregacao-${index}`);
       const badge  = cong.badge || `Congregação ${String(index).padStart(2, '0')}`;
-      const link   = mapsUrl(cong.maps);
+      const mLink  = mapsUrl(cong.maps || cong.endereco);
+      const pLink  = `congregacao.html?id=${encodeURIComponent(docId)}`;
       const cidade = cong.cidade ? `<br/>${cong.cidade}` : '';
 
       const article = document.createElement('article');
       article.className = 'cong-card fade-in';
       article.innerHTML = `
-        <div class="cong-card-img">
+        <a href="${pLink}" class="cong-card-img" aria-label="Ver perfil de ${cong.nome}">
           <img src="${foto}"
                alt="${cong.nome}"
                width="800" height="500" loading="lazy"
                onerror="this.src='${imgFallback(cong.nome)}'" />
           <span class="cong-badge">${badge}</span>
-        </div>
+        </a>
         <div class="cong-card-body">
-          <h3>${cong.nome}</h3>
+          <h3>
+            <a href="${pLink}" style="color:inherit;">${cong.nome}</a>
+          </h3>
           <div class="cong-address">
             <div class="cong-address-line">
               <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
@@ -511,12 +530,19 @@
             <i class="fas fa-clock" aria-hidden="true"></i>
             ${cong.horario}
           </div>` : ''}
-          <a class="btn-map"
-             href="${link}"
-             target="_blank" rel="noopener noreferrer"
-             aria-label="Como chegar em ${cong.nome}">
-            <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
-          </a>
+          <div class="cong-card-actions">
+            <a class="btn-perfil"
+               href="${pLink}"
+               aria-label="Ver perfil de ${cong.nome}">
+              <i class="fas fa-church" aria-hidden="true"></i> Ver perfil
+            </a>
+            <a class="btn-map"
+               href="${mLink}"
+               target="_blank" rel="noopener noreferrer"
+               aria-label="Como chegar em ${cong.nome}">
+              <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
+            </a>
+          </div>
         </div>`;
       return article;
     }
@@ -553,7 +579,7 @@
 
         let index = 1;
         snap.forEach(docSnap => {
-          const card = renderCard(docSnap.data(), index++);
+          const card = renderCard(docSnap.id, docSnap.data(), index++);
           grid.appendChild(card);
         });
 
