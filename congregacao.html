@@ -110,16 +110,10 @@
   .cong-hero-meta i { color: var(--gold); }
   .cong-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 
-  /* ── SKELETON ── */
-  .skeleton { background: #e0e7f3; border-radius: 8px; animation: shimmer 1.4s infinite; }
-  @keyframes shimmer { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
   /* ── SEÇÃO DIRIGENTE ── */
   .dirigente-section { padding: 90px 0; background: #fff; }
   .dirigente-grid { display: grid; grid-template-columns: 340px 1fr; gap: 60px; align-items: center; }
-  .dirigente-foto-wrap {
-    position: relative;
-  }
+  .dirigente-foto-wrap { position: relative; }
   .dirigente-foto {
     width: 100%; aspect-ratio: 3/4;
     border-radius: 20px;
@@ -388,6 +382,9 @@
         <span><i class="fas fa-map-marker-alt"></i><span id="hero-endereco">—</span></span>
         <span id="hero-cidade-wrap"><i class="fas fa-city"></i><span id="hero-cidade">—</span></span>
         <span id="hero-horario-wrap"><i class="fas fa-clock"></i><span id="hero-horario">—</span></span>
+        <span id="hero-dirigente-wrap" style="display:none;">
+          <i class="fas fa-user-tie"></i><span id="hero-dirigente">—</span>
+        </span>
       </div>
       <div class="cong-hero-actions">
         <a id="btn-maps" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
@@ -408,16 +405,13 @@
           <div class="dirigente-foto" id="dirigente-foto">
             <div class="dirigente-foto-placeholder"><i class="fas fa-user-tie"></i></div>
           </div>
-          <span class="dirigente-cargo-badge" id="dirigente-cargo">Líder</span>
+          <span class="dirigente-cargo-badge">Líder</span>
         </div>
         <div class="dirigente-info">
           <span class="section-tag">Liderança</span>
           <h2 class="dirigente-nome" id="dirigente-nome">—</h2>
-          <p class="dirigente-bio" id="dirigente-bio">Informações sobre o dirigente desta congregação serão exibidas aqui.</p>
+          <p class="dirigente-bio" id="dirigente-bio">Responsável por esta congregação.</p>
           <div class="dirigente-contato">
-            <a id="btn-wa-dirigente" href="#" target="_blank" class="btn btn-gold" style="display:none;">
-              <i class="fab fa-whatsapp"></i> WhatsApp
-            </a>
             <a href="congregacoes.html" class="btn btn-outline-dark">
               <i class="fas fa-arrow-left"></i> Voltar
             </a>
@@ -481,9 +475,7 @@
     <div class="container">
       <span class="section-tag">Memórias</span>
       <h2 class="section-title" style="margin-bottom:32px;">Galeria de Fotos</h2>
-      <div class="galeria-grid" id="galeria-grid">
-        <!-- populado via JS -->
-      </div>
+      <div class="galeria-grid" id="galeria-grid"></div>
     </div>
   </section>
 
@@ -579,19 +571,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
 function setText(id, val) { const el=document.getElementById(id); if(el && val) el.textContent=val; }
 function setHref(id, val) { const el=document.getElementById(id); if(el && val) el.href=val; }
-
 function mapsUrl(maps) {
   if (!maps) return '#';
   if (maps.startsWith('http')) return maps;
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(maps)}`;
 }
 
-// ── Pega ?id= da URL ─────────────────────────────────────────────────────────
 const congId = new URLSearchParams(window.location.search).get('id');
-
 if (!congId) {
   document.getElementById('not-found').style.display = 'flex';
 } else {
@@ -610,11 +598,11 @@ async function carregarPerfil(id) {
     document.getElementById('page-content').style.display = 'block';
     document.title = `${d.nome || 'Congregação'} — AD Diamantina`;
 
-    // ── HERO ────────────────────────────────────────────────────────────────
+    // ── HERO ─────────────────────────────────────────────────────────────────
     setText('breadcrumb-nome', d.nome || 'Congregação');
-    setText('hero-nome', d.nome || 'Congregação');
-    setText('hero-badge', d.badge || 'Congregação');
-    setText('hero-endereco', d.endereco || '—');
+    setText('hero-nome',       d.nome || 'Congregação');
+    setText('hero-badge',      d.badge || 'Congregação');
+    setText('hero-endereco',   d.endereco || '—');
 
     if (d.cidade) setText('hero-cidade', d.cidade);
     else document.getElementById('hero-cidade-wrap').style.display = 'none';
@@ -622,53 +610,59 @@ async function carregarPerfil(id) {
     if (d.horario) setText('hero-horario', d.horario);
     else document.getElementById('hero-horario-wrap').style.display = 'none';
 
+    // Mostra dirigente no hero se existir
+    if (d.dirigente) {
+      setText('hero-dirigente', d.dirigente);
+      document.getElementById('hero-dirigente-wrap').style.display = 'flex';
+    }
+
     const mUrl = mapsUrl(d.maps || d.endereco);
     setHref('btn-maps', mUrl);
     setHref('cta-maps', mUrl);
 
     if (d.foto) {
-      const bg = document.getElementById('hero-bg');
-      bg.style.backgroundImage = `url('${d.foto}')`;
+      document.getElementById('hero-bg').style.backgroundImage = `url('${d.foto}')`;
     }
-
-    // ── INFORMAÇÕES RÁPIDAS ──────────────────────────────────────────────────
-    setText('info-endereco', d.endereco || '—');
-    setText('info-cidade', d.cidade || '—');
-    setText('info-horario', d.horario || '—');
 
     // ── DIRIGENTE ────────────────────────────────────────────────────────────
-    const dir = d.dirigente || {};
-    if (dir.nome) {
-      setText('dirigente-nome', dir.nome);
-      setText('info-dirigente', `${dir.cargo || ''} ${dir.nome}`.trim());
-    }
-    if (dir.cargo) setText('dirigente-cargo', dir.cargo);
-    if (dir.bio)   setText('dirigente-bio', dir.bio);
+    // O admin salva: d.dirigente (string com o nome) e d.fotoDirigente (string URL)
+    const nomeDirigente = (typeof d.dirigente === 'string') ? d.dirigente.trim() : '';
+    const fotoDirigente = d.fotoDirigente || '';
 
-    if (dir.foto) {
+    if (nomeDirigente) {
+      setText('dirigente-nome',  nomeDirigente);
+      setText('info-dirigente',  nomeDirigente);
+      // Esconde seção inteira se não há nome
+      document.getElementById('dirigente-section').style.display = '';
+    } else {
+      // Oculta seção de dirigente se não cadastrado
+      document.getElementById('dirigente-section').style.display = 'none';
+    }
+
+    if (fotoDirigente) {
       document.getElementById('dirigente-foto').innerHTML =
-        `<img src="${dir.foto}" alt="${dir.nome || 'Dirigente'}" width="340" height="453" loading="lazy"
+        `<img src="${fotoDirigente}" alt="${nomeDirigente || 'Dirigente'}" loading="lazy"
               onerror="this.parentElement.innerHTML='<div class=dirigente-foto-placeholder><i class=fas fa-user-tie></i></div>'" />`;
     }
 
-    if (dir.whatsapp) {
-      const waBtn = document.getElementById('btn-wa-dirigente');
-      waBtn.href = `https://wa.me/${dir.whatsapp.replace(/\D/g,'')}`;
-      waBtn.style.display = 'inline-flex';
-    }
+    // ── INFORMAÇÕES RÁPIDAS ───────────────────────────────────────────────────
+    setText('info-endereco', d.endereco || '—');
+    setText('info-cidade',   d.cidade   || '—');
+    setText('info-horario',  d.horario  || '—');
+    // info-dirigente já foi definido acima
 
-    // ── HISTÓRIA ─────────────────────────────────────────────────────────────
+    // ── HISTÓRIA ──────────────────────────────────────────────────────────────
     if (d.historia && d.historia.trim()) {
       const el = document.getElementById('historia-texto');
       el.innerHTML = '';
       el.textContent = d.historia;
     }
 
-    // ── GALERIA ──────────────────────────────────────────────────────────────
+    // ── GALERIA ───────────────────────────────────────────────────────────────
     const galeria = Array.isArray(d.galeria) ? d.galeria.filter(Boolean) : [];
     renderGaleria(galeria);
 
-    // ── FADE IN ───────────────────────────────────────────────────────────────
+    // ── FADE IN ────────────────────────────────────────────────────────────────
     const io = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
@@ -682,7 +676,7 @@ async function carregarPerfil(id) {
   }
 }
 
-// ── Galeria + Lightbox ───────────────────────────────────────────────────────
+// ── Galeria + Lightbox ────────────────────────────────────────────────────────
 let _galUrls = [];
 let _lbIdx   = 0;
 
@@ -710,8 +704,7 @@ function renderGaleria(urls) {
 }
 
 function openLightbox(idx) {
-  _lbIdx = idx;
-  updateLightbox();
+  _lbIdx = idx; updateLightbox();
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -731,11 +724,11 @@ document.getElementById('lightbox').addEventListener('click', e => { if(e.target
 document.addEventListener('keydown', e => {
   if (!document.getElementById('lightbox').classList.contains('open')) return;
   if (e.key==='Escape') closeLightbox();
-  if (e.key==='ArrowLeft') { _lbIdx=(_lbIdx-1+_galUrls.length)%_galUrls.length; updateLightbox(); }
+  if (e.key==='ArrowLeft')  { _lbIdx=(_lbIdx-1+_galUrls.length)%_galUrls.length; updateLightbox(); }
   if (e.key==='ArrowRight') { _lbIdx=(_lbIdx+1)%_galUrls.length; updateLightbox(); }
 });
 
-// ── Dados globais do site (footer + redes) ────────────────────────────────────
+// ── Dados globais (footer + redes) ────────────────────────────────────────────
 async function carregarSite() {
   try {
     const [homeSnap, contatoSnap, redesSnap] = await Promise.all([
@@ -743,31 +736,27 @@ async function carregarSite() {
       getDoc(doc(db,'site','contato')),
       getDoc(doc(db,'site','redes'))
     ]);
-
     const h = homeSnap.data() || {};
     if (Array.isArray(h.cultos) && h.cultos.length) {
       document.getElementById('footer-cultos').innerHTML =
         h.cultos.map(c=>`<li>${c.label} — ${c.hora}</li>`).join('');
     }
-
     const c = contatoSnap.data() || {};
     document.getElementById('footer-endereco').innerHTML =
       [c.rua, c.bairro, c.cidade, c.cep ? 'CEP '+c.cep : ''].filter(Boolean).join('<br/>');
-
     const r = redesSnap.data() || {};
     if (r.instagram) setHref('footer-instagram', r.instagram);
     if (r.facebook)  setHref('footer-facebook',  r.facebook);
     if (r.youtube)   setHref('footer-youtube',   r.youtube);
     const wp = r.whatsapp ? `https://wa.me/${r.whatsapp.replace(/\D/g,'')}` : '#';
     setHref('footer-whatsapp', wp);
-    setHref('whatsapp-float', wp);
+    setHref('whatsapp-float',  wp);
   } catch(e) { console.warn(e); }
 }
 carregarSite();
 </script>
 
 <script>
-  // Hamburger
   const hamburger = document.getElementById('hamburger');
   const nav = document.getElementById('nav');
   hamburger.addEventListener('click', () => {
@@ -775,8 +764,6 @@ carregarSite();
     hamburger.setAttribute('aria-expanded', nav.classList.contains('open'));
   });
   document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => nav.classList.remove('open')));
-
-  // Header shadow on scroll
   window.addEventListener('scroll', () => {
     document.getElementById('header').style.boxShadow =
       window.scrollY > 40 ? '0 4px 24px rgba(26,58,143,0.15)' : '0 2px 16px rgba(26,58,143,0.08)';
