@@ -99,6 +99,10 @@
       background: none; border: none; cursor: pointer; padding: 4px;
     }
     .hamburger span { display: block; width: 25px; height: 2.5px; background: var(--primary); border-radius: 2px; transition: var(--transition); }
+    /* Animação hambúrguer → X */
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; width: 0; }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
     .page-hero {
       padding-top: 80px;
@@ -144,8 +148,48 @@
     .stat-item span { font-size: 0.8rem; opacity: 0.75; }
 
     .congregacoes-section { padding: 90px 0 100px; background: var(--light); }
-    .section-intro { text-align: center; max-width: 620px; margin: 0 auto 56px; }
+    .section-intro { text-align: center; max-width: 620px; margin: 0 auto 40px; }
     .section-intro p { color: var(--gray); }
+
+    /* Campo de busca */
+    .busca-wrapper {
+      max-width: 480px;
+      margin: 0 auto 40px;
+      position: relative;
+    }
+    .busca-wrapper i {
+      position: absolute;
+      left: 18px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+    #busca-cong {
+      width: 100%;
+      padding: 13px 18px 13px 46px;
+      border: 2px solid #e0e7f3;
+      border-radius: 50px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      color: #1a1a2e;
+      background: #fff;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+    #busca-cong:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26,58,143,0.12);
+    }
+    #busca-cong::placeholder { color: var(--gray); }
+    .busca-sem-resultado {
+      display: none;
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--gray);
+    }
+    .busca-sem-resultado i { font-size: 2rem; margin-bottom: 10px; display: block; }
 
     .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
 
@@ -276,7 +320,13 @@
       50%{box-shadow:0 4px 28px rgba(37,211,102,0.7)}
     }
 
-    @media (max-width: 960px) { .cards-grid { grid-template-columns: repeat(2, 1fr); } .footer-grid { grid-template-columns: 1fr 1fr; } }
+    /* ── Responsivo 960px ── */
+    @media (max-width: 960px) {
+      .cards-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ── Responsivo 768px ── */
     @media (max-width: 768px) {
       .nav { display: none; position: absolute; top: 72px; left: 0; right: 0; background: #fff; padding: 16px 24px 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
       .nav.open { display: block; }
@@ -285,10 +335,55 @@
       .hamburger { display: flex; }
       .footer-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── Responsivo 600px — MOBILE ── */
     @media (max-width: 600px) {
-      .cards-grid { grid-template-columns: 1fr; }
-      .stat-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+      /* Hero compacto */
+      .page-hero { min-height: 220px; }
+      .page-hero-content { padding: 32px 0 28px; }
+      .page-hero-content h1 { font-size: 1.7rem; }
+
+      /* Cards em coluna única */
+      .cards-grid { grid-template-columns: 1fr; gap: 20px; }
+
+      /* Imagem menos alta para menos scroll */
+      .cong-card-img { aspect-ratio: 16 / 7; }
+
+      /* Body do card mais compacto */
+      .cong-card-body { padding: 18px 18px 20px; gap: 10px; }
+
+      /* Botões com área de toque mínima 48px (Apple HIG / Material Design) */
+      .cong-card-actions a {
+        padding: 14px 12px;
+        font-size: 0.9rem;
+        min-height: 48px;
+      }
+
+      /* Stats bar com separador claro entre itens */
+      .stat-item {
+        border-right: none;
+        border-bottom: 2px solid rgba(255,255,255,0.12);
+        padding: 18px 20px;
+      }
       .stat-item:last-child { border-bottom: none; }
+
+      /* WhatsApp float menor e reposicionado */
+      .whatsapp-float { bottom: 20px; right: 16px; width: 52px; height: 52px; font-size: 1.5rem; }
+
+      /* Espaço extra no final para o float não sobrepor botões */
+      .congregacoes-section { padding-bottom: 120px; }
+    }
+
+    /* ── Responsivo 480px — CTA buttons ── */
+    @media (max-width: 480px) {
+      .cta-section { padding: 56px 0; }
+      .cta-buttons { flex-direction: column; align-items: stretch; gap: 12px; }
+      .cta-buttons .btn { justify-content: center; width: 100%; }
+    }
+
+    /* ── Telas muito pequenas (≤ 380px) ── */
+    @media (max-width: 380px) {
+      .logo-sub { display: none; }
     }
 
     .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.55s ease, transform 0.55s ease; }
@@ -378,6 +473,18 @@
         <span class="section-tag center">Encontre-nos</span>
         <h2 class="section-title center" id="titulo-congregacoes">Pontos de Pregação</h2>
         <p>Clique em <strong>"Ver perfil"</strong> para conhecer a história, dirigente e galeria de fotos de cada congregação.</p>
+      </div>
+
+      <!-- Campo de busca -->
+      <div class="busca-wrapper">
+        <i class="fas fa-search" aria-hidden="true"></i>
+        <input
+          type="search"
+          id="busca-cong"
+          placeholder="Buscar congregação por nome..."
+          aria-label="Buscar congregação"
+          autocomplete="off"
+        />
       </div>
 
       <div class="cards-grid" id="cards-grid">
@@ -559,6 +666,37 @@
       container.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     }
 
+    function ativarBusca() {
+      const input = document.getElementById('busca-cong');
+      const grid  = document.getElementById('cards-grid');
+
+      let semResultado = grid.querySelector('.busca-sem-resultado');
+      if (!semResultado) {
+        semResultado = document.createElement('div');
+        semResultado.className = 'busca-sem-resultado';
+        semResultado.innerHTML = '<i class="fas fa-search"></i><p>Nenhuma congregação encontrada para "<span id="busca-termo"></span>".</p>';
+        grid.appendChild(semResultado);
+      }
+
+      input.addEventListener('input', () => {
+        const termo = input.value.trim().toLowerCase();
+        const cards = grid.querySelectorAll('.cong-card');
+        let visiveis = 0;
+
+        cards.forEach(card => {
+          const nome     = card.querySelector('h3')?.textContent.toLowerCase() || '';
+          const endereco = card.querySelector('.cong-address-line span')?.textContent.toLowerCase() || '';
+          const match    = nome.includes(termo) || endereco.includes(termo);
+          card.style.display = match ? '' : 'none';
+          if (match) visiveis++;
+        });
+
+        const termoBusca = grid.querySelector('#busca-termo');
+        if (termoBusca) termoBusca.textContent = input.value.trim();
+        semResultado.style.display = (visiveis === 0 && termo.length > 0) ? 'block' : 'none';
+      });
+    }
+
     async function carregarCongregacoes() {
       const grid = document.getElementById('cards-grid');
       try {
@@ -587,6 +725,7 @@
           String(snap.size).padStart(2, '0');
 
         observeFadeIn(grid);
+        ativarBusca();
 
       } catch (err) {
         console.error('Erro ao carregar congregações:', err);
@@ -645,11 +784,18 @@
     const hamburger = document.getElementById('hamburger');
     const nav = document.getElementById('nav');
     hamburger.addEventListener('click', () => {
-      nav.classList.toggle('open');
-      hamburger.setAttribute('aria-expanded', nav.classList.contains('open'));
+      const isOpen = nav.classList.toggle('open');
+      hamburger.classList.toggle('open', isOpen);
+      hamburger.setAttribute('aria-expanded', isOpen);
+      hamburger.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
     });
     document.querySelectorAll('.nav-link').forEach(link => {
-      link.addEventListener('click', () => nav.classList.remove('open'));
+      link.addEventListener('click', () => {
+        nav.classList.remove('open');
+        hamburger.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.setAttribute('aria-label', 'Abrir menu');
+      });
     });
 
     const header = document.getElementById('header');
