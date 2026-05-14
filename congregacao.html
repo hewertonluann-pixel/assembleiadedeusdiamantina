@@ -47,7 +47,6 @@
   .btn-outline-dark { background: transparent; color: var(--primary); border-color: var(--primary); }
   .btn-outline-dark:hover { background: var(--primary); color: #fff; }
 
-  /* ── HEADER ── */
   .header {
     position: fixed; top: 0; left: 0; right: 0; z-index: 999;
     background: rgba(255,255,255,0.97);
@@ -67,66 +66,30 @@
   .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
   .hamburger span { display: block; width: 25px; height: 2.5px; background: var(--primary); border-radius: 2px; transition: var(--transition); }
 
-  /* ── HERO ── */
   .cong-hero {
-    padding-top: 80px;
-    position: relative;
-    min-height: 480px;
-    display: flex; align-items: flex-end;
-    overflow: hidden;
+    padding-top: 80px; position: relative; min-height: 480px;
+    display: flex; align-items: flex-end; overflow: hidden;
     background: linear-gradient(135deg, #0f1f5c, #1A3A8F);
   }
-  .cong-hero-bg {
-    position: absolute; inset: 0;
-    background-size: cover; background-position: center;
-    filter: brightness(0.38);
-    transition: opacity 0.5s ease;
-  }
-  .cong-hero-content {
-    position: relative; z-index: 1;
-    padding: 60px 0 52px;
-    width: 100%;
-  }
+  .cong-hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; filter: brightness(0.38); transition: opacity 0.5s ease; }
+  .cong-hero-content { position: relative; z-index: 1; padding: 60px 0 52px; width: 100%; }
   .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 0.82rem; color: rgba(255,255,255,0.55); }
   .breadcrumb a { color: rgba(255,255,255,0.55); transition: var(--transition); }
   .breadcrumb a:hover { color: var(--gold); }
   .breadcrumb i { font-size: 0.65rem; }
-  .cong-hero-badge {
-    display: inline-block; background: var(--gold); color: #fff;
-    font-size: 0.7rem; font-weight: 700; letter-spacing: 1.4px;
-    text-transform: uppercase; padding: 4px 14px; border-radius: 50px;
-    margin-bottom: 14px;
-  }
-  .cong-hero-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 5vw, 3.4rem);
-    color: #fff; line-height: 1.15; margin-bottom: 20px;
-  }
-  .cong-hero-meta {
-    display: flex; flex-wrap: wrap; gap: 20px;
-    font-size: 0.9rem; color: rgba(255,255,255,0.82);
-  }
+  .cong-hero-badge { display: inline-block; background: var(--gold); color: #fff; font-size: 0.7rem; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; padding: 4px 14px; border-radius: 50px; margin-bottom: 14px; }
+  .cong-hero-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.4rem); color: #fff; line-height: 1.15; margin-bottom: 20px; }
+  .cong-hero-meta { display: flex; flex-wrap: wrap; gap: 20px; font-size: 0.9rem; color: rgba(255,255,255,0.82); }
   .cong-hero-meta span { display: flex; align-items: center; gap: 8px; }
   .cong-hero-meta i { color: var(--gold); }
   .cong-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 
-  /* ── SEÇÃO DIRIGENTE ── */
   .dirigente-section { padding: 90px 0; background: #fff; }
   .dirigente-grid { display: grid; grid-template-columns: 340px 1fr; gap: 60px; align-items: center; }
   .dirigente-foto-wrap { position: relative; }
-  .dirigente-foto {
-    width: 100%; aspect-ratio: 3/4;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(26,58,143,0.18);
-    background: var(--light);
-  }
+  .dirigente-foto { width: 100%; aspect-ratio: 3/4; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(26,58,143,0.18); background: var(--light); }
   .dirigente-foto img { width: 100%; height: 100%; object-fit: cover; }
-  .dirigente-foto-placeholder {
-    width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 5rem; color: #c5cfe8;
-  }
+  .dirigente-foto-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 5rem; color: #c5cfe8; }
   .dirigente-cargo-badge {
     position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
     background: var(--primary); color: #fff;
@@ -136,126 +99,55 @@
     white-space: nowrap;
     box-shadow: 0 4px 16px rgba(26,58,143,0.3);
   }
-  .section-tag {
-    display: inline-block; background: rgba(26,58,143,0.08); color: var(--primary);
-    font-size: 0.78rem; font-weight: 600; letter-spacing: 1.5px;
-    text-transform: uppercase; padding: 4px 14px; border-radius: 50px; margin-bottom: 12px;
-  }
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.8rem, 4vw, 2.5rem);
-    color: var(--primary); margin-bottom: 16px; line-height: 1.2;
-  }
+  .section-tag { display: inline-block; background: rgba(26,58,143,0.08); color: var(--primary); font-size: 0.78rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 14px; border-radius: 50px; margin-bottom: 12px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.5rem); color: var(--primary); margin-bottom: 16px; line-height: 1.2; }
   .dirigente-nome { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--primary); margin-bottom: 8px; }
   .dirigente-bio { color: var(--gray); font-size: 1rem; line-height: 1.8; margin-bottom: 28px; }
   .dirigente-contato { display: flex; flex-wrap: wrap; gap: 12px; }
 
-  /* ── SEÇÃO HISTÓRIA ── */
   .historia-section { padding: 90px 0; background: var(--light); }
   .historia-inner { max-width: 820px; margin: 0 auto; }
-  .historia-quote {
-    border-left: 4px solid var(--gold);
-    padding: 24px 32px;
-    background: #fff;
-    border-radius: 0 16px 16px 0;
-    margin-bottom: 32px;
-    box-shadow: var(--shadow);
-  }
-  .historia-quote p {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem; color: var(--primary);
-    line-height: 1.7; font-style: italic;
-  }
-  .historia-texto {
-    color: var(--gray); font-size: 1rem; line-height: 1.9;
-    white-space: pre-line;
-  }
+  .historia-quote { border-left: 4px solid var(--gold); padding: 24px 32px; background: #fff; border-radius: 0 16px 16px 0; margin-bottom: 32px; box-shadow: var(--shadow); }
+  .historia-quote p { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--primary); line-height: 1.7; font-style: italic; }
+  .historia-texto { color: var(--gray); font-size: 1rem; line-height: 1.9; white-space: pre-line; }
   .historia-texto-placeholder { color: #c5cfe8; font-size: 0.95rem; text-align: center; padding: 40px 0; }
 
-  /* ── SEÇÃO INFORMAÇÕES ── */
   .info-section { padding: 80px 0; background: #fff; }
   .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
-  .info-card {
-    background: var(--light); border-radius: var(--radius);
-    padding: 28px 24px;
-    display: flex; flex-direction: column; gap: 10px;
-  }
+  .info-card { background: var(--light); border-radius: var(--radius); padding: 28px 24px; display: flex; flex-direction: column; gap: 10px; }
   .info-card i { font-size: 1.6rem; color: var(--gold); }
   .info-card strong { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); }
   .info-card span { font-size: 0.95rem; color: var(--gray); }
 
-  /* ── GALERIA ── */
   .galeria-section { padding: 90px 0; background: var(--light); }
-  .galeria-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 200px;
-    gap: 12px;
-  }
-  .galeria-item {
-    border-radius: var(--radius);
-    overflow: hidden;
-    cursor: pointer;
-    position: relative;
-    background: #dce3f3;
-  }
+  .galeria-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 200px; gap: 12px; }
+  .galeria-item { border-radius: var(--radius); overflow: hidden; cursor: pointer; position: relative; background: #dce3f3; }
   .galeria-item:first-child { grid-column: span 2; grid-row: span 2; }
   .galeria-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.45s ease; }
   .galeria-item:hover img { transform: scale(1.06); }
-  .galeria-item-overlay {
-    position: absolute; inset: 0;
-    background: rgba(26,58,143,0.0);
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.3s ease;
-  }
+  .galeria-item-overlay { position: absolute; inset: 0; background: rgba(26,58,143,0.0); display: flex; align-items: center; justify-content: center; transition: background 0.3s ease; }
   .galeria-item:hover .galeria-item-overlay { background: rgba(26,58,143,0.35); }
   .galeria-item-overlay i { color: #fff; font-size: 1.8rem; opacity: 0; transition: opacity 0.3s; }
   .galeria-item:hover .galeria-item-overlay i { opacity: 1; }
   .galeria-empty { text-align: center; padding: 60px 20px; color: var(--gray); }
   .galeria-empty i { font-size: 3rem; color: #c5cfe8; margin-bottom: 12px; }
 
-  /* ── LIGHTBOX ── */
-  .lightbox {
-    position: fixed; inset: 0; z-index: 2000;
-    background: rgba(0,0,0,0.92);
-    display: none; align-items: center; justify-content: center;
-    padding: 20px;
-  }
+  .lightbox { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; padding: 20px; }
   .lightbox.open { display: flex; }
   .lightbox-img { max-width: 90vw; max-height: 88vh; border-radius: 12px; object-fit: contain; box-shadow: 0 8px 48px rgba(0,0,0,0.6); }
-  .lightbox-close {
-    position: absolute; top: 20px; right: 24px;
-    background: rgba(255,255,255,0.15); border: none; color: #fff;
-    width: 44px; height: 44px; border-radius: 50%;
-    font-size: 1.3rem; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s;
-  }
+  .lightbox-close { position: absolute; top: 20px; right: 24px; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .lightbox-close:hover { background: rgba(255,255,255,0.3); }
-  .lightbox-nav {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    background: rgba(255,255,255,0.15); border: none; color: #fff;
-    width: 48px; height: 48px; border-radius: 50%;
-    font-size: 1.2rem; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s;
-  }
+  .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: none; color: #fff; width: 48px; height: 48px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
   .lightbox-nav:hover { background: rgba(255,255,255,0.3); }
   .lightbox-prev { left: 20px; }
   .lightbox-next { right: 20px; }
   .lightbox-counter { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.6); font-size: 0.85rem; }
 
-  /* ── CTA ── */
-  .cta-section {
-    padding: 80px 0;
-    background: linear-gradient(135deg, var(--primary) 0%, #2d5ac8 100%);
-    text-align: center;
-  }
+  .cta-section { padding: 80px 0; background: linear-gradient(135deg, var(--primary) 0%, #2d5ac8 100%); text-align: center; }
   .cta-section h2 { font-family: 'Playfair Display', serif; color: #fff; font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin-bottom: 14px; }
   .cta-section p { color: rgba(255,255,255,0.78); max-width: 500px; margin: 0 auto 32px; }
   .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
 
-  /* ── FOOTER ── */
   .footer { background: #0e1f4d; padding: 72px 0 0; color: rgba(255,255,255,0.75); }
   .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 40px; padding-bottom: 48px; }
   .footer-col p { font-size: 0.88rem; line-height: 1.7; margin-bottom: 20px; }
@@ -264,43 +156,23 @@
   .footer-col ul a { font-size: 0.88rem; }
   .footer-col ul a:hover { color: var(--gold); }
   .footer-social { display: flex; gap: 12px; }
-  .footer-social a {
-    width: 38px; height: 38px; background: rgba(255,255,255,0.1);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    color: #fff; font-size: 1rem; transition: var(--transition);
-  }
+  .footer-social a { width: 38px; height: 38px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1rem; transition: var(--transition); }
   .footer-social a:hover { background: var(--gold); color: var(--primary); }
   .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding: 20px 24px; text-align: center; font-size: 0.82rem; color: rgba(255,255,255,0.45); }
 
-  .whatsapp-float {
-    position: fixed; bottom: 28px; right: 28px; z-index: 998;
-    background: #25d366; color: #fff;
-    width: 58px; height: 58px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.8rem; box-shadow: 0 4px 16px rgba(37,211,102,0.4);
-    transition: var(--transition); animation: pulse-wp 2.5s infinite;
-  }
+  .whatsapp-float { position: fixed; bottom: 28px; right: 28px; z-index: 998; background: #25d366; color: #fff; width: 58px; height: 58px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 16px rgba(37,211,102,0.4); transition: var(--transition); animation: pulse-wp 2.5s infinite; }
   .whatsapp-float:hover { transform: scale(1.1); }
   @keyframes pulse-wp { 0%,100%{box-shadow:0 4px 16px rgba(37,211,102,0.4)} 50%{box-shadow:0 4px 28px rgba(37,211,102,0.7)} }
 
-  /* ── NOT FOUND ── */
-  .not-found {
-    padding: 140px 24px 100px; text-align: center;
-    display: none; flex-direction: column; align-items: center; gap: 16px;
-  }
+  .not-found { padding: 140px 24px 100px; text-align: center; display: none; flex-direction: column; align-items: center; gap: 16px; }
   .not-found i { font-size: 4rem; color: #c5cfe8; }
   .not-found h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--primary); }
   .not-found p { color: var(--gray); }
 
-  /* ── FADE IN ── */
   .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
   .fade-in.visible { opacity: 1; transform: none; }
 
-  /* ── RESPONSIVE ── */
-  @media (max-width: 960px) {
-    .dirigente-grid { grid-template-columns: 260px 1fr; gap: 40px; }
-    .footer-grid { grid-template-columns: 1fr 1fr; }
-  }
+  @media (max-width: 960px) { .dirigente-grid { grid-template-columns: 260px 1fr; gap: 40px; } .footer-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 768px) {
     .nav { display: none; position: absolute; top: 72px; left: 0; right: 0; background: #fff; padding: 16px 24px 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
     .nav.open { display: block; }
@@ -313,19 +185,12 @@
     .galeria-item:first-child { grid-column: span 2; grid-row: span 1; }
     .footer-grid { grid-template-columns: 1fr; }
   }
-  @media (max-width: 480px) {
-    .galeria-grid { grid-template-columns: 1fr; }
-    .galeria-item:first-child { grid-column: span 1; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .fade-in { opacity: 1; transform: none; transition: none; }
-    .whatsapp-float { animation: none; }
-  }
+  @media (max-width: 480px) { .galeria-grid { grid-template-columns: 1fr; } .galeria-item:first-child { grid-column: span 1; } }
+  @media (prefers-reduced-motion: reduce) { .fade-in { opacity: 1; transform: none; transition: none; } .whatsapp-float { animation: none; } }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="header" id="header">
   <div class="container nav-container">
     <a href="index.html" class="logo" aria-label="Voltar para a página inicial">
@@ -352,7 +217,6 @@
   </div>
 </header>
 
-<!-- NOT FOUND -->
 <div class="not-found" id="not-found">
   <i class="fas fa-church"></i>
   <h2>Congregação não encontrada</h2>
@@ -362,10 +226,8 @@
   </a>
 </div>
 
-<!-- CONTEÚDO PRINCIPAL -->
 <div id="page-content" style="display:none;">
 
-  <!-- HERO -->
   <section class="cong-hero" id="cong-hero" aria-label="Cabeçalho da congregação">
     <div class="cong-hero-bg" id="hero-bg"></div>
     <div class="container cong-hero-content">
@@ -397,7 +259,6 @@
     </div>
   </section>
 
-  <!-- DIRIGENTE -->
   <section class="dirigente-section fade-in" id="dirigente-section">
     <div class="container">
       <div class="dirigente-grid">
@@ -405,7 +266,7 @@
           <div class="dirigente-foto" id="dirigente-foto">
             <div class="dirigente-foto-placeholder"><i class="fas fa-user-tie"></i></div>
           </div>
-          <span class="dirigente-cargo-badge">Líder</span>
+          <span class="dirigente-cargo-badge">Dirigente</span>
         </div>
         <div class="dirigente-info">
           <span class="section-tag">Liderança</span>
@@ -421,7 +282,6 @@
     </div>
   </section>
 
-  <!-- HISTÓRIA -->
   <section class="historia-section fade-in" id="historia-section">
     <div class="container">
       <div class="historia-inner">
@@ -440,7 +300,6 @@
     </div>
   </section>
 
-  <!-- INFORMAÇÕES RÁPIDAS -->
   <section class="info-section fade-in">
     <div class="container">
       <span class="section-tag">Informações</span>
@@ -470,7 +329,6 @@
     </div>
   </section>
 
-  <!-- GALERIA -->
   <section class="galeria-section fade-in" id="galeria-section">
     <div class="container">
       <span class="section-tag">Memórias</span>
@@ -479,7 +337,6 @@
     </div>
   </section>
 
-  <!-- CTA -->
   <section class="cta-section" aria-label="Chamada para ação">
     <div class="container">
       <h2>Venha nos visitar!</h2>
@@ -495,9 +352,8 @@
     </div>
   </section>
 
-</div><!-- /page-content -->
+</div>
 
-<!-- FOOTER -->
 <footer class="footer" role="contentinfo">
   <div class="container footer-grid">
     <div class="footer-col">
@@ -545,7 +401,6 @@
   <i class="fab fa-whatsapp"></i>
 </a>
 
-<!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Visualizador de fotos">
   <button class="lightbox-close" id="lb-close" aria-label="Fechar"><i class="fas fa-times"></i></button>
   <button class="lightbox-nav lightbox-prev" id="lb-prev" aria-label="Foto anterior"><i class="fas fa-chevron-left"></i></button>
@@ -554,7 +409,6 @@
   <span class="lightbox-counter" id="lb-counter"></span>
 </div>
 
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
@@ -598,7 +452,6 @@ async function carregarPerfil(id) {
     document.getElementById('page-content').style.display = 'block';
     document.title = `${d.nome || 'Congregação'} — AD Diamantina`;
 
-    // ── HERO ─────────────────────────────────────────────────────────────────
     setText('breadcrumb-nome', d.nome || 'Congregação');
     setText('hero-nome',       d.nome || 'Congregação');
     setText('hero-badge',      d.badge || 'Congregação');
@@ -610,7 +463,6 @@ async function carregarPerfil(id) {
     if (d.horario) setText('hero-horario', d.horario);
     else document.getElementById('hero-horario-wrap').style.display = 'none';
 
-    // Mostra dirigente no hero se existir
     if (d.dirigente) {
       setText('hero-dirigente', d.dirigente);
       document.getElementById('hero-dirigente-wrap').style.display = 'flex';
@@ -624,18 +476,15 @@ async function carregarPerfil(id) {
       document.getElementById('hero-bg').style.backgroundImage = `url('${d.foto}')`;
     }
 
-    // ── DIRIGENTE ────────────────────────────────────────────────────────────
-    // O admin salva: d.dirigente (string com o nome) e d.fotoDirigente (string URL)
+    // DIRIGENTE — campos planos salvos pelo admin
     const nomeDirigente = (typeof d.dirigente === 'string') ? d.dirigente.trim() : '';
     const fotoDirigente = d.fotoDirigente || '';
 
     if (nomeDirigente) {
-      setText('dirigente-nome',  nomeDirigente);
-      setText('info-dirigente',  nomeDirigente);
-      // Esconde seção inteira se não há nome
+      setText('dirigente-nome', nomeDirigente);
+      setText('info-dirigente', nomeDirigente);
       document.getElementById('dirigente-section').style.display = '';
     } else {
-      // Oculta seção de dirigente se não cadastrado
       document.getElementById('dirigente-section').style.display = 'none';
     }
 
@@ -645,24 +494,19 @@ async function carregarPerfil(id) {
               onerror="this.parentElement.innerHTML='<div class=dirigente-foto-placeholder><i class=fas fa-user-tie></i></div>'" />`;
     }
 
-    // ── INFORMAÇÕES RÁPIDAS ───────────────────────────────────────────────────
     setText('info-endereco', d.endereco || '—');
     setText('info-cidade',   d.cidade   || '—');
     setText('info-horario',  d.horario  || '—');
-    // info-dirigente já foi definido acima
 
-    // ── HISTÓRIA ──────────────────────────────────────────────────────────────
     if (d.historia && d.historia.trim()) {
       const el = document.getElementById('historia-texto');
       el.innerHTML = '';
       el.textContent = d.historia;
     }
 
-    // ── GALERIA ───────────────────────────────────────────────────────────────
     const galeria = Array.isArray(d.galeria) ? d.galeria.filter(Boolean) : [];
     renderGaleria(galeria);
 
-    // ── FADE IN ────────────────────────────────────────────────────────────────
     const io = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
@@ -676,7 +520,6 @@ async function carregarPerfil(id) {
   }
 }
 
-// ── Galeria + Lightbox ────────────────────────────────────────────────────────
 let _galUrls = [];
 let _lbIdx   = 0;
 
@@ -728,7 +571,6 @@ document.addEventListener('keydown', e => {
   if (e.key==='ArrowRight') { _lbIdx=(_lbIdx+1)%_galUrls.length; updateLightbox(); }
 });
 
-// ── Dados globais (footer + redes) ────────────────────────────────────────────
 async function carregarSite() {
   try {
     const [homeSnap, contatoSnap, redesSnap] = await Promise.all([
