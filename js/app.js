@@ -80,8 +80,20 @@ async function loadRedes() {
   const d = snap.data();
   if(d.instagram) document.querySelectorAll('a[href*="instagram"]').forEach(a=>a.href=d.instagram);
   if(d.facebook)  document.querySelectorAll('a[href*="facebook"]').forEach(a=>a.href=d.facebook);
-  if(d.youtube)   document.querySelectorAll('a[href*="youtube"]').forEach(a=>a.href=d.youtube);
-  if(d.whatsapp)  document.querySelectorAll('a[href*="wa.me"]').forEach(a=>a.href=`https://wa.me/${d.whatsapp}`);
+  if(d.youtube) document.querySelectorAll('a[href*="youtube"]').forEach(a=>a.href=d.youtube);
+
+  const number = String(d.whatsapp || '').replace(/\D/g, '');
+  const whatsappUrl = number ? `https://wa.me/${number}` : '';
+  document.querySelectorAll('#link-whatsapp, #footer-whatsapp, #whatsapp-float, #cta-whatsapp').forEach(a => {
+    if (whatsappUrl) {
+      a.href = whatsappUrl;
+      a.hidden = false;
+    } else {
+      a.hidden = true;
+      a.removeAttribute('href');
+    }
+  });
+  window._waNum = number;
 }
 
 async function loadContato() {

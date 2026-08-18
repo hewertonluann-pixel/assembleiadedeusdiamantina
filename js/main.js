@@ -47,15 +47,22 @@ function enviarFormulario(e) {
     return;
   }
 
+  const waNum = String(window._waNum || '').replace(/\D/g, '');
+  if (!waNum) {
+    feedback.className = 'form-feedback error';
+    feedback.textContent = 'O WhatsApp institucional ainda não foi configurado. Entre em contato pelas redes sociais ou pelo telefone da igreja.';
+    return;
+  }
+
   // Abre WhatsApp com a mensagem formatada
   const assunto = document.getElementById('assunto').value;
   const tel = document.getElementById('telefone').value;
   const texto = `Olá! Mensagem do site:\n\n*Nome:* ${nome}\n*E-mail:* ${email}\n*Telefone:* ${tel || 'Não informado'}\n*Assunto:* ${assunto}\n*Mensagem:* ${mensagem}`;
-  const url = `https://wa.me/5538999999999?text=${encodeURIComponent(texto)}`;
+  const url = `https://wa.me/${waNum}?text=${encodeURIComponent(texto)}`;
   window.open(url, '_blank');
 
   feedback.className = 'form-feedback success';
-  feedback.textContent = '✅ Redirecionando para o WhatsApp... Obrigado pelo contato!';
+  feedback.textContent = 'Redirecionando para o WhatsApp... Obrigado pelo contato!';
   document.getElementById('form-contato').reset();
 }
 

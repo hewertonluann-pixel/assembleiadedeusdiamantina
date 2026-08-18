@@ -522,7 +522,7 @@
       <p>Entre em contato conosco e ajude-nos a manter as informações sempre atualizadas.</p>
       <div class="cta-buttons">
         <a href="index.html#contato" class="btn btn-primary"><i class="fas fa-envelope"></i> Fale conosco</a>
-        <a id="cta-whatsapp" href="https://wa.me/5538999999999" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+        <a id="cta-whatsapp" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline" hidden><i class="fab fa-whatsapp"></i> WhatsApp</a>
       </div>
     </div>
   </section>
@@ -541,7 +541,7 @@
           <a id="footer-instagram" href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
           <a id="footer-facebook"  href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
           <a id="footer-youtube"   href="#" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-          <a id="footer-whatsapp"  href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          <a id="footer-whatsapp"  href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" hidden><i class="fab fa-whatsapp"></i></a>
         </div>
       </div>
       <div class="footer-col">
@@ -572,7 +572,7 @@
     </div>
   </footer>
 
-  <a id="whatsapp-float" href="https://wa.me/5538999999999" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale pelo WhatsApp">
+  <a id="whatsapp-float" href="#" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale pelo WhatsApp" hidden>
     <i class="fab fa-whatsapp"></i>
   </a>
 
@@ -603,6 +603,20 @@
       if (!maps) return '#';
       if (maps.startsWith('http')) return maps;
       return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(maps)}`;
+    }
+
+    function updateWhatsappLinks(rawNumber) {
+      const number = String(rawNumber || '').replace(/\D/g, '');
+      const whatsappUrl = number ? `https://wa.me/${number}` : '';
+      document.querySelectorAll('#cta-whatsapp, #footer-whatsapp, #whatsapp-float').forEach(el => {
+        if (whatsappUrl) {
+          el.href = whatsappUrl;
+          el.hidden = false;
+        } else {
+          el.hidden = true;
+          el.removeAttribute('href');
+        }
+      });
     }
 
     function renderCard(docId, cong, index) {
@@ -763,13 +777,10 @@
         const redesDoc = await getDoc(doc(db, 'site', 'redes'));
         if (redesDoc.exists()) {
           const r = redesDoc.data();
-          const wp = r.whatsapp ? `https://wa.me/${r.whatsapp}` : '#';
           if (r.instagram) document.getElementById('footer-instagram').href = r.instagram;
           if (r.facebook)  document.getElementById('footer-facebook').href  = r.facebook;
           if (r.youtube)   document.getElementById('footer-youtube').href   = r.youtube;
-          document.getElementById('footer-whatsapp').href = wp;
-          document.getElementById('whatsapp-float').href  = wp;
-          document.getElementById('cta-whatsapp').href    = wp;
+          updateWhatsappLinks(r.whatsapp);
         }
 
       } catch (err) {

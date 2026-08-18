@@ -368,7 +368,7 @@
         <a id="footer-instagram" href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
         <a id="footer-facebook"  href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
         <a id="footer-youtube"   href="#" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-        <a id="footer-whatsapp"  href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a id="footer-whatsapp"  href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" hidden><i class="fab fa-whatsapp"></i></a>
       </div>
     </div>
     <div class="footer-col">
@@ -397,7 +397,7 @@
   </div>
 </footer>
 
-<a id="whatsapp-float" href="https://wa.me/5538999999999" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale pelo WhatsApp">
+<a id="whatsapp-float" href="#" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale pelo WhatsApp" hidden>
   <i class="fab fa-whatsapp"></i>
 </a>
 
@@ -427,6 +427,19 @@ const db  = getFirestore(app);
 
 function setText(id, val) { const el=document.getElementById(id); if(el && val) el.textContent=val; }
 function setHref(id, val) { const el=document.getElementById(id); if(el && val) el.href=val; }
+function updateWhatsappLinks(rawNumber) {
+  const number = String(rawNumber || '').replace(/\D/g, '');
+  const whatsappUrl = number ? `https://wa.me/${number}` : '';
+  document.querySelectorAll('#footer-whatsapp, #whatsapp-float').forEach(el => {
+    if (whatsappUrl) {
+      el.href = whatsappUrl;
+      el.hidden = false;
+    } else {
+      el.hidden = true;
+      el.removeAttribute('href');
+    }
+  });
+}
 function mapsUrl(maps) {
   if (!maps) return '#';
   if (maps.startsWith('http')) return maps;
@@ -590,9 +603,7 @@ async function carregarSite() {
     if (r.instagram) setHref('footer-instagram', r.instagram);
     if (r.facebook)  setHref('footer-facebook',  r.facebook);
     if (r.youtube)   setHref('footer-youtube',   r.youtube);
-    const wp = r.whatsapp ? `https://wa.me/${r.whatsapp.replace(/\D/g,'')}` : '#';
-    setHref('footer-whatsapp', wp);
-    setHref('whatsapp-float',  wp);
+    updateWhatsappLinks(r.whatsapp);
   } catch(e) { console.warn(e); }
 }
 carregarSite();

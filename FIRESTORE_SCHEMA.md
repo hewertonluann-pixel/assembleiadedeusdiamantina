@@ -48,9 +48,12 @@ Este projeto usa o Firebase Firestore para armazenar e servir conteúdo dinâmic
   "instagram": "https://instagram.com/seu_usuario",
   "facebook": "https://facebook.com/sua_pagina",
   "youtube": "https://youtube.com/@seu_canal",
+  "youtubeVideo": "https://www.youtube.com/watch?v=VIDEO_ID",
   "whatsapp": "5538999999999"
 }
 ```
+
+**Campo `youtubeVideo`**: URL opcional de um vídeo específico do YouTube que será exibido no player em destaque da home. O link do canal permanece no campo `youtube`.
 
 ### `site/contato`
 ```json

@@ -199,12 +199,17 @@
           <div class="video-embed">
             <iframe
               id="yt-iframe"
-              src="https://www.youtube.com/embed?listType=user_uploads&list=assembleiadedeusdiamantina&index=1"
+              src=""
               title="Transmissões AD Diamantina"
               frameborder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowfullscreen>
             </iframe>
+            <div class="video-fallback" id="yt-fallback" hidden>
+              <i class="fab fa-youtube" aria-hidden="true"></i>
+              <p>Assista às pregações e transmissões no canal oficial da igreja.</p>
+              <a href="#" id="yt-channel-link" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Abrir canal no YouTube</a>
+            </div>
           </div>
         </div>
         <div class="midia-redes">
@@ -230,7 +235,7 @@
               <span>Assista ao vivo e pregações</span>
             </div>
           </a>
-          <a href="https://wa.me/5538999999999" target="_blank" class="rede-card whatsapp" id="link-whatsapp">
+          <a href="#" target="_blank" rel="noopener noreferrer" class="rede-card whatsapp" id="link-whatsapp" hidden>
             <i class="fab fa-whatsapp"></i>
             <div>
               <strong>WhatsApp</strong>
@@ -338,7 +343,7 @@
           <a href="https://www.instagram.com/assembleiadedeusm.diamantina/" target="_blank" id="footer-instagram"><i class="fab fa-instagram"></i></a>
           <a href="https://www.facebook.com/Assembleiadedeusdiamantina/" target="_blank" id="footer-facebook"><i class="fab fa-facebook"></i></a>
           <a href="https://www.youtube.com/@assembleiadedeusdiamantina" target="_blank" id="footer-youtube"><i class="fab fa-youtube"></i></a>
-          <a href="https://wa.me/5538999999999" target="_blank" id="footer-whatsapp"><i class="fab fa-whatsapp"></i></a>
+          <a href="#" target="_blank" rel="noopener noreferrer" id="footer-whatsapp" hidden><i class="fab fa-whatsapp"></i></a>
         </div>
       </div>
       <div class="footer-col">
@@ -372,7 +377,7 @@
   </footer>
 
   <!-- WHATSAPP FLUTUANTE -->
-  <a href="https://wa.me/5538999999999" target="_blank" class="whatsapp-float" aria-label="Fale pelo WhatsApp" id="whatsapp-float">
+  <a href="#" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale pelo WhatsApp" id="whatsapp-float" hidden>
     <i class="fab fa-whatsapp"></i>
   </a>
 
@@ -428,6 +433,42 @@
     function setIframeSrc(id, val) {
       const el = document.getElementById(id);
       if (el && val) el.src = val;
+    }
+
+    function youtubeEmbedUrl(raw) {
+      const value = String(raw || '').trim();
+      if (!value) return '';
+      try {
+        const url = new URL(value);
+        const host = url.hostname.replace(/^www\./, '');
+        if (host === 'youtu.be') {
+          const videoId = url.pathname.split('/').filter(Boolean)[0];
+          return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
+        }
+        if (url.pathname.startsWith('/embed/')) return value;
+        const videoId = url.searchParams.get('v');
+        if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+        const playlistId = url.searchParams.get('list');
+        if (playlistId) return `https://www.youtube.com/embed/videoseries?list=${playlistId}`;
+      } catch (e) {
+        console.warn('URL do YouTube inválida:', e);
+      }
+      return '';
+    }
+
+    function updateWhatsappLinks(rawNumber) {
+      const number = String(rawNumber || '').replace(/\D/g, '');
+      const url = number ? `https://wa.me/${number}` : '';
+      window._waNum = number;
+      document.querySelectorAll('#link-whatsapp, #footer-whatsapp, #whatsapp-float').forEach(el => {
+        if (url) {
+          el.href = url;
+          el.hidden = false;
+        } else {
+          el.hidden = true;
+          el.removeAttribute('href');
+        }
+      });
     }
 
     // ── Ícones padrão para a barra rápida de cultos ──────────────────────────
@@ -544,28 +585,35 @@
         if (d.youtube) {
           setHref('link-youtube', d.youtube);
           setHref('hero-yt-btn', d.youtube);
-          // Extrai canal para o iframe
-          const canal = d.youtube.replace(/\/$/, '').split('@').pop();
-          if (canal) setIframeSrc('yt-iframe',
-            `https://www.youtube.com/embed?listType=user_uploads&list=${canal}&index=1`);
+          const embedUrl = youtubeEmbedUrl(d.youtubeVideo);
+          const iframe = document.getElementById('yt-iframe');
+          const fallback = document.getElementById('yt-fallback');
+          const channelLink = document.getElementById('yt-channel-link');
+          if (channelLink) channelLink.href = d.youtube;
+          if (embedUrl) {
+            if (iframe) {
+              iframe.src = embedUrl;
+              iframe.hidden = false;
+            }
+            if (fallback) fallback.hidden = true;
+          } else {
+            if (iframe) iframe.hidden = true;
+            if (fallback) fallback.hidden = false;
+          }
+        } else {
+          const iframe = document.getElementById('yt-iframe');
+          const fallback = document.getElementById('yt-fallback');
+          if (iframe) iframe.hidden = true;
+          if (fallback) fallback.hidden = true;
         }
-        if (d.whatsapp) {
-          const num = d.whatsapp.replace(/\D/g, '');
-          const waUrl = `https://wa.me/${num}`;
-          setHref('link-whatsapp', waUrl);
-          setHref('whatsapp-float', waUrl);
-          // formulário de contato também usa whatsapp
-          window._waNum = num;
-        }
+
+        updateWhatsappLinks(d.whatsapp);
 
         // Footer
         if (d.instagram) setHref('footer-instagram', d.instagram);
         if (d.facebook)  setHref('footer-facebook',  d.facebook);
         if (d.youtube)   setHref('footer-youtube',   d.youtube);
-        if (d.whatsapp) {
-          const num = d.whatsapp.replace(/\D/g, '');
-          setHref('footer-whatsapp', `https://wa.me/${num}`);
-        }
+        // O WhatsApp é tratado por updateWhatsappLinks para permitir que fique vazio.
 
       } catch (e) { console.warn('loadRedes:', e); }
     }
