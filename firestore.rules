@@ -1,13 +1,30 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Proteção inicial baseada no e-mail da conta administradora informada.
+    // Em uma etapa posterior, pode ser migrada para custom claims ou uma
+    // coleção de administradores para permitir múltiplas contas com segurança.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'hewertonluann@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    // O conteúdo institucional é público por natureza.
     match /site/{document=**} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
+
+    // Os perfis públicos das congregações também precisam ser legíveis sem login,
+    // mas somente o administrador pode criar, editar ou remover registros.
     match /congregacoes/{document=**} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
+
+    // Nenhuma coleção administrativa deve ser criada com acesso público por engano.
+    // Novas coleções privadas devem declarar regras próprias e explícitas.
   }
 }

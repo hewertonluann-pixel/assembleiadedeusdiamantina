@@ -1,0 +1,34 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'hewertonluann@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    function isImageUpload() {
+      return request.resource != null
+        && request.resource.contentType.matches('image/.*')
+        && request.resource.size < 10 * 1024 * 1024;
+    }
+
+    // Assets institucionais e fotos das congregações são públicos para leitura,
+    // mas somente a conta administradora pode fazer upload, substituição ou remoção.
+    match /img/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() && (request.resource == null || isImageUpload());
+    }
+
+    match /congregacoes/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() && (request.resource == null || isImageUpload());
+    }
+
+    // Bloqueia caminhos não previstos até que possuam uma regra explícita.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
