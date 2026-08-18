@@ -18,7 +18,7 @@
   <header class="header" id="header">
     <div class="container nav-container">
       <a href="#home" class="logo">
-        <img src="img/logo.png" alt="Logo AD Diamantina" onerror="this.style.display='none'" />
+        <img id="site-logo" src="img/logo.png" alt="Logo AD Diamantina" onerror="this.style.display='none'" />
         <div class="logo-text">
           <span class="logo-title">Assembleia de Deus</span>
           <span class="logo-sub">Ministério de Diamantina</span>
@@ -75,7 +75,7 @@
   <section class="sobre" id="sobre">
     <div class="container sobre-grid">
       <div class="sobre-img">
-        <img src="img/igreja.jpg" alt="Igreja Assembleia de Deus Diamantina" onerror="this.outerHTML='<div class=sobre-img-placeholder><i class=fas fa-church></i></div>'" />
+        <img id="site-igreja" src="img/igreja.jpg" alt="Igreja Assembleia de Deus Diamantina" onerror="this.outerHTML='<div class=sobre-img-placeholder><i class=fas fa-church></i></div>'" />
       </div>
       <div class="sobre-texto">
         <span class="section-tag">Conheça nossa história</span>
@@ -618,7 +618,31 @@
       } catch (e) { console.warn('loadRedes:', e); }
     }
 
-    // ── 5. CONTATO & MAPA ────────────────────────────────────────────────────
+    // ── 5. IMAGENS DO SITE ────────────────────────────────────────────────────
+    async function loadImagens() {
+      try {
+        const snap = await getDoc(doc(db, 'site', 'imagens'));
+        const d = snap.data();
+        if (!d) return;
+
+        const logo = document.getElementById('site-logo');
+        if (logo && d.logo) {
+          logo.src = d.logo;
+          logo.style.display = '';
+        }
+
+        const igreja = document.getElementById('site-igreja');
+        if (igreja && d.igreja) {
+          igreja.src = d.igreja;
+          igreja.style.display = '';
+        }
+
+        const hero = document.getElementById('home');
+        if (hero && d.hero) hero.style.backgroundImage = `url("${d.hero}")`;
+      } catch (e) { console.warn('loadImagens:', e); }
+    }
+
+    // ── 6. CONTATO & MAPA ────────────────────────────────────────────────────
     async function loadContato() {
       try {
         const snap = await getDoc(doc(db, 'site', 'contato'));
@@ -648,7 +672,7 @@
     }
 
     // ── Disparar tudo em paralelo ─────────────────────────────────────────────
-    Promise.all([loadHome(), loadAgenda(), loadMins(), loadRedes(), loadContato()]);
+    Promise.all([loadHome(), loadAgenda(), loadMins(), loadRedes(), loadImagens(), loadContato()]);
   </script>
 
 </body>
