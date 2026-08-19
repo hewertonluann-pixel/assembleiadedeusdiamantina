@@ -56,15 +56,27 @@
   <section class="hero" id="home">
     <div class="hero-overlay"></div>
     <div class="container hero-content">
-      <p class="hero-verse" id="hero-verse">"Porque Deus amou o mundo de tal maneira..." — João 3:16</p>
-      <h1 class="hero-title" id="hero-title">Bem-vindo à<br/>Assembleia de Deus<br/>Ministério de Diamantina</h1>
-      <p class="hero-sub" id="hero-subtitle">Uma comunidade de fé, amor e esperança no coração de Diamantina, MG.</p>
-      <div class="hero-buttons">
-        <a href="#cultos" class="btn btn-primary">Ver Horários de Culto</a>
-        <a href="#envie-uma-mensagem" class="btn btn-outline" id="hero-contact-btn">
-          <i class="fas fa-praying-hands"></i> Pedido de oração/contato
-        </a>
+      <div class="hero-copy">
+        <p class="hero-verse" id="hero-verse">"Porque Deus amou o mundo de tal maneira..." — João 3:16</p>
+        <h1 class="hero-title" id="hero-title">Bem-vindo à<br/>Assembleia de Deus<br/>Ministério de Diamantina</h1>
+        <p class="hero-sub" id="hero-subtitle">Uma comunidade de fé, amor e esperança no coração de Diamantina, MG.</p>
+        <div class="hero-buttons">
+          <a href="#cultos" class="btn btn-primary">Ver Horários de Culto</a>
+          <a href="#envie-uma-mensagem" class="btn btn-outline" id="hero-contact-btn">
+            <i class="fas fa-praying-hands"></i> Pedido de oração/contato
+          </a>
+        </div>
       </div>
+      <aside class="hero-president" id="hero-president" hidden aria-label="Pastor presidente">
+        <div class="hero-president-photo" id="hero-president-photo">
+          <i class="fas fa-user-tie"></i><span>Foto do pastor presidente</span>
+        </div>
+        <div class="hero-president-meta">
+          <span class="hero-president-label">Nossa liderança</span>
+          <strong id="hero-president-name"></strong>
+          <span id="hero-president-role"></span>
+        </div>
+      </aside>
     </div>
     <div class="hero-scroll"><i class="fas fa-chevron-down"></i></div>
   </section>
@@ -72,18 +84,6 @@
   <!-- LIDERANÇA -->
   <section class="lideranca" id="lideranca" aria-labelledby="lideranca-title" hidden>
     <div class="container">
-      <div class="lideranca-president" id="lideranca-president" hidden>
-        <div class="lideranca-president-copy">
-          <span class="section-tag">Nossa liderança</span>
-          <h2 class="section-title" id="lideranca-title">Pastor Presidente</h2>
-          <p class="lideranca-president-bio" id="lideranca-president-bio" hidden></p>
-          <div class="lideranca-president-name" id="lideranca-president-name"></div>
-          <div class="lideranca-president-role" id="lideranca-president-role"></div>
-        </div>
-        <div class="lideranca-president-photo" id="lideranca-president-photo" aria-label="Espaço para a foto do pastor presidente">
-          <i class="fas fa-user-tie"></i><span>Foto do pastor presidente</span>
-        </div>
-      </div>
       <div class="lideranca-team" id="lideranca-team" hidden>
         <div class="section-heading-row">
           <div>
@@ -783,28 +783,26 @@
     // ── 6. LIDERANÇA ──────────────────────────────────────────────────────────
     async function loadLideranca() {
       const section = document.getElementById('lideranca');
-      const president = document.getElementById('lideranca-president');
+      const heroPresident = document.getElementById('hero-president');
       const team = document.getElementById('lideranca-team');
       const list = document.getElementById('lideranca-list');
-      if (!section || !president || !team || !list) return;
+      if (!section || !heroPresident || !team || !list) return;
       try {
         const snap = await getDoc(doc(db, 'site', 'lideranca'));
         const d = snap.data() || {};
         const p = d.presidente || {};
         const obreiros = Array.isArray(d.obreiros) ? d.obreiros.filter(item => item && (item.nome || item.funcao || item.fotoUrl)) : [];
         const hasPresident = Boolean(p.nome || p.funcao || p.bio || p.fotoUrl);
-        if (!hasPresident && !obreiros.length) { section.hidden = true; return; }
-        section.hidden = false;
-        president.hidden = !hasPresident;
+        if (!hasPresident && !obreiros.length) { section.hidden = true; heroPresident.hidden = true; return; }
+        section.hidden = !obreiros.length;
+        heroPresident.hidden = !hasPresident;
         team.hidden = !obreiros.length;
         if (hasPresident) {
-          const name = document.getElementById('lideranca-president-name');
-          const role = document.getElementById('lideranca-president-role');
-          const bio = document.getElementById('lideranca-president-bio');
-          const photo = document.getElementById('lideranca-president-photo');
+          const name = document.getElementById('hero-president-name');
+          const role = document.getElementById('hero-president-role');
+          const photo = document.getElementById('hero-president-photo');
           if (name) name.textContent = p.nome || '';
           if (role) role.textContent = p.funcao || '';
-          if (bio) { bio.textContent = p.bio || ''; bio.hidden = !p.bio; }
           if (photo) {
             const alt = p.alt || p.nome || 'Foto do pastor presidente';
             photo.innerHTML = p.fotoUrl ? `<img src="${escapeHtml(p.fotoUrl)}" alt="${escapeHtml(alt)}" />` : '<i class="fas fa-user-tie"></i><span>Foto do pastor presidente</span>';
