@@ -418,10 +418,26 @@
     </div>
   </footer>
 
-  <!-- WHATSAPP FLUTUANTE -->
-  <a href="#" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale pelo WhatsApp" id="whatsapp-float" hidden>
-    <i class="fab fa-whatsapp"></i>
-  </a>
+  <!-- AÇÕES FLUTUANTES -->
+  <div class="floating-actions" id="floating-actions" hidden aria-label="Ações rápidas">
+    <button class="contribution-float" id="contribution-float" type="button" aria-label="Abrir contribuição via Pix" aria-expanded="false" aria-controls="contribution-float-popover" hidden>
+      <span class="contribution-icon contribution-float__icon"><i class="fas fa-hand-holding-heart"></i></span>
+    </button>
+    <a href="#" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale pelo WhatsApp" id="whatsapp-float" hidden>
+      <i class="fab fa-whatsapp"></i>
+    </a>
+  </div>
+  <div class="contribution-float-popover" id="contribution-float-popover" hidden role="dialog" aria-modal="false" aria-labelledby="contribution-float-title">
+    <button class="contribution-float-popover__close" id="contribution-float-close" type="button" aria-label="Fechar contribuição">&times;</button>
+    <span class="section-kicker">Participe da obra</span>
+    <h3 id="contribution-float-title">Contribua via Pix</h3>
+    <p id="contribuicao-float-recipient" class="contribution-float-popover__recipient"></p>
+    <div class="contribution-float-popover__key-row">
+      <code id="contribuicao-float-key"></code>
+      <button class="btn btn-primary" id="contribuicao-float-copy" type="button"><i class="fas fa-copy"></i> Copiar chave</button>
+    </div>
+    <p class="contribution-float-popover__hint">Confira o nome do recebedor no aplicativo do seu banco antes de confirmar.</p>
+  </div>
 
   <!-- MINIPLAYER DA RÁDIO -->
   <aside class="radio-player" id="radio-player" hidden aria-label="Rádio ao vivo">
@@ -502,11 +518,28 @@
       return '';
     }
 
+    function setFloatingButtonVisibility() {
+      const actions = document.getElementById('floating-actions');
+      const whatsapp = document.getElementById('whatsapp-float');
+      const contribution = document.getElementById('contribution-float');
+      const config = window._floatingConfig || {};
+      const whatsappVisible = Boolean(window._waNum) && config.whatsappFloatEnabled !== false;
+      const contributionVisible = Boolean(window._contributionData?.ready) && config.contributionFloatEnabled === true;
+      if (whatsapp) whatsapp.hidden = !whatsappVisible;
+      if (contribution) contribution.hidden = !contributionVisible;
+      if (actions) actions.hidden = !(whatsappVisible || contributionVisible);
+      if (!contributionVisible) {
+        const popover = document.getElementById('contribution-float-popover');
+        if (popover) popover.hidden = true;
+        if (contribution) contribution.setAttribute('aria-expanded', 'false');
+      }
+    }
+
     function updateWhatsappLinks(rawNumber) {
       const number = String(rawNumber || '').replace(/\D/g, '');
       const url = number ? `https://wa.me/${number}` : '';
       window._waNum = number;
-      document.querySelectorAll('#link-whatsapp, #footer-whatsapp, #whatsapp-float').forEach(el => {
+      document.querySelectorAll('#link-whatsapp, #footer-whatsapp').forEach(el => {
         if (url) {
           el.href = url;
           el.hidden = false;
@@ -515,6 +548,12 @@
           el.removeAttribute('href');
         }
       });
+      const floating = document.getElementById('whatsapp-float');
+      if (floating) {
+        if (url) floating.href = url;
+        else floating.removeAttribute('href');
+      }
+      setFloatingButtonVisibility();
     }
 
     // ── Ícones padrão para a barra rápida de cultos ──────────────────────────
@@ -526,6 +565,11 @@
         const snap = await getDoc(doc(db, 'site', 'home'));
         const d = snap.data();
         if (!d) return;
+        window._floatingConfig = {
+          whatsappFloatEnabled: d.whatsappFloatEnabled !== false,
+          contributionFloatEnabled: d.contributionFloatEnabled === true
+        };
+        setFloatingButtonVisibility();
 
         // Hero
         if (d.verse)    setText('hero-verse', d.verse);
@@ -735,6 +779,36 @@
       } catch (e) { console.warn('loadContato:', e); }
     }
 
+    async function copyPixKey(key, button) {
+      let copied = false;
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(key);
+          copied = true;
+        }
+      } catch (_) { /* usa o fallback abaixo */ }
+      if (!copied) {
+        const textarea = document.createElement('textarea');
+        textarea.value = key;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try { copied = document.execCommand('copy'); } catch (_) { copied = false; }
+        textarea.remove();
+      }
+      const originalLabel = button.innerHTML;
+      button.innerHTML = copied ? '<i class="fas fa-check"></i> Copiada!' : '<i class="fas fa-copy"></i> Copiar chave';
+      if (!copied) window.alert('Não foi possível copiar automaticamente. Pressione e segure a chave para copiá-la.');
+      window.setTimeout(() => { button.innerHTML = originalLabel; }, 2200);
+    }
+
+    function bindPixCopyButton(id, key) {
+      const button = document.getElementById(id);
+      if (button) button.onclick = () => copyPixKey(key, button);
+    }
+
     async function loadContribuicao() {
       try {
         const snap = await getDoc(doc(db, 'site', 'contribuicao'));
@@ -743,6 +817,18 @@
         const receiver = String(d.receiverName || '').trim();
         const city = String(d.receiverCity || '').trim();
         const qr = String(d.qrCode || '').trim();
+        window._contributionData = {
+          key,
+          receiver,
+          city,
+          ready: Boolean(key && receiver && city)
+        };
+        const floatRecipient = document.getElementById('contribuicao-float-recipient');
+        const floatKey = document.getElementById('contribuicao-float-key');
+        if (floatRecipient) floatRecipient.textContent = [receiver, city].filter(Boolean).join(' · ');
+        if (floatKey) floatKey.textContent = key;
+        bindPixCopyButton('contribuicao-float-copy', key);
+        setFloatingButtonVisibility();
         const section = document.getElementById('contribuicao');
         const complete = Boolean(key && receiver && city && qr);
         const navContribution = document.getElementById('nav-contribuicao');
@@ -762,35 +848,31 @@
         if (cityEl) cityEl.textContent = city;
         if (keyEl) keyEl.textContent = key;
         if (qrEl) qrEl.src = qr;
-        const copyBtn = document.getElementById('contribuicao-copy');
-        if (copyBtn) {
-          copyBtn.onclick = async () => {
-            let copied = false;
-            try {
-              if (navigator.clipboard?.writeText) {
-                await navigator.clipboard.writeText(key);
-                copied = true;
-              }
-            } catch (_) { /* usa o fallback abaixo */ }
-            if (!copied) {
-              const textarea = document.createElement('textarea');
-              textarea.value = key;
-              textarea.setAttribute('readonly', '');
-              textarea.style.position = 'fixed';
-              textarea.style.opacity = '0';
-              document.body.appendChild(textarea);
-              textarea.select();
-              try { copied = document.execCommand('copy'); } catch (_) { copied = false; }
-              textarea.remove();
-            }
-            const originalLabel = copyBtn.innerHTML;
-            copyBtn.innerHTML = copied ? '<i class="fas fa-check"></i> Copiada!' : '<i class="fas fa-copy"></i> Copiar chave';
-            if (!copied) window.alert('Não foi possível copiar automaticamente. Pressione e segure a chave para copiá-la.');
-            window.setTimeout(() => { copyBtn.innerHTML = originalLabel; }, 2200);
-          };
-        }
+        bindPixCopyButton('contribuicao-copy', key);
       } catch (e) { console.warn('loadContribuicao:', e); }
     }
+
+    const contributionFloat = document.getElementById('contribution-float');
+    const contributionPopover = document.getElementById('contribution-float-popover');
+    const contributionClose = document.getElementById('contribution-float-close');
+    function closeContributionPopover() {
+      if (contributionPopover) contributionPopover.hidden = true;
+      if (contributionFloat) contributionFloat.setAttribute('aria-expanded', 'false');
+    }
+    contributionFloat?.addEventListener('click', event => {
+      event.stopPropagation();
+      if (!window._contributionData?.ready) return;
+      const isOpen = contributionPopover && !contributionPopover.hidden;
+      if (contributionPopover) contributionPopover.hidden = isOpen;
+      contributionFloat.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+    });
+    contributionClose?.addEventListener('click', closeContributionPopover);
+    document.addEventListener('click', event => {
+      if (contributionPopover && !contributionPopover.hidden && !contributionPopover.contains(event.target) && event.target !== contributionFloat && !contributionFloat?.contains(event.target)) closeContributionPopover();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeContributionPopover();
+    });
 
     document.getElementById('radio-section-play')?.addEventListener('click', async () => {
       document.getElementById('radio-player')?.removeAttribute('hidden');

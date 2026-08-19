@@ -14,6 +14,8 @@ Este projeto usa o Firebase Firestore para armazenar e servir conteúdo dinâmic
   "subtitle": "Uma família que glorifica a Deus",
   "sobre_p1": "Parágrafo 1 sobre a igreja...",
   "sobre_p2": "Parágrafo 2 sobre a igreja...",
+  "whatsappFloatEnabled": true,
+  "contributionFloatEnabled": false,
   "cultos": [
     { "label": "Domingo – EBD", "hora": "09:00h" },
     { "label": "Domingo – Culto", "hora": "18:00h" },
@@ -21,6 +23,8 @@ Este projeto usa o Firebase Firestore para armazenar e servir conteúdo dinâmic
   ]
 }
 ```
+
+Os campos `whatsappFloatEnabled` e `contributionFloatEnabled` controlam os botões flutuantes da home. O primeiro é ativado por padrão para manter o comportamento anterior, mas o botão só aparece se houver um número de WhatsApp em `site/redes`. O segundo vem desativado por padrão e só aparece quando for ativado no painel e houver chave Pix, nome e cidade do recebedor em `site/contribuicao`.
 
 ### `site/agenda`
 ```json

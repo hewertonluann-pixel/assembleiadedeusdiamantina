@@ -520,6 +520,116 @@ ul { list-style: none; }
   color: var(--gray); cursor: pointer;
 }
 
+/* === AÇÕES FLUTUANTES CONFIGURÁVEIS === */
+.floating-actions {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  z-index: 998;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.floating-actions[hidden],
+.floating-actions [hidden],
+.contribution-float-popover[hidden] { display: none !important; }
+.floating-actions .whatsapp-float {
+  position: relative;
+  inset: auto;
+  flex: 0 0 58px;
+}
+.contribution-float {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  background: transparent;
+  transition: transform var(--transition), filter var(--transition);
+}
+.contribution-float__icon {
+  width: 58px;
+  height: 58px;
+  font-size: 1.35rem;
+  box-shadow: 0 4px 16px rgba(155,113,17,.32);
+}
+.contribution-float:hover { transform: scale(1.1); filter: brightness(1.06); }
+.contribution-float:focus-visible,
+.floating-actions .whatsapp-float:focus-visible,
+.contribution-float-popover button:focus-visible {
+  outline: 3px solid rgba(212,160,23,.55);
+  outline-offset: 3px;
+}
+.contribution-float-popover {
+  position: fixed;
+  right: 28px;
+  bottom: 100px;
+  z-index: 999;
+  width: min(360px, calc(100vw - 32px));
+  padding: 1.35rem;
+  border: 1px solid rgba(184,134,11,.25);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 16px 45px rgba(39,29,14,.2);
+}
+.contribution-float-popover h3 {
+  margin: .2rem 2rem .35rem 0;
+  color: var(--primary);
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+}
+.contribution-float-popover__close {
+  position: absolute;
+  top: .65rem;
+  right: .8rem;
+  width: 32px;
+  height: 32px;
+  color: var(--gray);
+  font-size: 1.45rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.contribution-float-popover__recipient {
+  margin: 0 0 .8rem;
+  color: var(--primary);
+  font-size: .82rem;
+  font-weight: 700;
+}
+.contribution-float-popover__key-row {
+  display: flex;
+  align-items: stretch;
+  gap: .55rem;
+  flex-wrap: wrap;
+}
+.contribution-float-popover__key-row code {
+  flex: 1 1 170px;
+  min-width: 0;
+  padding: .65rem .7rem;
+  border: 1px solid rgba(184,134,11,.2);
+  border-radius: 9px;
+  color: var(--primary);
+  background: #faf7ee;
+  word-break: break-all;
+  font-size: .8rem;
+}
+.contribution-float-popover__key-row .btn {
+  justify-content: center;
+  white-space: nowrap;
+}
+.contribution-float-popover__hint {
+  margin: .8rem 0 0;
+  color: var(--gray);
+  font-size: .75rem;
+  line-height: 1.5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-float { animation: none; }
+  .contribution-float, .floating-actions .whatsapp-float { transition: none; }
+}
+
 /* === RESPONSIVO === */
 @media (max-width: 900px) {
   .sobre-grid, .contato-grid, .midia-grid { grid-template-columns: 1fr; gap: 40px; }
@@ -553,14 +663,13 @@ ul { list-style: none; }
     flex: 0 0 200px;
   }
 
-  /* ── FIX 3: PIX vira ícone circular no mobile — sem colisão com WhatsApp ── */
-  .btn-pix span { display: none; }
-  .btn-pix {
-    width: 52px; height: 52px;
-    padding: 0;
-    border-radius: 50%;
-    justify-content: center;
-  }
+  /* Ações flutuantes compactas no mobile */
+  .floating-actions { right: 16px; bottom: 18px; gap: 10px; }
+  .floating-actions .whatsapp-float,
+  .contribution-float,
+  .contribution-float__icon { width: 54px; height: 54px; }
+  .floating-actions .whatsapp-float { flex-basis: 54px; }
+  .contribution-float-popover { right: 16px; bottom: 86px; }
 
   /* Imagem da seção Sobre: limita altura no mobile */
   .sobre-img img,
