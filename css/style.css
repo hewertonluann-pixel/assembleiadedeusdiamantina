@@ -115,9 +115,9 @@ ul { list-style: none; }
   z-index: 0;
   pointer-events: none;
 }
-.hero-content { position: relative; z-index: 1; max-width: 1140px; width: 100%; display: grid; grid-template-columns: minmax(0,1fr) 252px; gap: 46px; align-items: center; }
-.hero-copy { min-width: 0; max-width: 760px; }
-.hero-president { justify-self: end; width: 220px; padding: 12px; border-radius: 22px; background: rgba(4,13,42,.42); border: 1px solid rgba(244,211,107,.5); box-shadow: 0 16px 42px rgba(0,0,0,.28); backdrop-filter: blur(5px); }
+.hero-content { position: relative; z-index: 1; max-width: 1140px; width: 100%; display: grid; grid-template-columns: 198px minmax(0,1fr); gap: 42px; align-items: center; }
+.hero-copy { min-width: 0; max-width: 760px; grid-column: 2; grid-row: 1; }
+.hero-president { justify-self: start; width: 176px; grid-column: 1; grid-row: 1; padding: 12px; border-radius: 22px; background: rgba(4,13,42,.42); border: 1px solid rgba(244,211,107,.5); box-shadow: 0 16px 42px rgba(0,0,0,.28); backdrop-filter: blur(5px); }
 .hero-president-photo { aspect-ratio: 4/5; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(244,211,107,.12)); color: #f4d36b; text-align: center; padding: 14px; }
 .hero-president-photo i { font-size: 3.4rem; opacity: .85; }
 .hero-president-photo span { font-size: .72rem; color: rgba(255,255,255,.8); line-height: 1.35; }
@@ -168,14 +168,15 @@ ul { list-style: none; }
 @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
 
 @media (max-width: 850px) {
-  .hero-content { grid-template-columns: minmax(0,1fr) 210px; gap: 26px; }
-  .hero-president { width: 190px; }
+  .hero-content { grid-template-columns: 174px minmax(0,1fr); gap: 26px; }
+  .hero-president { width: 158px; }
 }
 @media (max-width: 600px) {
   .hero { min-height: 820px; padding-top: 104px; padding-bottom: 72px; }
   .hero-content { max-width: 100%; display: flex; flex-direction: column; align-items: stretch; gap: 28px; }
   .hero-copy { max-width: 100%; }
-  .hero-president { align-self: center; width: 190px; }
+  .hero-president { align-self: center; width: 176px; grid-column: auto; grid-row: auto; order: -1; }
+  .hero-copy { grid-column: auto; grid-row: auto; order: 0; }
   .hero-content { max-width: 100%; }
   .hero-title { font-size: clamp(2rem, 10vw, 3rem); line-height: 1.1; }
   .hero-sub { font-size: 1rem; margin-bottom: 28px; }
