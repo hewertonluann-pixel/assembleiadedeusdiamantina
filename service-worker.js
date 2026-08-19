@@ -1,8 +1,8 @@
-const CACHE_VERSION = 'ad-diamantina-pwa-v6';
+const CACHE_VERSION = 'ad-diamantina-pwa-v7';
 const FIRESTORE_IMAGES_URL = 'https://firestore.googleapis.com/v1/projects/ad-diamantina/databases/(default)/documents/site/imagens';
 const DYNAMIC_ICON_ROUTES = {
-  '/pwa-icon-192.png': { field: 'favicon192', fallbackField: 'favicon', fallback: '/icons/icon-192.png' },
-  '/pwa-icon-512.png': { field: 'favicon512', fallbackField: 'favicon', fallback: '/icons/icon-512.png' }
+  '/pwa-icon-192.png': { field: 'favicon192', dataField: 'faviconData192', fallbackField: 'favicon', fallback: '/icons/icon-192.png' },
+  '/pwa-icon-512.png': { field: 'favicon512', dataField: 'faviconData512', fallbackField: 'favicon', fallback: '/icons/icon-512.png' }
 };
 const APP_SHELL = [
   '/',
@@ -23,18 +23,42 @@ const APP_SHELL = [
   '/js/radio-player.js'
 ];
 
+function responseFromDataUrl(dataUrl) {
+  const separator = dataUrl.indexOf(',');
+  if (separator < 0) return null;
+  const header = dataUrl.slice(0, separator);
+  const encoded = dataUrl.slice(separator + 1);
+  const mime = header.match(/^data:([^;]+)/)?.[1] || 'image/png';
+  const binary = atob(encoded);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+  return new Response(bytes, { headers: { 'Content-Type': mime, 'Cache-Control': 'no-cache' } });
+}
+
 async function getDynamicIconResponse(request, config) {
   const cache = await caches.open(CACHE_VERSION);
   try {
     const firestoreResponse = await fetch(FIRESTORE_IMAGES_URL, { cache: 'no-store' });
     if (firestoreResponse.ok) {
       const payload = await firestoreResponse.json();
-      const dynamicUrl = payload.fields?.[config.field]?.stringValue || payload.fields?.[config.fallbackField]?.stringValue;
-      if (dynamicUrl) {
-        const iconResponse = await fetch(dynamicUrl, { mode: 'no-cors', cache: 'no-store' });
-        if (iconResponse.ok || iconResponse.type === 'opaque') {
+      const dataUrl = payload.fields?.[config.dataField]?.stringValue;
+      if (dataUrl?.startsWith('data:image/png;base64,')) {
+        const iconResponse = responseFromDataUrl(dataUrl);
+        if (iconResponse) {
           await cache.put(request, iconResponse.clone());
           return iconResponse;
+        }
+      }
+      const dynamicUrl = payload.fields?.[config.field]?.stringValue || payload.fields?.[config.fallbackField]?.stringValue;
+      if (dynamicUrl) {
+        try {
+          const iconResponse = await fetch(dynamicUrl, { mode: 'cors', cache: 'no-store' });
+          if (iconResponse.ok && iconResponse.type !== 'opaque') {
+            await cache.put(request, iconResponse.clone());
+            return iconResponse;
+          }
+        } catch (error) {
+          // O Storage sem CORS cai para o PNG same-origin abaixo.
         }
       }
     }

@@ -1174,6 +1174,14 @@ function createPwaIconFile(sourceFile,size){
     image.src=objectUrl;
   });
 }
+function fileToDataUrl(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=()=>reject(new Error('Não foi possível preparar o ícone para o PWA.'));
+    reader.readAsDataURL(file);
+  });
+}
 function uploadImageFile(file,path,onProgress){
   const uploadTask=uploadBytesResumable(storageRef(storage,path),file);
   return new Promise((resolve,reject)=>{
@@ -1218,9 +1226,12 @@ IMG_SLOTS.forEach(slot=>{
     wrapEl.style.display='block';fillEl.style.width='0%';
     try{
       const uploads=[{field:slot.firestoreField,path:slot.storagePath,file}];
+      const generatedFiles={};
       if(slot.extraUploads?.length){
         for(const extra of slot.extraUploads){
-          uploads.push({field:extra.field,path:extra.path,file:await createPwaIconFile(file,extra.size)});
+          const generatedFile=await createPwaIconFile(file,extra.size);
+          generatedFiles[extra.field]=generatedFile;
+          uploads.push({field:extra.field,path:extra.path,file:generatedFile});
         }
       }
       const totalBytes=uploads.reduce((sum,item)=>sum+item.file.size,0);let completedBytes=0;const urls={};
@@ -1229,6 +1240,10 @@ IMG_SLOTS.forEach(slot=>{
           fillEl.style.width=Math.min(99,Math.round(((completedBytes+transferred)/totalBytes)*100))+'%';
         });
         completedBytes+=item.file.size;
+      }
+      if(slot.key==='favicon'){
+        if(generatedFiles.favicon192) urls.faviconData192=await fileToDataUrl(generatedFiles.favicon192);
+        if(generatedFiles.favicon512) urls.faviconData512=await fileToDataUrl(generatedFiles.favicon512);
       }
       await setDoc(doc(db,'site','imagens'),urls,{merge:true});
       fillEl.style.width='100%';toast(slot.key==='favicon' ? '✓ Favicon e ícones de instalação enviados!' : `✓ ${slot.storagePath} enviada!`);
