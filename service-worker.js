@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'ad-diamantina-pwa-v4';
+const CACHE_VERSION = 'ad-diamantina-pwa-v5';
 const FIRESTORE_IMAGES_URL = 'https://firestore.googleapis.com/v1/projects/ad-diamantina/databases/(default)/documents/site/imagens';
 const DYNAMIC_ICON_ROUTES = {
   '/pwa-icon-192.png': { field: 'favicon192', fallbackField: 'favicon', fallback: '/icons/icon-192.png' },

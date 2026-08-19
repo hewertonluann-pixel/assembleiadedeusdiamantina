@@ -769,9 +769,13 @@
       } catch (e) { console.warn('loadContribuicao:', e); }
     }
 
-    document.getElementById('radio-section-play')?.addEventListener('click', () => {
+    document.getElementById('radio-section-play')?.addEventListener('click', async () => {
       document.getElementById('radio-player')?.removeAttribute('hidden');
-      document.getElementById('radio-player-toggle')?.click();
+      if (typeof window.__radioPlayerStart === 'function') {
+        await window.__radioPlayerStart();
+      } else {
+        document.getElementById('radio-player-toggle')?.click();
+      }
     });
 
     // ── Disparar tudo em paralelo ─────────────────────────────────────────────

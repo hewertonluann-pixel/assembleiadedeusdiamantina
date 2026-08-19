@@ -28,9 +28,10 @@
 
     const volumeKey = 'ad-diamantina-radio-volume';
     const closedKey = 'ad-diamantina-radio-closed';
-    const defaultVolume = Number(localStorage.getItem(volumeKey));
-    audio.volume = Number.isFinite(defaultVolume) && defaultVolume >= 0 && defaultVolume <= 1
-      ? defaultVolume
+    const storedVolume = localStorage.getItem(volumeKey);
+    const parsedVolume = storedVolume === null ? NaN : Number(storedVolume);
+    audio.volume = Number.isFinite(parsedVolume) && parsedVolume >= 0 && parsedVolume <= 1
+      ? parsedVolume
       : 0.8;
     if (volume) volume.value = String(audio.volume);
 
@@ -77,8 +78,28 @@
       setStatus('Pronta para ouvir', 'ready');
     }
 
+    async function startPlayback() {
+      if (!audio.src) {
+        setStatus('Rádio ainda não configurada', 'error');
+        return false;
+      }
+
+      setStatus('Conectando…', 'loading');
+      try {
+        audio.muted = false;
+        await audio.play();
+        return true;
+      } catch (error) {
+        console.warn('Não foi possível iniciar a rádio:', error);
+        setPlaying(false);
+        setStatus('Toque novamente para ouvir', 'error');
+        return false;
+      }
+    }
+
     window.setRadioConfig = showPlayer;
     window.__radioPlayerApply = showPlayer;
+    window.__radioPlayerStart = startPlayback;
     if (pendingConfig) {
       showPlayer(pendingConfig);
       pendingConfig = null;
@@ -95,14 +116,7 @@
         return;
       }
 
-      setStatus('Conectando…', 'loading');
-      try {
-        await audio.play();
-      } catch (error) {
-        console.warn('Não foi possível iniciar a rádio:', error);
-        setPlaying(false);
-        setStatus('Clique novamente para ouvir', 'error');
-      }
+      await startPlayback();
     });
 
     audio.addEventListener('playing', () => {
