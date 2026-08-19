@@ -69,6 +69,34 @@
     <div class="hero-scroll"><i class="fas fa-chevron-down"></i></div>
   </section>
 
+  <!-- LIDERANÇA -->
+  <section class="lideranca" id="lideranca" aria-labelledby="lideranca-title" hidden>
+    <div class="container">
+      <div class="lideranca-president" id="lideranca-president" hidden>
+        <div class="lideranca-president-copy">
+          <span class="section-tag">Nossa liderança</span>
+          <h2 class="section-title" id="lideranca-title">Pastor Presidente</h2>
+          <p class="lideranca-president-bio" id="lideranca-president-bio" hidden></p>
+          <div class="lideranca-president-name" id="lideranca-president-name"></div>
+          <div class="lideranca-president-role" id="lideranca-president-role"></div>
+        </div>
+        <div class="lideranca-president-photo" id="lideranca-president-photo" aria-label="Espaço para a foto do pastor presidente">
+          <i class="fas fa-user-tie"></i><span>Foto do pastor presidente</span>
+        </div>
+      </div>
+      <div class="lideranca-team" id="lideranca-team" hidden>
+        <div class="section-heading-row">
+          <div>
+            <span class="section-tag">Servindo com dedicação</span>
+            <h2 class="section-title">Corpo de Obreiros</h2>
+          </div>
+          <div class="lideranca-scroll-hint"><i class="fas fa-arrows-left-right"></i><span>Deslize para ver a equipe</span></div>
+        </div>
+        <div class="lideranca-list" id="lideranca-list" tabindex="0" aria-label="Lista de pastores e obreiros"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- PRÓXIMOS CULTOS RÁPIDOS -->
   <section class="cultos-rapidos">
     <div class="container">
@@ -496,6 +524,9 @@
       const el = document.getElementById(id);
       if (el && val) el.src = val;
     }
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    }
 
     function youtubeEmbedUrl(raw) {
       const value = String(raw || '').trim();
@@ -749,7 +780,50 @@
       } catch (e) { console.warn('loadImagens:', e); }
     }
 
-    // ── 6. CONTATO & MAPA ────────────────────────────────────────────────────
+    // ── 6. LIDERANÇA ──────────────────────────────────────────────────────────
+    async function loadLideranca() {
+      const section = document.getElementById('lideranca');
+      const president = document.getElementById('lideranca-president');
+      const team = document.getElementById('lideranca-team');
+      const list = document.getElementById('lideranca-list');
+      if (!section || !president || !team || !list) return;
+      try {
+        const snap = await getDoc(doc(db, 'site', 'lideranca'));
+        const d = snap.data() || {};
+        const p = d.presidente || {};
+        const obreiros = Array.isArray(d.obreiros) ? d.obreiros.filter(item => item && (item.nome || item.funcao || item.fotoUrl)) : [];
+        const hasPresident = Boolean(p.nome || p.funcao || p.bio || p.fotoUrl);
+        if (!hasPresident && !obreiros.length) { section.hidden = true; return; }
+        section.hidden = false;
+        president.hidden = !hasPresident;
+        team.hidden = !obreiros.length;
+        if (hasPresident) {
+          const name = document.getElementById('lideranca-president-name');
+          const role = document.getElementById('lideranca-president-role');
+          const bio = document.getElementById('lideranca-president-bio');
+          const photo = document.getElementById('lideranca-president-photo');
+          if (name) name.textContent = p.nome || '';
+          if (role) role.textContent = p.funcao || '';
+          if (bio) { bio.textContent = p.bio || ''; bio.hidden = !p.bio; }
+          if (photo) {
+            const alt = p.alt || p.nome || 'Foto do pastor presidente';
+            photo.innerHTML = p.fotoUrl ? `<img src="${escapeHtml(p.fotoUrl)}" alt="${escapeHtml(alt)}" />` : '<i class="fas fa-user-tie"></i><span>Foto do pastor presidente</span>';
+          }
+        }
+        if (obreiros.length) {
+          list.innerHTML = obreiros.map(o => {
+            const alt = o.alt || o.nome || 'Foto do pastor';
+            const details = [o.funcao, o.local].filter(Boolean).join(' · ');
+            return `<article class="lideranca-card" tabindex="0" aria-label="${escapeHtml([o.nome, details].filter(Boolean).join(' — '))}">
+              <div class="lideranca-card-photo">${o.fotoUrl ? `<img src="${escapeHtml(o.fotoUrl)}" alt="${escapeHtml(alt)}" loading="lazy" />` : '<i class="fas fa-user"></i><span>Foto em breve</span>'}</div>
+              <div class="lideranca-card-info"><strong>${escapeHtml(o.nome || 'Pastor')}</strong><span>${escapeHtml(details || 'Corpo de obreiros')}</span></div>
+            </article>`;
+          }).join('');
+        }
+      } catch (e) { section.hidden = true; console.warn('loadLideranca:', e); }
+    }
+
+    // ── 7. CONTATO & MAPA ──────────────────────────────────────────────────────
     async function loadContato() {
       try {
         const snap = await getDoc(doc(db, 'site', 'contato'));
@@ -883,7 +957,7 @@
     });
 
     // ── Disparar tudo em paralelo ─────────────────────────────────────────────
-    Promise.all([loadHome(), loadAgenda(), loadMins(), loadRedes(), loadImagens(), loadContato(), loadContribuicao()]);
+    Promise.all([loadHome(), loadAgenda(), loadMins(), loadRedes(), loadImagens(), loadLideranca(), loadContato(), loadContribuicao()]);
   </script>
 
 </body>

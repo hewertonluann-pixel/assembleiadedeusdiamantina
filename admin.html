@@ -129,6 +129,29 @@ a{color:inherit;text-decoration:none;}
 .stat-card .stat-value{font-family:var(--font-display);font-size:2rem;color:var(--gold);line-height:1;}
 .stat-card .stat-desc{font-size:0.75rem;color:var(--faint);margin-top:0.2rem;}
 
+/* LIDERANÇA */
+.admin-subtitle{font-size:1rem;color:var(--text);margin-bottom:.75rem;}
+.leadership-admin-president{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(230px,.8fr);gap:1.5rem;align-items:start;}
+.leadership-admin-fields{min-width:0;}
+.leadership-admin-upload{display:flex;flex-direction:column;gap:.75rem;}
+.leadership-photo-preview{width:100%;aspect-ratio:4/5;background:var(--surface3);border:1px dashed var(--border);border-radius:var(--radius-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;color:var(--faint);overflow:hidden;text-align:center;padding:1rem;}
+.leadership-photo-preview i{font-size:2.6rem;}
+.leadership-photo-preview span{font-size:.75rem;}
+.leadership-photo-preview img{width:100%;height:100%;object-fit:cover;}
+.leadership-photo-preview.compact{aspect-ratio:4/4.7;min-height:150px;}
+.leadership-admin-divider{width:100%;border:0;border-top:1px solid var(--border);margin:1rem 0;}
+.leadership-admin-list-header{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:1rem;}
+.leadership-admin-empty{padding:1.5rem;border:1px dashed var(--border);border-radius:var(--radius);text-align:center;color:var(--muted);}
+.leadership-admin-empty i{font-size:1.6rem;color:var(--faint);margin-bottom:.5rem;}
+.leadership-admin-empty p{font-size:.82rem;}
+.obreiro-admin-row{display:grid;grid-template-columns:180px minmax(0,1fr);gap:1.25rem;padding:1.25rem 0;border-top:1px solid var(--border);}
+.obreiro-admin-row:first-child{border-top:0;padding-top:0;}
+.obreiro-admin-photo{display:flex;flex-direction:column;gap:.55rem;}
+.obreiro-admin-photo .btn{justify-content:center;}
+.btn-small{padding:.45rem .75rem;font-size:.78rem;}
+[data-theme="light"] .leadership-photo-preview{background:#f0ede8;}
+@media(max-width:700px){.leadership-admin-president{grid-template-columns:1fr;}.leadership-admin-upload{max-width:280px;}.leadership-admin-list-header{align-items:flex-start;flex-direction:column;}.obreiro-admin-row{grid-template-columns:1fr;}.obreiro-admin-photo{max-width:220px;}.leadership-photo-preview.compact{min-height:0;}}
+
 /* UPLOAD */
 .upload-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
 .upload-card-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border);background:var(--surface2);}
@@ -354,6 +377,31 @@ a{color:inherit;text-decoration:none;}
               <input type="checkbox" id="hf-contribution-float" style="margin-top:.25rem;accent-color:var(--gold);width:1rem;height:1rem;" />
               <span><strong style="display:block;margin-bottom:.25rem;">Exibir botão flutuante de Contribuição</strong><small class="form-hint">O botão aparecerá somente quando a chave Pix, o recebedor e a cidade estiverem preenchidos.</small></span>
             </label>
+          </div>
+        </div>
+        <div class="config-section">
+          <div class="config-section-header"><i class="fas fa-users-cog"></i><strong>Liderança da igreja</strong></div>
+          <div class="config-section-body">
+            <p class="form-hint" style="margin:0 0 1rem;">Cadastre primeiro o pastor presidente e depois adicione os demais pastores do corpo de obreiros. Fotos e nomes vazios não serão publicados.</p>
+            <div class="leadership-admin-president">
+              <div class="leadership-admin-fields">
+                <h3 class="admin-subtitle"><i class="fas fa-star" style="color:var(--gold);margin-right:.35rem;"></i>Pastor presidente</h3>
+                <div class="form-group"><label class="form-label">Nome</label><input type="text" id="lf-president-name" class="form-input" placeholder="Nome oficial do pastor presidente" /></div>
+                <div class="form-group"><label class="form-label">Função</label><input type="text" id="lf-president-role" class="form-input" placeholder="Pastor Presidente" /></div>
+                <div class="form-group"><label class="form-label">Descrição curta (opcional)</label><textarea id="lf-president-bio" class="form-textarea" rows="3" placeholder="Uma breve apresentação institucional"></textarea></div>
+                <div class="form-group"><label class="form-label">Texto alternativo da foto</label><input type="text" id="lf-president-alt" class="form-input" placeholder="Retrato do pastor presidente" /></div>
+              </div>
+              <div class="leadership-admin-upload">
+                <div class="leadership-photo-preview" id="lf-president-preview"><i class="fas fa-user-tie"></i><span>Espaço para a foto</span></div>
+                <label class="upload-drop" id="lf-president-drop"><input type="file" id="lf-president-file" accept="image/jpeg,image/webp,image/png" /><i class="fas fa-cloud-upload-alt"></i><strong>Selecionar foto</strong><p>JPG/PNG/WEBP • máx. 10 MB</p></label>
+                <div class="progress-bar-wrap" id="lf-president-progress-wrap"><div class="progress-bar-fill" id="lf-president-progress"></div></div>
+                <button type="button" class="btn btn-gold" id="lf-president-upload" style="width:100%;justify-content:center;" disabled><i class="fas fa-upload"></i> Enviar foto do presidente</button>
+              </div>
+            </div>
+            <hr class="leadership-admin-divider" />
+            <div class="leadership-admin-list-header"><div><h3 class="admin-subtitle"><i class="fas fa-users" style="color:var(--primary);margin-right:.35rem;"></i>Corpo de obreiros</h3><small class="form-hint">A ordem da lista será a ordem exibida na página inicial.</small></div><button type="button" class="btn btn-ghost" id="btn-add-obreiro"><i class="fas fa-plus"></i> Adicionar pastor</button></div>
+            <div id="obreiros-admin-container"></div>
+            <button type="button" class="btn btn-primary" id="btn-save-leadership" style="margin-top:1rem;"><i class="fas fa-save"></i> Salvar liderança</button>
           </div>
         </div>
       </div>
@@ -1113,10 +1161,23 @@ async function saveMins(){
 // HOME CONFIG
 // ═══════════════════════════════════════
 let cultosData=[];
+let leadershipData={presidente:{nome:'',funcao:'Pastor Presidente',bio:'',fotoUrl:'',alt:''},obreiros:[]};
+let presidentSelectedFile=null;
+const leadershipSelectedFiles=new Map();
+
+function escapeHtml(value){
+  return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+}
+function defaultLeadership(){
+  return {presidente:{nome:'',funcao:'Pastor Presidente',bio:'',fotoUrl:'',alt:''},obreiros:[]};
+}
 async function loadHomeConfig(){
   showEl('home-loading',true);showEl('home-form',false);
   try{
-    const snap=await getDoc(doc(db,'site','home'));const d=snap.data()||{};
+    const [homeSnap,leadershipSnap]=await Promise.all([getDoc(doc(db,'site','home')),getDoc(doc(db,'site','lideranca'))]);
+    const d=homeSnap.data()||{};
+    const savedLeadership=leadershipSnap.data()||{};
+    leadershipData={...defaultLeadership(),...savedLeadership,presidente:{...defaultLeadership().presidente,...(savedLeadership.presidente||{})},obreiros:Array.isArray(savedLeadership.obreiros)?savedLeadership.obreiros:[]};
     document.getElementById('hf-verse').value=d.verse||'';
     document.getElementById('hf-title').value=d.title||'';
     document.getElementById('hf-subtitle').value=d.subtitle||'';
@@ -1124,10 +1185,91 @@ async function loadHomeConfig(){
     document.getElementById('hf-p2').value=d.sobre_p2||'';
     document.getElementById('hf-whatsapp-float').checked=d.whatsappFloatEnabled !== false;
     document.getElementById('hf-contribution-float').checked=d.contributionFloatEnabled === true;
-    cultosData=d.cultos||[{label:'',hora:''}]; renderCultos();
+    cultosData=d.cultos||[{label:'',hora:''}];
+    renderCultos();
+    renderLeadershipAdmin();
     showEl('home-form',true);
   }catch(e){toast('Erro: '+e.message,'error');}finally{showEl('home-loading',false);}
 }
+function setLeadershipPreview(id,url,alt,emptyIcon='fa-user-tie'){
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML=url?`<img src="${escapeHtml(url)}" alt="${escapeHtml(alt||'Foto da liderança')}" />`:`<i class="fas ${emptyIcon}"></i><span>Espaço para a foto</span>`;
+}
+function renderLeadershipAdmin(){
+  const p=leadershipData.presidente||defaultLeadership().presidente;
+  document.getElementById('lf-president-name').value=p.nome||'';
+  document.getElementById('lf-president-role').value=p.funcao||'Pastor Presidente';
+  document.getElementById('lf-president-bio').value=p.bio||'';
+  document.getElementById('lf-president-alt').value=p.alt||'';
+  setLeadershipPreview('lf-president-preview',p.fotoUrl,p.alt||p.nome||'Retrato do pastor presidente');
+  const cont=document.getElementById('obreiros-admin-container');
+  if(!leadershipData.obreiros.length){
+    cont.innerHTML='<div class="leadership-admin-empty"><i class="fas fa-user-plus"></i><p>Nenhum pastor adicionado. Use “Adicionar pastor” para criar o primeiro espaço.</p></div>';
+    return;
+  }
+  cont.innerHTML=leadershipData.obreiros.map((o,i)=>`
+    <article class="obreiro-admin-row" data-obreiro-row="${i}">
+      <div class="obreiro-admin-photo">
+        <div class="leadership-photo-preview compact" id="lf-obreiro-preview-${i}">${o.fotoUrl?`<img src="${escapeHtml(o.fotoUrl)}" alt="${escapeHtml(o.alt||o.nome||'Foto do pastor')}" />`:'<i class="fas fa-user"></i><span>Sem foto</span>'}</div>
+        <label class="btn btn-ghost btn-small"><i class="fas fa-image"></i> Escolher foto<input type="file" data-obreiro-file="${i}" accept="image/jpeg,image/webp,image/png" hidden /></label>
+        <button type="button" class="btn btn-gold btn-small" data-obreiro-upload="${i}" disabled><i class="fas fa-upload"></i> Enviar foto</button>
+        <div class="progress-bar-wrap" id="lf-obreiro-progress-wrap-${i}"><div class="progress-bar-fill" id="lf-obreiro-progress-${i}"></div></div>
+      </div>
+      <div class="obreiro-admin-fields">
+        <div class="form-group"><label class="form-label">Nome</label><input type="text" class="form-input" data-lead-field="nome" data-i="${i}" value="${escapeHtml(o.nome)}" placeholder="Ex: Pr. Nome Sobrenome" /></div>
+        <div class="form-group"><label class="form-label">Função</label><input type="text" class="form-input" data-lead-field="funcao" data-i="${i}" value="${escapeHtml(o.funcao)}" placeholder="Ex: Vice-presidente" /></div>
+        <div class="form-group"><label class="form-label">Sede / congregação</label><input type="text" class="form-input" data-lead-field="local" data-i="${i}" value="${escapeHtml(o.local)}" placeholder="Ex: Sede" /></div>
+        <div class="form-group"><label class="form-label">Texto alternativo da foto</label><input type="text" class="form-input" data-lead-field="alt" data-i="${i}" value="${escapeHtml(o.alt)}" placeholder="Retrato do pastor" /></div>
+        <button type="button" class="btn btn-danger btn-small" onclick="removeObreiro(${i})"><i class="fas fa-trash"></i> Remover pastor</button>
+      </div>
+    </article>`).join('');
+  cont.querySelectorAll('[data-obreiro-file]').forEach(input=>input.addEventListener('change',()=>{
+    const index=Number(input.dataset.obreiroFile);const file=input.files[0];
+    if(!file)return;
+    if(!file.type.startsWith('image/')||file.size>10*1024*1024){input.value='';toast('Selecione uma imagem de até 10 MB.','error');return;}
+    leadershipSelectedFiles.set(index,file);
+    const row=document.querySelector(`[data-obreiro-row="${index}"]`);
+    const preview=row?.querySelector(`#lf-obreiro-preview-${index}`);
+    if(preview)preview.innerHTML=`<img src="${URL.createObjectURL(file)}" alt="Prévia da foto" />`;
+    row?.querySelector(`[data-obreiro-upload="${index}"]`)?.removeAttribute('disabled');
+  }));
+  cont.querySelectorAll('[data-obreiro-upload]').forEach(btn=>btn.addEventListener('click',()=>uploadObreiroPhoto(Number(btn.dataset.obreiroUpload))));
+}
+window.addObreiro=()=>{leadershipData.obreiros.push({nome:'',funcao:'',local:'',fotoUrl:'',alt:''});renderLeadershipAdmin();};
+window.removeObreiro=index=>{if(!confirm('Remover este pastor da lista?'))return;leadershipData.obreiros.splice(index,1);leadershipSelectedFiles.delete(index);renderLeadershipAdmin();};
+async function uploadObreiroPhoto(index){
+  const file=leadershipSelectedFiles.get(index);if(!file)return;
+  const btn=document.querySelector(`[data-obreiro-upload="${index}"]`);const wrap=document.getElementById(`lf-obreiro-progress-wrap-${index}`);const fill=document.getElementById(`lf-obreiro-progress-${index}`);
+  if(btn)btn.disabled=true;if(wrap)wrap.style.display='block';
+  try{
+    const extension=(file.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,'').toLowerCase()||'jpg';
+    const url=await uploadImageFile(file,`img/lideranca/obreiro-${Date.now()}-${index}.${extension}`,(done,total)=>{if(fill)fill.style.width=Math.round((done/total)*100)+'%';});
+    leadershipData.obreiros[index].fotoUrl=url;leadershipSelectedFiles.delete(index);renderLeadershipAdmin();toast('Foto do pastor enviada!');
+  }catch(e){toast('Erro no upload da foto: '+e.message,'error');if(btn)btn.disabled=false;if(wrap)wrap.style.display='none';}
+}
+document.getElementById('btn-add-obreiro').addEventListener('click',()=>window.addObreiro());
+document.getElementById('lf-president-file').addEventListener('change',e=>{
+  const file=e.target.files[0];if(!file)return;
+  if(!file.type.startsWith('image/')||file.size>10*1024*1024){e.target.value='';toast('Selecione uma imagem de até 10 MB.','error');return;}
+  presidentSelectedFile=file;setLeadershipPreview('lf-president-preview',URL.createObjectURL(file),'Prévia da foto do pastor presidente');document.getElementById('lf-president-upload').disabled=false;
+});
+document.getElementById('lf-president-upload').addEventListener('click',async()=>{
+  if(!presidentSelectedFile)return;
+  const btn=document.getElementById('lf-president-upload');const wrap=document.getElementById('lf-president-progress-wrap');const fill=document.getElementById('lf-president-progress');btn.disabled=true;wrap.style.display='block';
+  try{
+    const file=presidentSelectedFile;const extension=(file.name.split('.').pop()||'jpg').replace(/[^a-z0-9]/gi,'').toLowerCase()||'jpg';
+    const url=await uploadImageFile(file,`img/lideranca/presidente-${Date.now()}.${extension}`,(done,total)=>{fill.style.width=Math.round((done/total)*100)+'%';});
+    leadershipData.presidente.fotoUrl=url;presidentSelectedFile=null;setLeadershipPreview('lf-president-preview',url,document.getElementById('lf-president-alt').value.trim()||'Retrato do pastor presidente');fill.style.width='100%';toast('Foto do pastor presidente enviada!');setTimeout(()=>{wrap.style.display='none';fill.style.width='0%';},1500);
+  }catch(e){toast('Erro no upload da foto: '+e.message,'error');wrap.style.display='none';}
+  btn.disabled=false;
+});
+document.getElementById('btn-save-leadership').addEventListener('click',async()=>{
+  const p=leadershipData.presidente||defaultLeadership().presidente;
+  leadershipData.presidente={nome:document.getElementById('lf-president-name').value.trim(),funcao:document.getElementById('lf-president-role').value.trim(),bio:document.getElementById('lf-president-bio').value.trim(),fotoUrl:p.fotoUrl||'',alt:document.getElementById('lf-president-alt').value.trim()};
+  leadershipData.obreiros=leadershipData.obreiros.map((o,i)=>({...o,nome:document.querySelector(`[data-lead-field="nome"][data-i="${i}"]`)?.value.trim()||'',funcao:document.querySelector(`[data-lead-field="funcao"][data-i="${i}"]`)?.value.trim()||'',local:document.querySelector(`[data-lead-field="local"][data-i="${i}"]`)?.value.trim()||'',alt:document.querySelector(`[data-lead-field="alt"][data-i="${i}"]`)?.value.trim()||''}));
+  try{await setDoc(doc(db,'site','lideranca'),{presidente:leadershipData.presidente,obreiros:leadershipData.obreiros,atualizadoEm:serverTimestamp()},{merge:true});toast('Liderança salva!');}
+  catch(e){toast('Erro ao salvar liderança: '+e.message,'error');}
+});
 function renderCultos(){
   const cont=document.getElementById('cultos-container');
   cont.innerHTML=cultosData.map((c,i)=>`<div style="display:grid;grid-template-columns:1fr 1fr auto;gap:0.75rem;align-items:end;"><div class="form-group"><label class="form-label">Descrição</label><input type="text" class="form-input culto-label" data-i="${i}" value="${c.label||''}" placeholder="Domingo – Culto" /></div><div class="form-group"><label class="form-label">Horário</label><input type="text" class="form-input culto-hora" data-i="${i}" value="${c.hora||''}" placeholder="18:00h" /></div><button class="btn btn-danger btn-icon" onclick="removeCulto(${i})" style="margin-bottom:0.4rem;"><i class="fas fa-minus"></i></button></div>`).join('')+`<button class="btn btn-ghost" style="margin-top:.5rem;" onclick="addCulto()"><i class="fas fa-plus"></i> Adicionar horário</button>`;

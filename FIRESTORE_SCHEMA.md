@@ -26,6 +26,31 @@ Este projeto usa o Firebase Firestore para armazenar e servir conteúdo dinâmic
 
 Os campos `whatsappFloatEnabled` e `contributionFloatEnabled` controlam os botões flutuantes da home. O primeiro é ativado por padrão para manter o comportamento anterior, mas o botão só aparece se houver um número de WhatsApp em `site/redes`. O segundo vem desativado por padrão e só aparece quando for ativado no painel e houver chave Pix, nome e cidade do recebedor em `site/contribuicao`.
 
+### `site/lideranca`
+```json
+{
+  "presidente": {
+    "nome": "",
+    "funcao": "Pastor Presidente",
+    "bio": "",
+    "fotoUrl": "",
+    "alt": ""
+  },
+  "obreiros": [
+    {
+      "nome": "",
+      "funcao": "",
+      "local": "",
+      "fotoUrl": "",
+      "alt": ""
+    }
+  ],
+  "atualizadoEm": "serverTimestamp()"
+}
+```
+
+O documento começa vazio. O presidente aparece no Hero apenas quando pelo menos um campo oficial estiver preenchido; cada obreiro só é exibido quando tiver nome, função ou foto. Fotos são armazenadas no Firebase Storage em `img/lideranca/presidente-*` e `img/lideranca/obreiro-*`.
+
 ### `site/agenda`
 ```json
 {
