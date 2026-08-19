@@ -152,6 +152,23 @@ a{color:inherit;text-decoration:none;}
 [data-theme="light"] .leadership-photo-preview{background:#f0ede8;}
 @media(max-width:700px){.leadership-admin-president{grid-template-columns:1fr;}.leadership-admin-upload{max-width:280px;}.leadership-admin-list-header{align-items:flex-start;flex-direction:column;}.obreiro-admin-row{grid-template-columns:1fr;}.obreiro-admin-photo{max-width:220px;}.leadership-photo-preview.compact{min-height:0;}}
 
+/* ADMINISTRADORES */
+.admins-layout{display:grid;grid-template-columns:minmax(260px,.82fr) minmax(0,1.18fr);gap:1.25rem;align-items:start;}
+.admins-list{display:flex;flex-direction:column;gap:.75rem;}
+.admin-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;}
+.admin-row-main{min-width:0;flex:1;}
+.admin-row-name{font-weight:600;overflow-wrap:anywhere;}
+.admin-row-email{font-size:.8rem;color:var(--muted);overflow-wrap:anywhere;margin-top:.2rem;}
+.admin-row-meta{display:flex;align-items:center;flex-wrap:wrap;gap:.45rem;margin-top:.6rem;font-size:.72rem;color:var(--faint);}
+.admin-status{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .55rem;border-radius:9999px;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
+.admin-status.active{background:rgba(48,160,93,.15);color:var(--success);}
+.admin-status.inactive{background:rgba(161,44,59,.15);color:var(--danger-h);}
+.admin-row-actions{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;justify-content:flex-end;}
+.admin-row-actions .btn{font-size:.76rem;padding:.45rem .7rem;}
+.admin-primary-note{border-left:3px solid var(--gold);background:rgba(201,149,42,.08);padding:.75rem .9rem;border-radius:0 var(--radius) var(--radius) 0;color:var(--muted);font-size:.8rem;line-height:1.5;}
+@media(max-width:900px){.admins-layout{grid-template-columns:1fr;}}
+@media(max-width:560px){.admin-row{flex-direction:column;}.admin-row-actions{width:100%;justify-content:flex-start;}.admin-row-actions .btn{flex:1;justify-content:center;}}
+
 /* UPLOAD */
 .upload-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
 .upload-card-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border);background:var(--surface2);}
@@ -270,6 +287,7 @@ a{color:inherit;text-decoration:none;}
     <button class="nav-item" data-page="redes-config"><i class="fas fa-share-alt"></i> Redes Sociais</button>
     <button class="nav-item" data-page="contribuicao"><i class="fas fa-hand-holding-heart"></i> Contribuição</button>
     <button class="nav-item" data-page="contato-config"><i class="fas fa-map-marker-alt"></i> Contato &amp; Mapa</button>
+    <button class="nav-item" data-page="admins" id="nav-admins" style="display:none;"><i class="fas fa-user-shield"></i> Administradores</button>
   </nav>
 
   <main class="main">
@@ -545,6 +563,39 @@ a{color:inherit;text-decoration:none;}
       </div>
     </section>
 
+    <!-- ADMINISTRADORES -->
+    <section class="page" id="page-admins">
+      <div class="section-header">
+        <div><h1 class="section-title">Administradores</h1><p class="section-subtitle">Autorize contas para editar o conteúdo do site</p></div>
+        <button class="btn btn-ghost" id="btn-refresh-admins"><i class="fas fa-sync-alt"></i> Atualizar lista</button>
+      </div>
+      <div class="admin-primary-note" style="margin-bottom:1.25rem;">
+        <i class="fas fa-shield-alt" style="color:var(--gold);margin-right:.35rem;"></i>
+        <strong style="color:var(--text);">Acesso principal:</strong> <span style="color:var(--gold);">hewertonluann@gmail.com</span> sempre mantém o controle desta área. Somente esta conta pode adicionar, ativar, desativar ou remover outros administradores.
+      </div>
+      <div class="admins-layout">
+        <div class="config-section" style="margin-bottom:0;">
+          <div class="config-section-header"><i class="fas fa-user-plus"></i><strong>Autorizar novo administrador</strong></div>
+          <div class="config-section-body">
+            <p class="form-hint" style="margin:0;">A pessoa precisa ter uma conta criada no Firebase Authentication e conseguir entrar neste painel. O UID é encontrado em <strong style="color:var(--text);">Authentication → Users</strong> no Firebase Console.</p>
+            <div class="form-group"><label class="form-label" for="admin-uid">UID da conta Firebase *</label><input type="text" id="admin-uid" class="form-input" placeholder="Cole o UID exibido no Firebase Console" autocomplete="off" spellcheck="false" required /><small class="form-hint">Não use o e-mail como UID. O UID é o identificador exclusivo da conta.</small></div>
+            <div class="form-group"><label class="form-label" for="admin-email">E-mail da conta *</label><input type="email" id="admin-email" class="form-input" placeholder="pastor@exemplo.com" autocomplete="off" required /></div>
+            <div class="form-group"><label class="form-label" for="admin-nome">Nome para identificação</label><input type="text" id="admin-nome" class="form-input" placeholder="Nome do administrador" autocomplete="off" /></div>
+            <button class="btn btn-gold" id="btn-add-admin" style="justify-content:center;"><i class="fas fa-user-shield"></i> Autorizar administrador</button>
+            <small class="form-hint">A autorização não cria senha nem conta de login. Ela apenas libera uma conta Firebase Authentication já existente.</small>
+          </div>
+        </div>
+        <div class="config-section" style="margin-bottom:0;">
+          <div class="config-section-header"><i class="fas fa-users-cog"></i><strong>Contas autorizadas</strong><span id="admins-count" style="margin-left:auto;font-size:.75rem;color:var(--muted);"></span></div>
+          <div class="config-section-body">
+            <div id="admins-loading" class="spinner" style="margin:1rem auto;"></div>
+            <div id="admins-list" class="admins-list" style="display:none;"></div>
+            <div id="admins-empty" class="empty-state" style="display:none;padding:2rem 1rem;"><i class="fas fa-user-shield"></i><h3>Nenhum administrador adicional</h3><p>Use o formulário ao lado para autorizar a primeira conta adicional.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -697,7 +748,7 @@ a{color:inherit;text-decoration:none;}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, collection, getDocs, addDoc, deleteDoc, orderBy, query, serverTimestamp }
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, deleteDoc, orderBy, query, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
@@ -714,6 +765,9 @@ const fbApp  = initializeApp(firebaseConfig);
 const auth   = getAuth(fbApp);
 const db     = getFirestore(fbApp);
 const storage = getStorage(fbApp);
+const PRIMARY_ADMIN_EMAIL = 'hewertonluann@gmail.com';
+let isPrimaryUser = false;
+let adminsData = [];
 
 // UTILS
 function toast(msg,type='success'){
@@ -751,13 +805,59 @@ document.querySelectorAll('[data-page]').forEach(btn=>{
     if(btn.dataset.page==='redes-config') loadRedesConfig();
     if(btn.dataset.page==='contribuicao') loadContribuicaoConfig();
     if(btn.dataset.page==='contato-config') loadContatoConfig();
+    if(btn.dataset.page==='admins' && isPrimaryUser) loadAdmins();
   });
 });
 
 // AUTH
-onAuthStateChanged(auth,user=>{
-  if(user){document.getElementById('login-screen').style.display='none';loadDashboard();}
-  else{document.getElementById('login-screen').style.display='flex';}
+function showLoginError(message){
+  const errEl=document.getElementById('login-error');
+  errEl.textContent=message;
+  errEl.classList.add('show');
+}
+
+async function checkPanelAccess(user){
+  if(!user || !user.email || !user.emailVerified){
+    return {allowed:false,message:'Use uma conta com e-mail verificado para acessar o painel.'};
+  }
+  if(user.email.toLowerCase()===PRIMARY_ADMIN_EMAIL){
+    return {allowed:true,primary:true};
+  }
+  try{
+    const adminSnap=await getDoc(doc(db,'admins',user.uid));
+    const adminData=adminSnap.exists()?adminSnap.data():null;
+    const registeredEmail=String(adminData?.email||'').trim().toLowerCase();
+    const emailMatches=!registeredEmail||registeredEmail===user.email.toLowerCase();
+    if(adminData?.ativo===true && emailMatches){
+      return {allowed:true,primary:false};
+    }
+    return {allowed:false,message:'Esta conta ainda não foi autorizada pelo administrador principal.'};
+  }catch(error){
+    console.error('Falha ao verificar autorização do painel:',error);
+    return {allowed:false,message:'Não foi possível verificar sua autorização. Confirme se as regras do Firestore foram publicadas.'};
+  }
+}
+
+onAuthStateChanged(auth,async user=>{
+  const loginScreen=document.getElementById('login-screen');
+  const navAdmins=document.getElementById('nav-admins');
+  if(!user){
+    isPrimaryUser=false;
+    navAdmins.style.display='none';
+    loginScreen.style.display='flex';
+    return;
+  }
+  const access=await checkPanelAccess(user);
+  if(!access.allowed){
+    await signOut(auth);
+    loginScreen.style.display='flex';
+    showLoginError(access.message);
+    return;
+  }
+  isPrimaryUser=access.primary===true;
+  navAdmins.style.display=isPrimaryUser?'flex':'none';
+  loginScreen.style.display='none';
+  loadDashboard();
 });
 document.getElementById('login-btn').addEventListener('click',async()=>{
   const email=document.getElementById('login-email').value.trim();
@@ -774,6 +874,142 @@ document.getElementById('google-btn').addEventListener('click',async()=>{
 });
 document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-btn').click();});
 document.getElementById('logout-btn').addEventListener('click',async()=>{await signOut(auth);toast('Sessão encerrada.','info');});
+
+// ADMINISTRADORES
+function formatAdminDate(value){
+  const date=value?.toDate?value.toDate():(value instanceof Date?value:(value?new Date(value):null));
+  if(!date||Number.isNaN(date.getTime())) return 'Data não informada';
+  return date.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+}
+
+function renderAdmins(){
+  const list=document.getElementById('admins-list');
+  const empty=document.getElementById('admins-empty');
+  const count=document.getElementById('admins-count');
+  if(!list||!empty||!count)return;
+  count.textContent=`${adminsData.length} adicional${adminsData.length===1?'':'is'}`;
+  const primaryRow=`<article class="admin-row">
+    <div class="admin-row-main">
+      <div class="admin-row-name">Administrador principal</div>
+      <div class="admin-row-email">${PRIMARY_ADMIN_EMAIL}</div>
+      <div class="admin-row-meta"><span class="admin-status active"><i class="fas fa-check-circle"></i> Ativo</span><span><i class="fas fa-crown" style="color:var(--gold);margin-right:.25rem;"></i>Controle total</span></div>
+    </div>
+    <div class="admin-row-actions"><span class="badge badge-gold">Principal</span></div>
+  </article>`;
+  const additionalRows=adminsData.map(item=>{
+    const uid=escapeHtml(item.id);
+    const name=escapeHtml(item.nome||'Administrador');
+    const email=escapeHtml(item.email||'E-mail não informado');
+    const status=item.ativo===true;
+    return `<article class="admin-row">
+      <div class="admin-row-main">
+        <div class="admin-row-name">${name}</div>
+        <div class="admin-row-email">${email}</div>
+        <div class="admin-row-meta"><span class="admin-status ${status?'active':'inactive'}"><i class="fas ${status?'fa-check-circle':'fa-pause-circle'}"></i> ${status?'Ativo':'Inativo'}</span><span><i class="fas fa-calendar-alt" style="margin-right:.25rem;"></i>Adicionado em ${formatAdminDate(item.criadoEm)}</span><span title="UID da conta">UID: ${uid}</span></div>
+      </div>
+      <div class="admin-row-actions">
+        <button type="button" class="btn btn-ghost" data-admin-toggle="${uid}"><i class="fas ${status?'fa-user-slash':'fa-user-check'}"></i> ${status?'Desativar':'Ativar'}</button>
+        <button type="button" class="btn btn-danger" data-admin-remove="${uid}"><i class="fas fa-trash"></i> Remover</button>
+      </div>
+    </article>`;
+  }).join('');
+  list.innerHTML=primaryRow+additionalRows;
+  showEl('admins-list',true,'flex');
+  showEl('admins-empty',adminsData.length===0);
+  list.querySelectorAll('[data-admin-toggle]').forEach(button=>button.addEventListener('click',()=>toggleAdmin(button.dataset.adminToggle)));
+  list.querySelectorAll('[data-admin-remove]').forEach(button=>button.addEventListener('click',()=>removeAdmin(button.dataset.adminRemove)));
+}
+
+async function loadAdmins(){
+  if(!isPrimaryUser)return;
+  showEl('admins-loading',true);
+  showEl('admins-list',false);
+  showEl('admins-empty',false);
+  try{
+    const snap=await getDocs(collection(db,'admins'));
+    adminsData=snap.docs.map(item=>({id:item.id,...item.data()})).sort((a,b)=>{
+      const aTime=a.criadoEm?.toMillis?a.criadoEm.toMillis():0;
+      const bTime=b.criadoEm?.toMillis?b.criadoEm.toMillis():0;
+      return bTime-aTime;
+    });
+    renderAdmins();
+  }catch(error){
+    console.error('Erro ao carregar administradores:',error);
+    toast('Erro ao carregar administradores: '+error.message,'error');
+  }finally{
+    showEl('admins-loading',false);
+  }
+}
+
+async function addAdmin(){
+  if(!isPrimaryUser)return;
+  const uid=document.getElementById('admin-uid').value.trim();
+  const email=document.getElementById('admin-email').value.trim().toLowerCase();
+  const nome=document.getElementById('admin-nome').value.trim();
+  if(!uid||uid.includes('/')||uid.length<6){toast('Informe um UID válido copiado do Firebase Authentication.','error');return;}
+  if(!email||!email.includes('@')){toast('Informe o e-mail da conta Firebase.','error');return;}
+  if(email===PRIMARY_ADMIN_EMAIL){toast('O administrador principal já possui acesso garantido.','info');return;}
+  const button=document.getElementById('btn-add-admin');
+  button.disabled=true;
+  try{
+    const adminRef=doc(db,'admins',uid);
+    const existing=await getDoc(adminRef);
+    const existingData=existing.exists()?existing.data():{};
+    await setDoc(adminRef,{
+      email,
+      nome:nome||email,
+      ativo:true,
+      papel:'admin',
+      criadoEm:existingData.criadoEm||serverTimestamp(),
+      adicionadoPor:auth.currentUser?.email||PRIMARY_ADMIN_EMAIL,
+      atualizadoEm:serverTimestamp()
+    },{merge:true});
+    document.getElementById('admin-uid').value='';
+    document.getElementById('admin-email').value='';
+    document.getElementById('admin-nome').value='';
+    toast('Administrador autorizado com sucesso.','success');
+    await loadAdmins();
+  }catch(error){
+    console.error('Erro ao adicionar administrador:',error);
+    toast('Não foi possível autorizar a conta: '+error.message,'error');
+  }finally{
+    button.disabled=false;
+  }
+}
+
+async function toggleAdmin(uid){
+  if(!isPrimaryUser)return;
+  const item=adminsData.find(admin=>admin.id===uid);
+  if(!item)return;
+  const nextStatus=item.ativo!==true;
+  try{
+    await updateDoc(doc(db,'admins',uid),{ativo:nextStatus,atualizadoEm:serverTimestamp()});
+    toast(nextStatus?'Administrador ativado.':'Administrador desativado.','success');
+    await loadAdmins();
+  }catch(error){
+    console.error('Erro ao alterar administrador:',error);
+    toast('Não foi possível alterar o status: '+error.message,'error');
+  }
+}
+
+async function removeAdmin(uid){
+  if(!isPrimaryUser)return;
+  const item=adminsData.find(admin=>admin.id===uid);
+  if(!item)return;
+  const label=item.email||item.nome||uid;
+  if(!window.confirm(`Remover a autorização de ${label}? A conta não será apagada do Firebase Authentication.`))return;
+  try{
+    await deleteDoc(doc(db,'admins',uid));
+    toast('Autorização removida.','success');
+    await loadAdmins();
+  }catch(error){
+    console.error('Erro ao remover administrador:',error);
+    toast('Não foi possível remover a autorização: '+error.message,'error');
+  }
+}
+
+document.getElementById('btn-add-admin')?.addEventListener('click',addAdmin);
+document.getElementById('btn-refresh-admins')?.addEventListener('click',loadAdmins);
 
 // DASHBOARD
 async function loadDashboard(){

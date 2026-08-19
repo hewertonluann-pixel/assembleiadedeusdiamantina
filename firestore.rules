@@ -2,13 +2,24 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Proteção inicial baseada no e-mail da conta administradora informada.
-    // Em uma etapa posterior, pode ser migrada para custom claims ou uma
-    // coleção de administradores para permitir múltiplas contas com segurança.
-    function isAdmin() {
+    // O administrador principal permanece como acesso de emergência e
+    // autorização exclusiva para gerenciar a coleção de administradores.
+    function isPrimaryAdmin() {
       return request.auth != null
         && request.auth.token.email == 'hewertonluann@gmail.com'
         && request.auth.token.email_verified == true;
+    }
+
+    // Administradores adicionais precisam estar cadastrados por UID e ativos.
+    function isAuthorizedAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.ativo == true;
+    }
+
+    function isAdmin() {
+      return isPrimaryAdmin() || isAuthorizedAdmin();
     }
 
     // O conteúdo institucional é público por natureza.
@@ -24,7 +35,14 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Nenhuma coleção administrativa deve ser criada com acesso público por engano.
-    // Novas coleções privadas devem declarar regras próprias e explícitas.
+    // A lista de administradores nunca fica pública. Somente o administrador
+    // principal pode criar, alterar, ativar, desativar ou remover registros.
+    match /admins/{uid} {
+      allow read: if isAdmin()
+        || (request.auth != null
+            && request.auth.uid == uid
+            && request.auth.token.email_verified == true);
+      allow write: if isPrimaryAdmin();
+    }
   }
 }

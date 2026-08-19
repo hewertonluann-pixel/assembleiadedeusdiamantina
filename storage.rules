@@ -2,10 +2,21 @@ rules_version = '2';
 
 service firebase.storage {
   match /b/{bucket}/o {
-    function isAdmin() {
+    function isPrimaryAdmin() {
       return request.auth != null
         && request.auth.token.email == 'hewertonluann@gmail.com'
         && request.auth.token.email_verified == true;
+    }
+
+    function isAuthorizedAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid))
+        && firestore.get(/databases/(default)/documents/admins/$(request.auth.uid)).data.ativo == true;
+    }
+
+    function isAdmin() {
+      return isPrimaryAdmin() || isAuthorizedAdmin();
     }
 
     function isImageUpload() {
@@ -15,7 +26,7 @@ service firebase.storage {
     }
 
     // Assets institucionais e fotos das congregações são públicos para leitura,
-    // mas somente a conta administradora pode fazer upload, substituição ou remoção.
+    // mas somente administradores autorizados podem fazer upload, substituição ou remoção.
     match /img/{allPaths=**} {
       allow read: if true;
       allow write: if isAdmin() && (request.resource == null || isImageUpload());

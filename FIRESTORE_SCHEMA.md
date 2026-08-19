@@ -2,6 +2,25 @@
 
 Este projeto usa o Firebase Firestore para armazenar e servir conteúdo dinâmico.
 
+## Coleção: `admins` (acesso privado)
+
+Cada documento usa o **UID da conta no Firebase Authentication como ID**. A coleção não é pública: o administrador principal pode gerenciá-la, e cada usuário autenticado pode consultar apenas o próprio documento para que o painel confirme a autorização.
+
+### `admins/{uid}`
+```json
+{
+  "email": "pastor@exemplo.com",
+  "nome": "Nome do administrador",
+  "ativo": true,
+  "papel": "admin",
+  "criadoEm": "serverTimestamp()",
+  "atualizadoEm": "serverTimestamp()",
+  "adicionadoPor": "hewertonluann@gmail.com"
+}
+```
+
+A conta principal `hewertonluann@gmail.com` mantém acesso por regra de segurança, mesmo sem documento nesta coleção. Contas adicionais somente podem editar o conteúdo quando o documento correspondente ao seu UID existir e tiver `ativo: true`; apenas a conta principal pode criar, alterar ou remover documentos em `admins`.
+
 ---
 
 ## Coleção: `site` (documentos fixos)
