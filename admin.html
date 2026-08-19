@@ -243,6 +243,7 @@ a{color:inherit;text-decoration:none;}
     <button class="nav-item" data-page="home-config"><i class="fas fa-home"></i> Página Inicial</button>
     <button class="nav-item" data-page="imagens"><i class="fas fa-images"></i> Imagens do Site</button>
     <button class="nav-item" data-page="redes-config"><i class="fas fa-share-alt"></i> Redes Sociais</button>
+    <button class="nav-item" data-page="contribuicao"><i class="fas fa-hand-holding-heart"></i> Contribuição</button>
     <button class="nav-item" data-page="contato-config"><i class="fas fa-map-marker-alt"></i> Contato &amp; Mapa</button>
   </nav>
 
@@ -398,6 +399,45 @@ a{color:inherit;text-decoration:none;}
             <div class="form-group"><label class="form-label"><i class="fas fa-radio" style="color:#D4A017;margin-right:.3rem;"></i>Página da rádio</label><input type="url" id="rf-radio-page" class="form-input" placeholder="https://www.radios.com.br/aovivo/..." /><small class="form-hint">Link que será aberto no botão do miniplayer.</small></div>
             <div class="form-group"><label class="form-label"><i class="fas fa-broadcast-tower" style="color:#D4A017;margin-right:.3rem;"></i>URL direta do áudio</label><input type="url" id="rf-radio-stream" class="form-input" placeholder="https://servidor.exemplo.com:8000/stream" /><small class="form-hint">Necessária para o Play funcionar. É diferente da página do Radios.com.br.</small></div>
             <div class="form-group"><label class="form-label"><i class="fab fa-whatsapp" style="color:#25D366;margin-right:.3rem;"></i>WhatsApp</label><input type="tel" id="rf-whatsapp" class="form-input" placeholder="5538999999999" /></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTRIBUIÇÃO CONFIG -->
+    <section class="page" id="page-contribuicao">
+      <div class="section-header">
+        <div><h1 class="section-title">Contribuição</h1><p class="section-subtitle">Dízimo, oferta e QR Code Pix</p></div>
+        <button class="btn btn-primary" id="btn-save-contribuicao"><i class="fas fa-save"></i> Salvar</button>
+      </div>
+      <div id="contribuicao-loading" class="spinner"></div>
+      <div id="contribuicao-form" style="display:none;">
+        <div class="config-section">
+          <div class="config-section-header"><i class="fas fa-qrcode"></i><strong>Dados da contribuição</strong></div>
+          <div class="config-section-body">
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Tipo da chave Pix</label><select id="cf-pix-type" class="form-input"><option value="aleatoria">Chave aleatória</option><option value="email">E-mail</option><option value="telefone">Telefone</option><option value="cpf">CPF</option><option value="cnpj">CNPJ</option></select></div>
+              <div class="form-group"><label class="form-label">Chave Pix</label><input type="text" id="cf-pix-key" class="form-input" placeholder="Será preenchida posteriormente" autocomplete="off" /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Nome do recebedor</label><input type="text" id="cf-pix-name" class="form-input" placeholder="Nome oficial da igreja" /></div>
+              <div class="form-group"><label class="form-label">Cidade do recebedor</label><input type="text" id="cf-pix-city" class="form-input" placeholder="Diamantina" /></div>
+            </div>
+            <div class="form-group"><label class="form-label">Mensagem de orientação</label><textarea id="cf-pix-note" class="form-textarea" rows="3" placeholder="Contribua com dízimos e ofertas..."> </textarea><span class="form-hint">A seção pública ficará oculta até haver chave, recebedor e QR Code configurados.</span></div>
+          </div>
+        </div>
+        <div class="config-section">
+          <div class="config-section-header"><i class="fas fa-image"></i><strong>QR Code Pix</strong></div>
+          <div class="config-section-body">
+            <div class="upload-card" style="max-width:420px;">
+              <div class="upload-card-header"><strong><i class="fas fa-qrcode" style="color:var(--gold);margin-right:.4rem;"></i>QR Code oficial</strong><span>img/pix-qr.png</span></div>
+              <div class="upload-card-body">
+                <div class="upload-preview contain" id="preview-pix-qr"><i class="fas fa-qrcode"></i></div>
+                <label class="upload-drop" id="drop-pix-qr"><input type="file" id="file-pix-qr" accept="image/jpeg,image/webp,image/png" /><i class="fas fa-cloud-upload-alt"></i><strong>Clique ou arraste aqui</strong><p>PNG/JPG/WEBP • QR gerado pelo banco</p></label>
+                <div class="progress-bar-wrap" id="prog-wrap-pix-qr"><div class="progress-bar-fill" id="prog-pix-qr"></div></div>
+                <button class="btn btn-gold" id="btn-upload-pix-qr" style="width:100%;justify-content:center;" disabled><i class="fas fa-upload"></i> Fazer upload</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -636,6 +676,7 @@ document.querySelectorAll('[data-page]').forEach(btn=>{
     if(btn.dataset.page==='home-config') loadHomeConfig();
     if(btn.dataset.page==='imagens') loadImagens();
     if(btn.dataset.page==='redes-config') loadRedesConfig();
+    if(btn.dataset.page==='contribuicao') loadContribuicaoConfig();
     if(btn.dataset.page==='contato-config') loadContatoConfig();
   });
 });
@@ -1160,6 +1201,50 @@ document.getElementById('btn-save-redes').addEventListener('click',async()=>{
     await setDoc(doc(db,'site','redes'),{instagram:document.getElementById('rf-instagram').value.trim(),facebook:document.getElementById('rf-facebook').value.trim(),youtube:document.getElementById('rf-youtube').value.trim(),youtubeVideo:document.getElementById('rf-youtube-video').value.trim(),radioPage:document.getElementById('rf-radio-page').value.trim(),radioStream:document.getElementById('rf-radio-stream').value.trim(),whatsapp:document.getElementById('rf-whatsapp').value.trim()});
     toast('Redes sociais atualizadas!');
   }catch(e){toast('Erro: '+e.message,'error');}
+});
+
+// ═══════════════════════════════════════
+// CONTRIBUIÇÃO CONFIG
+// ═══════════════════════════════════════
+async function loadContribuicaoConfig(){
+  showEl('contribuicao-loading',true);showEl('contribuicao-form',false);
+  try{
+    const snap=await getDoc(doc(db,'site','contribuicao'));const d=snap.data()||{};
+    document.getElementById('cf-pix-type').value=d.pixKeyType||'aleatoria';
+    document.getElementById('cf-pix-key').value=d.pixKey||'';
+    document.getElementById('cf-pix-name').value=d.receiverName||'';
+    document.getElementById('cf-pix-city').value=d.receiverCity||'';
+    document.getElementById('cf-pix-note').value=d.note||'';
+    if(d.qrCode) setPreview('preview-pix-qr',d.qrCode,true);
+    showEl('contribuicao-form',true);
+  }catch(e){toast('Erro ao carregar contribuição: '+e.message,'error');}finally{showEl('contribuicao-loading',false);}
+}
+document.getElementById('btn-save-contribuicao').addEventListener('click',async()=>{
+  try{
+    await setDoc(doc(db,'site','contribuicao'),{pixKeyType:document.getElementById('cf-pix-type').value,pixKey:document.getElementById('cf-pix-key').value.trim(),receiverName:document.getElementById('cf-pix-name').value.trim(),receiverCity:document.getElementById('cf-pix-city').value.trim(),note:document.getElementById('cf-pix-note').value.trim()},{merge:true});
+    toast('Configuração de contribuição salva!');
+  }catch(e){toast('Erro: '+e.message,'error');}
+});
+const pixQrFile=document.getElementById('file-pix-qr');
+const pixQrBtn=document.getElementById('btn-upload-pix-qr');
+const pixQrDrop=document.getElementById('drop-pix-qr');
+let pixQrSelected=null;
+function selectPixQr(file){if(!file||!file.type.startsWith('image/')){toast('Selecione uma imagem válida.','error');return;}pixQrSelected=file;setPreview('preview-pix-qr',URL.createObjectURL(file),true);pixQrBtn.disabled=false;}
+pixQrFile.addEventListener('change',()=>selectPixQr(pixQrFile.files[0]));
+pixQrDrop.addEventListener('dragover',e=>{e.preventDefault();pixQrDrop.classList.add('drag-over');});
+pixQrDrop.addEventListener('dragleave',()=>pixQrDrop.classList.remove('drag-over'));
+pixQrDrop.addEventListener('drop',e=>{e.preventDefault();pixQrDrop.classList.remove('drag-over');selectPixQr(e.dataTransfer.files[0]);});
+pixQrBtn.addEventListener('click',async()=>{
+  if(!pixQrSelected){toast('Selecione o QR Code primeiro.','error');return;}
+  pixQrBtn.disabled=true;const wrap=document.getElementById('prog-wrap-pix-qr');const fill=document.getElementById('prog-pix-qr');wrap.style.display='block';fill.style.width='0%';
+  try{
+    const sRef=storageRef(storage,'img/pix-qr.png');const uploadTask=uploadBytesResumable(sRef,pixQrSelected);
+    await new Promise((resolve,reject)=>uploadTask.on('state_changed',snap=>{fill.style.width=Math.round((snap.bytesTransferred/snap.totalBytes)*100)+'%';},reject,resolve));
+    const downloadURL=await getDownloadURL(uploadTask.snapshot.ref);
+    await setDoc(doc(db,'site','contribuicao'),{qrCode:downloadURL},{merge:true});
+    fill.style.width='100%';toast('✓ QR Code Pix enviado!');setTimeout(()=>{wrap.style.display='none';fill.style.width='0%';},2000);pixQrSelected=null;
+  }catch(e){toast('Erro no upload do QR Code: '+e.message,'error');wrap.style.display='none';}
+  pixQrBtn.disabled=false;
 });
 
 // ═══════════════════════════════════════

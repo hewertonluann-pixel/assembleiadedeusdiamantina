@@ -94,7 +94,26 @@ O miniplayer aparece depois que a URL direta estiver salva e oferece play/pause,
 
 Clique em **Salvar** e confirme **“Redes sociais atualizadas!”**. Depois recarregue a home com `Ctrl+F5`.
 
-## 5. Ministérios
+## 5. Contribuição via Pix
+
+No menu lateral, clique em **Contribuição**. A página foi preparada para receber os dados oficiais sem publicar nada enquanto a configuração estiver incompleta.
+
+Preencha somente quando a liderança confirmar:
+
+| Campo | Orientação |
+|---|---|
+| Tipo de chave | Aleatória, e-mail, telefone, CPF ou CNPJ. |
+| Chave Pix | Valor exato da chave oficial. |
+| Nome do recebedor | Nome que deve aparecer para conferência. |
+| Cidade do recebedor | Cidade registrada para a cobrança Pix. |
+| QR Code | Faça upload do QR Code gerado pelo banco ou instituição financeira. |
+| Mensagem | Texto opcional de orientação aos membros. |
+
+A seção pública só aparece quando chave, nome, cidade e QR Code estiverem preenchidos. Antes disso, o site não mostrará uma chave incompleta nem um QR Code placeholder. O QR Code deve ser selecionado diretamente no navegador; não envie chaves privadas, senhas ou tokens por mensagem.
+
+Depois de preencher, clique em **Salvar contribuição**. A página pública exibirá a seção de dízimo e oferta com QR Code, chave copiável e aviso para conferir o recebedor no aplicativo do banco.
+
+## 6. Ministérios
 
 No menu lateral, clique em **Ministérios**. A home já encontrou cinco ministérios no Firestore, mas quase todos estão sem descrição. Não invente descrições. Para cada ministério, abra **Editar** e preencha uma descrição curta fornecida pela igreja:
 
@@ -108,7 +127,7 @@ No menu lateral, clique em **Ministérios**. A home já encontrou cinco ministé
 
 Também confirme os ícones antes de alterá-los. O campo de ícone usa classes do Font Awesome, como `fa-users`, mas a descrição oficial é mais importante que o ícone.
 
-## 5. Agenda
+## 7. Agenda
 
 No menu lateral, clique em **Agenda**. Não crie eventos fictícios. Para cada evento real, clique em **Novo Evento** e preencha:
 
@@ -120,7 +139,7 @@ No menu lateral, clique em **Agenda**. Não crie eventos fictícios. Para cada e
 
 Depois salve a agenda. Se ainda não houver evento confirmado, a próxima melhoria de código deverá criar explicitamente o documento com `eventos: []`, para a home mostrar **“Nenhum evento programado”** em vez de permanecer sem estado.
 
-## 6. Imagens do site
+## 8. Imagens do site
 
 No menu lateral, clique em **Imagens do Site**. Esta seção ainda depende de arquivos oficiais que não estão no repositório. Não faça upload de imagens aleatórias ou sem autorização.
 
@@ -134,7 +153,7 @@ Os três arquivos necessários são:
 
 Selecione um arquivo, aguarde o botão **Fazer upload** ficar habilitado, clique nele e aguarde a confirmação. O upload criará ou atualizará `site/imagens`.
 
-## 7. Ordem para testar depois de salvar
+## 9. Ordem para testar depois de salvar
 
 Depois de preencher os documentos, abra estas páginas e atualize com `Ctrl+F5`:
 
@@ -145,7 +164,7 @@ Depois de preencher os documentos, abra estas páginas e atualize com `Ctrl+F5`:
 
 Verifique principalmente se o rodapé deixa de mostrar **“Carregando…”**, se endereço e cultos aparecem na listagem e se os textos da home correspondem aos valores salvos.
 
-## 8. O que não deve ser alterado nesta etapa
+## 10. O que não deve ser alterado nesta etapa
 
 Não altere as regras do Firestore nem do Storage pelo painel. Não crie contas administrativas adicionais sem definir antes uma política de acesso. Não exclua congregações ou ministérios existentes. Não publique eventos, imagens, telefones, horários, PIX ou descrições que não tenham sido confirmados pela liderança.
 

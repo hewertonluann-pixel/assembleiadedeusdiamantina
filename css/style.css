@@ -252,6 +252,7 @@ ul { list-style: none; }
 .agenda-box h3 { font-size: 1.2rem; color: var(--primary); margin-bottom: 24px; display: flex; gap: 10px; align-items: center; }
 .agenda-lista { display: flex; flex-direction: column; gap: 16px; }
 .agenda-lista li { display: flex; align-items: center; gap: 20px; padding: 16px; background: var(--light); border-radius: var(--radius); }
+.agenda-lista li.agenda-empty { justify-content: center; padding: 24px 16px; color: var(--gray); background: transparent; border: 1px dashed #d9d9d9; font-size: 0.95rem; text-align: center; }
 .agenda-data {
   background: var(--primary);
   color: #fff;
@@ -584,3 +585,51 @@ ul { list-style: none; }
   /* Modal PIX: padding menor em tela pequena */
   .pix-modal-box { padding: 28px 20px; }
 }
+
+/* CONTRIBUTION + RADIO SECTIONS */
+.contribution-section,
+.radio-section { background: var(--light); }
+.contribution-section[hidden],
+.radio-section[hidden] { display: none; }
+.contribution-card { max-width: 980px; margin: 1.5rem auto 0; display: grid; grid-template-columns: 1.2fr .8fr; gap: 2rem; align-items: center; padding: 2rem; border: 1px solid rgba(184, 134, 11, .25); border-radius: 22px; background: #fff; box-shadow: 0 16px 45px rgba(39, 29, 14, .09); }
+.contribution-copy h3 { margin: .55rem 0 .65rem; color: var(--primary); font-family: 'Playfair Display', serif; font-size: 1.55rem; }
+.contribution-copy > p { max-width: 620px; margin: 0 0 1rem; color: var(--gray); line-height: 1.7; }
+.contribution-icon { width: 46px; height: 46px; display: inline-grid; place-items: center; border-radius: 50%; color: #fff; background: linear-gradient(135deg, var(--gold), #9b7111); box-shadow: 0 8px 18px rgba(155,113,17,.22); }
+.contribution-recipient { display: flex; flex-wrap: wrap; gap: .4rem 1rem; margin: .8rem 0; color: var(--primary); }
+.contribution-recipient span { color: var(--gray); }
+.contribution-key-row { display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; }
+.contribution-key-row code { min-width: 240px; padding: .65rem .8rem; border-radius: 9px; color: var(--primary); background: #faf7ee; border: 1px solid rgba(184,134,11,.2); word-break: break-all; }
+.contribution-qr-wrap { min-height: 230px; display: grid; place-items: center; padding: 1rem; border-radius: 16px; background: #fafafa; border: 1px solid #eee8dd; }
+.contribution-qr-wrap img { display: block; max-width: 230px; max-height: 230px; width: 100%; height: auto; object-fit: contain; }
+.radio-section { padding-top: 2.2rem; padding-bottom: 2.2rem; background: linear-gradient(135deg, #211b14, #3f2b15); color: #fff; }
+.radio-section__inner { display: flex; align-items: center; gap: 1.1rem; }
+.radio-section__icon { flex: 0 0 52px; width: 52px; height: 52px; display: grid; place-items: center; border-radius: 50%; color: #2d2112; background: var(--gold); font-size: 1.3rem; }
+.radio-section__copy { flex: 1; }
+.radio-section__copy .section-kicker { color: #f2d68a; }
+.radio-section__copy h2 { margin: .15rem 0 .25rem; color: #fff; font-family: 'Playfair Display', serif; }
+.radio-section__copy p { margin: 0; color: rgba(255,255,255,.72); }
+.radio-section__actions { display: flex; flex-wrap: wrap; gap: .65rem; }
+.radio-section__actions .btn-outline { color: #fff; border-color: rgba(255,255,255,.35); }
+.radio-section__actions .btn-outline:hover { border-color: var(--gold); color: #fff; }
+@media (max-width: 760px) {
+  .contribution-card { grid-template-columns: 1fr; padding: 1.25rem; }
+  .contribution-qr-wrap { order: -1; min-height: 190px; }
+  .contribution-qr-wrap img { max-width: 190px; max-height: 190px; }
+  .contribution-key-row { align-items: stretch; flex-direction: column; }
+  .contribution-key-row code { min-width: 0; }
+  .contribution-key-row .btn { width: 100%; justify-content: center; }
+  .radio-section__inner { align-items: flex-start; flex-wrap: wrap; }
+  .radio-section__copy { min-width: calc(100% - 68px); }
+  .radio-section__actions { width: 100%; margin-left: 68px; }
+  .radio-section__actions .btn { flex: 1; justify-content: center; }
+}
+@media (max-width: 420px) {
+  .radio-section__actions { margin-left: 0; }
+  .radio-section__actions .btn { width: 100%; flex-basis: 100%; }
+}
+
+.section-heading { margin-bottom: 1.5rem; }
+.section-heading.centered { text-align: center; }
+.section-heading h2 { margin: .2rem 0 .7rem; color: var(--primary); font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4vw, 2.5rem); }
+.section-heading p { color: var(--gray); }
+.section-kicker { display: inline-block; color: var(--gold); font-size: .75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }

@@ -34,6 +34,7 @@
           <li><a href="#midia" class="nav-link">Mídia</a></li>
           <li><a href="congregacoes.html" class="nav-link">Congregações</a></li>
           <li><a href="#contato" class="nav-link">Contato</a></li>
+          <li id="nav-contribuicao" hidden><a href="#contribuicao" class="nav-link">Contribuição</a></li>
         </ul>
       </nav>
       <button class="hamburger" id="hamburger" aria-label="Abrir menu">
@@ -143,7 +144,7 @@
       <div class="agenda-box">
         <h3><i class="fas fa-calendar-alt"></i> Próximos Eventos</h3>
         <ul class="agenda-lista" id="agenda-lista">
-          <!-- populado pelo Firestore -->
+          <li class="agenda-empty" id="agenda-empty">Nenhum evento programado no momento.</li>
         </ul>
       </div>
     </div>
@@ -329,6 +330,36 @@
     </div>
   </section>
 
+  <!-- CONTRIBUIÇÃO -->
+  <section class="section contribution-section" id="contribuicao" hidden>
+    <div class="container">
+      <div class="section-heading centered">
+        <span class="section-kicker">Participe da obra</span>
+        <h2>Dízimo e oferta</h2>
+        <p id="contribuicao-note">Sua contribuição ajuda a igreja a continuar pregando o Evangelho e servindo a comunidade.</p>
+      </div>
+      <div class="contribution-card">
+        <div class="contribution-copy">
+          <span class="contribution-icon"><i class="fas fa-hand-holding-heart"></i></span>
+          <h3>Contribua com segurança</h3>
+          <p>Utilize a chave Pix abaixo ou escaneie o QR Code. Antes de confirmar, confira o nome do recebedor no aplicativo do seu banco.</p>
+          <div class="contribution-recipient"><strong id="contribuicao-receiver"></strong><span id="contribuicao-city"></span></div>
+          <div class="contribution-key-row"><code id="contribuicao-pix-key"></code><button class="btn btn-outline" id="contribuicao-copy" type="button"><i class="fas fa-copy"></i> Copiar chave</button></div>
+        </div>
+        <div class="contribution-qr-wrap"><img id="contribuicao-qr" alt="QR Code para contribuição via Pix" loading="lazy" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RÁDIO -->
+  <section class="section radio-section" id="radio" hidden>
+    <div class="container radio-section__inner">
+      <div class="radio-section__icon"><i class="fas fa-broadcast-tower"></i></div>
+      <div class="radio-section__copy"><span class="section-kicker">Ao vivo</span><h2>Ouça a nossa rádio</h2><p>Louvor, palavra e informação para acompanhar você.</p></div>
+      <div class="radio-section__actions"><button class="btn btn-primary" id="radio-section-play" type="button"><i class="fas fa-play"></i> Ouvir agora</button><a class="btn btn-outline" id="radio-section-link" href="#" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Página da rádio</a></div>
+    </div>
+  </section>
+
   <!-- FOOTER -->
   <footer class="footer">
     <div class="container footer-grid">
@@ -357,6 +388,7 @@
           <li><a href="#midia">Mídia</a></li>
           <li><a href="congregacoes.html">Congregações</a></li>
           <li><a href="#contato">Contato</a></li>
+          <li id="footer-nav-contribuicao" hidden><a href="#contribuicao">Contribuição</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -381,26 +413,6 @@
   <a href="#" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale pelo WhatsApp" id="whatsapp-float" hidden>
     <i class="fab fa-whatsapp"></i>
   </a>
-
-  <!-- PIX MODAL -->
-  <div class="pix-btn-wrapper">
-    <button class="btn-pix" onclick="document.getElementById('pix-modal').style.display='flex'" aria-label="Contribuir via PIX">
-      <i class="fas fa-hand-holding-heart"></i> Contribuir / Dízimo
-    </button>
-  </div>
-  <div class="pix-modal" id="pix-modal" onclick="this.style.display='none'">
-    <div class="pix-modal-box" onclick="event.stopPropagation()">
-      <button class="pix-close" onclick="document.getElementById('pix-modal').style.display='none'">&times;</button>
-      <h3><i class="fas fa-hand-holding-heart"></i> Contribua com a obra de Deus</h3>
-      <p>Use o PIX abaixo para enviar sua oferta ou dízimo:</p>
-      <div class="pix-key">
-        <strong>Chave PIX (CNPJ):</strong>
-        <span id="pix-chave">10.955.024/0001-58</span>
-        <button onclick="copiarPix()"><i class="fas fa-copy"></i> Copiar</button>
-      </div>
-      <p class="pix-obs">Assembleia de Deus — Ministério de Diamantina/MG</p>
-    </div>
-  </div>
 
   <!-- MINIPLAYER DA RÁDIO -->
   <aside class="radio-player" id="radio-player" hidden aria-label="Rádio ao vivo">
@@ -551,9 +563,14 @@
       try {
         const snap = await getDoc(doc(db, 'site', 'agenda'));
         const eventos = snap.data()?.eventos;
-        if (!eventos || !eventos.length) return;
-
         const lista = document.getElementById('agenda-lista');
+        if (!lista) return;
+        if (!Array.isArray(eventos) || !eventos.length) {
+          lista.innerHTML = '<li class="agenda-empty">Nenhum evento programado no momento.</li>';
+          return;
+        }
+
+
         lista.innerHTML = eventos.map(ev => {
           const partes = (ev.data || '').split('/');
           const dia = partes[0] || '—';
@@ -633,9 +650,15 @@
         }
 
         updateWhatsappLinks(d.whatsapp);
+        const radioPage = String(d.radioPage || '').trim();
+        const radioStream = String(d.radioStream || '').trim();
+        const radioSection = document.getElementById('radio');
+        const radioSectionLink = document.getElementById('radio-section-link');
+        if (radioSection) radioSection.hidden = !(radioPage || radioStream);
+        if (radioSectionLink) radioSectionLink.href = radioPage || radioStream || '#';
         window.dispatchEvent(new CustomEvent('site:radio-config', { detail: {
-          radioPage: d.radioPage,
-          radioStream: d.radioStream,
+          radioPage,
+          radioStream,
           radioName: d.radioName || 'Diamantina Gospel FM'
         }}));
 
@@ -701,8 +724,47 @@
       } catch (e) { console.warn('loadContato:', e); }
     }
 
+    async function loadContribuicao() {
+      try {
+        const snap = await getDoc(doc(db, 'site', 'contribuicao'));
+        const d = snap.data() || {};
+        const key = String(d.pixKey || '').trim();
+        const receiver = String(d.receiverName || '').trim();
+        const city = String(d.receiverCity || '').trim();
+        const qr = String(d.qrCode || '').trim();
+        const section = document.getElementById('contribuicao');
+        const complete = Boolean(key && receiver && city && qr);
+        const navContribution = document.getElementById('nav-contribuicao');
+        const footerNavContribution = document.getElementById('footer-nav-contribuicao');
+        if (navContribution) navContribution.hidden = !complete;
+        if (footerNavContribution) footerNavContribution.hidden = !complete;
+        if (!section) return;
+        section.hidden = !complete;
+        if (!complete) return;
+        const note = document.getElementById('contribuicao-note');
+        const receiverEl = document.getElementById('contribuicao-receiver');
+        const cityEl = document.getElementById('contribuicao-city');
+        const keyEl = document.getElementById('contribuicao-pix-key');
+        const qrEl = document.getElementById('contribuicao-qr');
+        if (note && d.note) note.textContent = d.note;
+        if (receiverEl) receiverEl.textContent = receiver;
+        if (cityEl) cityEl.textContent = city;
+        if (keyEl) keyEl.textContent = key;
+        if (qrEl) qrEl.src = qr;
+        document.getElementById('contribuicao-copy')?.addEventListener('click', async () => {
+          try { await navigator.clipboard.writeText(key); window.alert('Chave Pix copiada!'); }
+          catch (_) { window.alert('Não foi possível copiar automaticamente.'); }
+        }, { once: true });
+      } catch (e) { console.warn('loadContribuicao:', e); }
+    }
+
+    document.getElementById('radio-section-play')?.addEventListener('click', () => {
+      document.getElementById('radio-player')?.removeAttribute('hidden');
+      document.getElementById('radio-player-toggle')?.click();
+    });
+
     // ── Disparar tudo em paralelo ─────────────────────────────────────────────
-    Promise.all([loadHome(), loadAgenda(), loadMins(), loadRedes(), loadImagens(), loadContato()]);
+    Promise.all([loadHome(), loadAgenda(), loadMins(), loadRedes(), loadImagens(), loadContato(), loadContribuicao()]);
   </script>
 
 </body>

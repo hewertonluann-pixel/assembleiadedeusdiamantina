@@ -92,3 +92,17 @@ Cada documento representa uma congregação:
 **Campo `maps`**: use o endereço completo para busca no Google Maps, ou o embed URL.
 **Campo `ordem`**: número inteiro para definir a ordem de exibição dos cards.
 **Campo `foto`**: URL de uma imagem da congregação. Se omitido, usa imagem automática.
+
+### `site/contribuicao`
+```json
+{
+  "pixKeyType": "aleatoria",
+  "pixKey": "chave Pix oficial",
+  "receiverName": "Nome oficial do recebedor",
+  "receiverCity": "Diamantina",
+  "qrCode": "https://.../img/pix-qr.png",
+  "note": "Mensagem opcional de orientação"
+}
+```
+
+A seção pública de contribuição só é exibida quando `pixKey`, `receiverName`, `receiverCity` e `qrCode` estiverem preenchidos. Enquanto os dados oficiais não forem informados, o painel pode salvar a estrutura incompleta sem publicar uma chave ou QR Code incorretos.
