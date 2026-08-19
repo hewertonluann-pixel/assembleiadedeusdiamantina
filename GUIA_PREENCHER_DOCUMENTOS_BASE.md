@@ -143,15 +143,16 @@ Depois salve a agenda. Se ainda não houver evento confirmado, a próxima melhor
 
 No menu lateral, clique em **Imagens do Site**. Esta seção ainda depende de arquivos oficiais que não estão no repositório. Não faça upload de imagens aleatórias ou sem autorização.
 
-Os três arquivos necessários são:
+Os quatro arquivos podem ser configurados nesta seção:
 
 | Slot | Recomendação |
 |---|---|
 | Logo da Igreja | PNG ou WEBP com fundo transparente, se disponível. |
 | Imagem de Fundo (Hero) | JPG/WEBP, preferencialmente com pelo menos 1920×1080 px. |
 | Foto da Igreja (Sobre) | Fachada ou interior, com autorização de uso. |
+| Ícone da Aba (Favicon) | Somente PNG, preferencialmente quadrado em 512×512 px, com o símbolo ou a versão reduzida da logo. |
 
-Selecione um arquivo, aguarde o botão **Fazer upload** ficar habilitado, clique nele e aguarde a confirmação. O upload criará ou atualizará `site/imagens`.
+Selecione um arquivo, aguarde o botão **Fazer upload** ficar habilitado, clique nele e aguarde a confirmação. O upload criará ou atualizará `site/imagens`. No caso do favicon, o arquivo será salvo como `img/favicon.png`; depois de recarregar as páginas, ele será aplicado automaticamente na aba do navegador. Use somente um PNG oficial e autorizado pela igreja.
 
 ## 9. Ordem para testar depois de salvar
 

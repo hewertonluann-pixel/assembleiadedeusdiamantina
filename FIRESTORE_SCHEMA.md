@@ -42,6 +42,18 @@ Este projeto usa o Firebase Firestore para armazenar e servir conteúdo dinâmic
 }
 ```
 
+### `site/imagens`
+```json
+{
+  "logo": "https://.../img/logo.png",
+  "hero": "https://.../img/hero-bg.jpg",
+  "igreja": "https://.../img/igreja.jpg",
+  "favicon": "https://.../img/favicon.png"
+}
+```
+
+**Campo `favicon`**: URL pública do PNG usado como ícone da aba do navegador. O painel grava o arquivo em `img/favicon.png` no Firebase Storage e aplica o ícone nas páginas públicas. Enquanto o campo estiver vazio ou indisponível, o site mantém `favicon.svg` como fallback.
+
 ### `site/redes`
 ```json
 {

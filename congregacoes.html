@@ -12,7 +12,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="css/radio-player.css" />
 
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link id="site-favicon" rel="icon" type="image/svg+xml" href="favicon.svg">
+  <script src="js/favicon.js"></script>
 <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -790,6 +791,11 @@
           const c = contatoDoc.data();
           document.getElementById('footer-endereco').innerHTML =
             `${c.rua || ''}<br/>${c.bairro || ''}<br/>${c.cidade || ''}<br/>${c.cep || ''}`;
+        }
+
+        const imagensDoc = await getDoc(doc(db, 'site', 'imagens'));
+        if (imagensDoc.exists() && window.setSiteFavicon) {
+          window.setSiteFavicon(imagensDoc.data().favicon);
         }
 
         const redesDoc = await getDoc(doc(db, 'site', 'redes'));

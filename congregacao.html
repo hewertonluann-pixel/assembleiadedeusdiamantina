@@ -10,7 +10,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="css/radio-player.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link id="site-favicon" rel="icon" type="image/svg+xml" href="favicon.svg">
+  <script src="js/favicon.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -604,11 +605,13 @@ document.addEventListener('keydown', e => {
 
 async function carregarSite() {
   try {
-    const [homeSnap, contatoSnap, redesSnap] = await Promise.all([
+    const [homeSnap, contatoSnap, redesSnap, imagensSnap] = await Promise.all([
       getDoc(doc(db,'site','home')),
       getDoc(doc(db,'site','contato')),
-      getDoc(doc(db,'site','redes'))
+      getDoc(doc(db,'site','redes')),
+      getDoc(doc(db,'site','imagens'))
     ]);
+    if (window.setSiteFavicon) window.setSiteFavicon(imagensSnap.data()?.favicon);
     const h = homeSnap.data() || {};
     if (Array.isArray(h.cultos) && h.cultos.length) {
       document.getElementById('footer-cultos').innerHTML =
