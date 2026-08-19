@@ -38,10 +38,10 @@ service cloud.firestore {
     // A lista de administradores nunca fica pública. Somente o administrador
     // principal pode criar, alterar, ativar, desativar ou remover registros.
     match /admins/{uid} {
-      allow read: if isAdmin()
-        || (request.auth != null
-            && request.auth.uid == uid
-            && request.auth.token.email_verified == true);
+      allow read: if request.auth != null
+        && request.auth.token.email_verified == true
+        && (request.auth.token.email == 'hewertonluann@gmail.com'
+            || request.auth.uid == uid);
       allow write: if isPrimaryAdmin();
     }
   }
