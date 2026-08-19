@@ -599,6 +599,8 @@ ul { list-style: none; }
 .contribution-recipient span { color: var(--gray); }
 .contribution-key-row { display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; }
 .contribution-key-row code { min-width: 240px; padding: .65rem .8rem; border-radius: 9px; color: var(--primary); background: #faf7ee; border: 1px solid rgba(184,134,11,.2); word-break: break-all; }
+.contribution-key-row .btn-outline { color: var(--primary); border-color: rgba(31, 63, 142, .35); background: #fff; }
+.contribution-key-row .btn-outline:hover { color: #fff; border-color: var(--primary); background: var(--primary); }
 .contribution-qr-wrap { min-height: 230px; display: grid; place-items: center; padding: 1rem; border-radius: 16px; background: #fafafa; border: 1px solid #eee8dd; }
 .contribution-qr-wrap img { display: block; max-width: 230px; max-height: 230px; width: 100%; height: auto; object-fit: contain; }
 .radio-section { padding-top: 2.2rem; padding-bottom: 2.2rem; background: linear-gradient(135deg, #211b14, #3f2b15); color: #fff; }
