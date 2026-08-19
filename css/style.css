@@ -537,6 +537,11 @@ ul { list-style: none; }
   position: relative;
   inset: auto;
   flex: 0 0 58px;
+  width: 58px;
+  min-width: 58px;
+  height: 58px;
+  min-height: 58px;
+  padding: 0;
 }
 .contribution-float {
   width: 58px;
@@ -550,7 +555,7 @@ ul { list-style: none; }
   background: transparent;
   transition: transform var(--transition), filter var(--transition);
 }
-.contribution-float__icon {
+.floating-actions .contribution-float__icon {
   width: 58px;
   height: 58px;
   font-size: 1.35rem;
@@ -667,8 +672,8 @@ ul { list-style: none; }
   .floating-actions { right: 16px; bottom: 18px; gap: 10px; }
   .floating-actions .whatsapp-float,
   .contribution-float,
-  .contribution-float__icon { width: 54px; height: 54px; }
-  .floating-actions .whatsapp-float { flex-basis: 54px; }
+  .floating-actions .contribution-float__icon { width: 54px; height: 54px; }
+  .floating-actions .whatsapp-float { flex-basis: 54px; min-width: 54px; min-height: 54px; }
   .contribution-float-popover { right: 16px; bottom: 86px; }
 
   /* Imagem da seção Sobre: limita altura no mobile */
