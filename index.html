@@ -762,10 +762,33 @@
         if (cityEl) cityEl.textContent = city;
         if (keyEl) keyEl.textContent = key;
         if (qrEl) qrEl.src = qr;
-        document.getElementById('contribuicao-copy')?.addEventListener('click', async () => {
-          try { await navigator.clipboard.writeText(key); window.alert('Chave Pix copiada!'); }
-          catch (_) { window.alert('Não foi possível copiar automaticamente.'); }
-        }, { once: true });
+        const copyBtn = document.getElementById('contribuicao-copy');
+        if (copyBtn) {
+          copyBtn.onclick = async () => {
+            let copied = false;
+            try {
+              if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(key);
+                copied = true;
+              }
+            } catch (_) { /* usa o fallback abaixo */ }
+            if (!copied) {
+              const textarea = document.createElement('textarea');
+              textarea.value = key;
+              textarea.setAttribute('readonly', '');
+              textarea.style.position = 'fixed';
+              textarea.style.opacity = '0';
+              document.body.appendChild(textarea);
+              textarea.select();
+              try { copied = document.execCommand('copy'); } catch (_) { copied = false; }
+              textarea.remove();
+            }
+            const originalLabel = copyBtn.innerHTML;
+            copyBtn.innerHTML = copied ? '<i class="fas fa-check"></i> Copiada!' : '<i class="fas fa-copy"></i> Copiar chave';
+            if (!copied) window.alert('Não foi possível copiar automaticamente. Pressione e segure a chave para copiá-la.');
+            window.setTimeout(() => { copyBtn.innerHTML = originalLabel; }, 2200);
+          };
+        }
       } catch (e) { console.warn('loadContribuicao:', e); }
     }
 
