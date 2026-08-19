@@ -48,11 +48,13 @@ Este projeto usa o Firebase Firestore para armazenar e servir conteúdo dinâmic
   "logo": "https://.../img/logo.png",
   "hero": "https://.../img/hero-bg.jpg",
   "igreja": "https://.../img/igreja.jpg",
-  "favicon": "https://.../img/favicon.png"
+  "favicon": "https://.../img/favicon.png",
+  "favicon192": "https://.../img/favicon-192.png",
+  "favicon512": "https://.../img/favicon-512.png"
 }
 ```
 
-**Campo `favicon`**: URL pública do PNG usado como ícone da aba do navegador. O painel grava o arquivo em `img/favicon.png` no Firebase Storage e aplica o ícone nas páginas públicas. Enquanto o campo estiver vazio ou indisponível, o site mantém `favicon.svg` como fallback.
+**Campos de favicon**: `favicon` é o PNG original usado como ícone da aba do navegador. `favicon192` e `favicon512` são gerados automaticamente pelo painel em versões quadradas de 192×192 e 512×512 px e são usados como ícones do aplicativo instalado pelo PWA. Os arquivos ficam em `img/favicon.png`, `img/favicon-192.png` e `img/favicon-512.png`. Enquanto o upload não existir ou estiver indisponível, as páginas usam `favicon.svg` e o manifest usa os ícones locais em `icons/` como fallback.
 
 ### `site/redes`
 ```json

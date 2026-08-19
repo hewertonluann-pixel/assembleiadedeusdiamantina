@@ -32,7 +32,7 @@ No iPhone e iPad, abra o site no Safari, toque em **Compartilhar**, escolha **Ad
 
 O favicon da aba pode ser alterado pelo painel em **Imagens do Site → Ícone da Aba (Favicon)**. Esse upload atualiza o campo `site/imagens.favicon` e as páginas públicas passam a usar a URL configurada.
 
-O ícone do aplicativo instalado é mantido pelos arquivos versionados em `icons/`, porque o manifest é um arquivo estático. Se a igreja escolher uma nova identidade para o ícone instalado, atualize os PNGs, incremente `CACHE_VERSION` e publique uma nova versão.
+O mesmo upload também gera automaticamente versões quadradas em `img/favicon-192.png` e `img/favicon-512.png`, registradas nos campos `site/imagens.favicon192` e `site/imagens.favicon512`. O manifest prioriza essas versões do Firebase Storage para o ícone do aplicativo instalado e mantém os arquivos versionados em `icons/` como fallback. Depois de trocar o ícone, o usuário deve atualizar ou reinstalar o PWA para que o sistema operacional substitua o ícone já armazenado.
 
 ## Requisitos
 

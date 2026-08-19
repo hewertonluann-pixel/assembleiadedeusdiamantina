@@ -803,7 +803,8 @@
 
         const imagensDoc = await getDoc(doc(db, 'site', 'imagens'));
         if (imagensDoc.exists() && window.setSiteFavicon) {
-          window.setSiteFavicon(imagensDoc.data().favicon);
+          const imagens = imagensDoc.data() || {};
+          window.setSiteFavicon(imagens.favicon, imagens.favicon192);
         }
 
         const redesDoc = await getDoc(doc(db, 'site', 'redes'));

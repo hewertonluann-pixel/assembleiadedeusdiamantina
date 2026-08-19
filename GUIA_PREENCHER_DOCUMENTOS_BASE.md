@@ -152,7 +152,7 @@ Os quatro arquivos podem ser configurados nesta seção:
 | Foto da Igreja (Sobre) | Fachada ou interior, com autorização de uso. |
 | Ícone da Aba (Favicon) | Somente PNG, preferencialmente quadrado em 512×512 px, com o símbolo ou a versão reduzida da logo. |
 
-Selecione um arquivo, aguarde o botão **Fazer upload** ficar habilitado, clique nele e aguarde a confirmação. O upload criará ou atualizará `site/imagens`. No caso do favicon, o arquivo será salvo como `img/favicon.png`; depois de recarregar as páginas, ele será aplicado automaticamente na aba do navegador. Use somente um PNG oficial e autorizado pela igreja.
+Selecione um arquivo, aguarde o botão **Fazer upload** ficar habilitado, clique nele e aguarde a confirmação. O upload criará ou atualizará `site/imagens`. No caso do favicon, o arquivo original será salvo como `img/favicon.png` e o painel também gerará automaticamente `img/favicon-192.png` e `img/favicon-512.png`. Assim, o mesmo PNG passa a ser usado na aba do navegador, no ícone de instalação e no ícone da tela inicial do iPhone/iPad. Depois de trocar o arquivo, atualize ou reinstale o PWA para o sistema operacional substituir um ícone antigo armazenado. Use somente um PNG oficial e autorizado pela igreja.
 
 ## 9. Ordem para testar depois de salvar
 

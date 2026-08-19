@@ -1,4 +1,9 @@
-const CACHE_VERSION = 'ad-diamantina-pwa-v1';
+const CACHE_VERSION = 'ad-diamantina-pwa-v4';
+const FIRESTORE_IMAGES_URL = 'https://firestore.googleapis.com/v1/projects/ad-diamantina/databases/(default)/documents/site/imagens';
+const DYNAMIC_ICON_ROUTES = {
+  '/pwa-icon-192.png': { field: 'favicon192', fallbackField: 'favicon', fallback: '/icons/icon-192.png' },
+  '/pwa-icon-512.png': { field: 'favicon512', fallbackField: 'favicon', fallback: '/icons/icon-512.png' }
+};
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -6,6 +11,8 @@ const APP_SHELL = [
   '/congregacao.html',
   '/favicon.svg',
   '/manifest.webmanifest',
+  '/pwa-icon-192.png',
+  '/pwa-icon-512.png',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   '/css/style.css',
@@ -15,6 +22,28 @@ const APP_SHELL = [
   '/js/pwa.js',
   '/js/radio-player.js'
 ];
+
+async function getDynamicIconResponse(request, config) {
+  const cache = await caches.open(CACHE_VERSION);
+  try {
+    const firestoreResponse = await fetch(FIRESTORE_IMAGES_URL, { cache: 'no-store' });
+    if (firestoreResponse.ok) {
+      const payload = await firestoreResponse.json();
+      const dynamicUrl = payload.fields?.[config.field]?.stringValue || payload.fields?.[config.fallbackField]?.stringValue;
+      if (dynamicUrl) {
+        const iconResponse = await fetch(dynamicUrl, { mode: 'no-cors', cache: 'no-store' });
+        if (iconResponse.ok || iconResponse.type === 'opaque') {
+          await cache.put(request, iconResponse.clone());
+          return iconResponse;
+        }
+      }
+    }
+  } catch (error) {
+    // A falha no Storage/Firestore não deve impedir a instalação do app.
+  }
+
+  return (await cache.match(request)) || (await cache.match(config.fallback)) || fetch(config.fallback);
+}
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -42,6 +71,12 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+
+  const dynamicIcon = DYNAMIC_ICON_ROUTES[url.pathname];
+  if (dynamicIcon) {
+    event.respondWith(getDynamicIconResponse(request, dynamicIcon));
+    return;
+  }
 
   if (request.mode === 'navigate') {
     const publicPages = new Set(['/', '/index.html', '/congregacoes.html', '/congregacao.html']);

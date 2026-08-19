@@ -687,7 +687,7 @@
         const d = snap.data();
         if (!d) return;
 
-        if (window.setSiteFavicon) window.setSiteFavicon(d.favicon);
+        if (window.setSiteFavicon) window.setSiteFavicon(d.favicon, d.favicon192);
 
         const logo = document.getElementById('site-logo');
         if (logo && d.logo) {

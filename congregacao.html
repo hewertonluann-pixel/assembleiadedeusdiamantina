@@ -619,7 +619,7 @@ async function carregarSite() {
       getDoc(doc(db,'site','redes')),
       getDoc(doc(db,'site','imagens'))
     ]);
-    if (window.setSiteFavicon) window.setSiteFavicon(imagensSnap.data()?.favicon);
+    if (window.setSiteFavicon) { const imagens = imagensSnap.data() || {}; window.setSiteFavicon(imagens.favicon, imagens.favicon192); }
     const h = homeSnap.data() || {};
     if (Array.isArray(h.cultos) && h.cultos.length) {
       document.getElementById('footer-cultos').innerHTML =
