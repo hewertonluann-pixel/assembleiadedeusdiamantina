@@ -633,8 +633,11 @@ async function carregarSite() {
     if (r.facebook)  setHref('footer-facebook',  r.facebook);
     if (r.youtube)   setHref('footer-youtube',   r.youtube);
     updateWhatsappLinks(r.whatsapp);
+    const defaultRadioPage = 'https://player.brsrv.xyz/player-app-multi-plataforma/7238';
+    const legacyRadioPage = 'https://www.radios.com.br/aovivo/radio-diamantina-gospel-fm/249014';
+    const configuredRadioPage = String(r.radioPage || '').trim();
     window.dispatchEvent(new CustomEvent('site:radio-config', { detail: {
-      radioPage: r.radioPage,
+      radioPage: configuredRadioPage === legacyRadioPage ? defaultRadioPage : (configuredRadioPage || defaultRadioPage),
       radioStream: r.radioStream,
       radioName: r.radioName || 'Diamantina Gospel FM'
     }}));

@@ -733,7 +733,10 @@
         }
 
         updateWhatsappLinks(d.whatsapp);
-        const radioPage = String(d.radioPage || '').trim();
+        const defaultRadioPage = 'https://player.brsrv.xyz/player-app-multi-plataforma/7238';
+        const legacyRadioPage = 'https://www.radios.com.br/aovivo/radio-diamantina-gospel-fm/249014';
+        const configuredRadioPage = String(d.radioPage || '').trim();
+        const radioPage = configuredRadioPage === legacyRadioPage ? defaultRadioPage : (configuredRadioPage || defaultRadioPage);
         const radioStream = String(d.radioStream || '').trim();
         const radioSection = document.getElementById('radio');
         const radioSectionLink = document.getElementById('radio-section-link');
