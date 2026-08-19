@@ -1415,7 +1415,8 @@ IMG_SLOTS.forEach(slot=>{
 // ═══════════════════════════════════════
 const DEFAULT_RADIO_PAGE = 'https://player.brsrv.xyz/player-app-multi-plataforma/7238';
 const LEGACY_RADIO_PAGE = 'https://www.radios.com.br/aovivo/radio-diamantina-gospel-fm/249014';
-const DEFAULT_RADIO_STREAM = 'https://stm7.voxhd.com.br:6852/;';
+const DEFAULT_RADIO_STREAM = 'https://stm16.brsrv.xyz:7238/stream';
+const LEGACY_RADIO_STREAM = 'https://stm7.voxhd.com.br:6852/;';
 
 async function loadRedesConfig(){
   showEl('redes-loading',true);showEl('redes-form',false);
@@ -1427,7 +1428,8 @@ async function loadRedesConfig(){
     document.getElementById('rf-youtube-video').value=d.youtubeVideo||'';
     const configuredRadioPage = String(d.radioPage || '').trim();
     document.getElementById('rf-radio-page').value = configuredRadioPage === LEGACY_RADIO_PAGE ? DEFAULT_RADIO_PAGE : (configuredRadioPage || DEFAULT_RADIO_PAGE);
-    document.getElementById('rf-radio-stream').value=d.radioStream||DEFAULT_RADIO_STREAM;
+    const configuredRadioStream = String(d.radioStream || '').trim();
+    document.getElementById('rf-radio-stream').value = configuredRadioStream === LEGACY_RADIO_STREAM ? DEFAULT_RADIO_STREAM : (configuredRadioStream || DEFAULT_RADIO_STREAM);
     document.getElementById('rf-whatsapp').value=d.whatsapp||'';
     showEl('redes-form',true);
   }catch(e){toast('Erro: '+e.message,'error');}finally{showEl('redes-loading',false);}

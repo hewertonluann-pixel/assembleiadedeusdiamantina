@@ -737,7 +737,10 @@
         const legacyRadioPage = 'https://www.radios.com.br/aovivo/radio-diamantina-gospel-fm/249014';
         const configuredRadioPage = String(d.radioPage || '').trim();
         const radioPage = configuredRadioPage === legacyRadioPage ? defaultRadioPage : (configuredRadioPage || defaultRadioPage);
-        const radioStream = String(d.radioStream || '').trim();
+        const defaultRadioStream = 'https://stm16.brsrv.xyz:7238/stream';
+        const legacyRadioStream = 'https://stm7.voxhd.com.br:6852/;';
+        const configuredRadioStream = String(d.radioStream || '').trim();
+        const radioStream = configuredRadioStream === legacyRadioStream ? defaultRadioStream : (configuredRadioStream || defaultRadioStream);
         const radioSection = document.getElementById('radio');
         const radioSectionLink = document.getElementById('radio-section-link');
         if (radioSection) radioSection.hidden = !(radioPage || radioStream);

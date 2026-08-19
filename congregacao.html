@@ -636,9 +636,12 @@ async function carregarSite() {
     const defaultRadioPage = 'https://player.brsrv.xyz/player-app-multi-plataforma/7238';
     const legacyRadioPage = 'https://www.radios.com.br/aovivo/radio-diamantina-gospel-fm/249014';
     const configuredRadioPage = String(r.radioPage || '').trim();
+    const defaultRadioStream = 'https://stm16.brsrv.xyz:7238/stream';
+    const legacyRadioStream = 'https://stm7.voxhd.com.br:6852/;';
+    const configuredRadioStream = String(r.radioStream || '').trim();
     window.dispatchEvent(new CustomEvent('site:radio-config', { detail: {
       radioPage: configuredRadioPage === legacyRadioPage ? defaultRadioPage : (configuredRadioPage || defaultRadioPage),
-      radioStream: r.radioStream,
+      radioStream: configuredRadioStream === legacyRadioStream ? defaultRadioStream : (configuredRadioStream || defaultRadioStream),
       radioName: r.radioName || 'Diamantina Gospel FM'
     }}));
   } catch(e) { console.warn(e); }
