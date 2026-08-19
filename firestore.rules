@@ -6,16 +6,19 @@ service cloud.firestore {
     // autorização exclusiva para gerenciar a coleção de administradores.
     function isPrimaryAdmin() {
       return request.auth != null
-        && request.auth.token.email == 'hewertonluann@gmail.com'
+        && request.auth.token.email != null
+        && request.auth.token.email.lower() == 'hewertonluann@gmail.com'
         && request.auth.token.email_verified == true;
     }
 
-    // Administradores adicionais precisam estar cadastrados por UID e ativos.
+    // Administradores adicionais são cadastrados pelo e-mail normalizado da
+    // conta Firebase Authentication e precisam estar ativos.
     function isAuthorizedAdmin() {
       return request.auth != null
+        && request.auth.token.email != null
         && request.auth.token.email_verified == true
-        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
-        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.ativo == true;
+        && exists(/databases/$(database)/documents/admins/$(request.auth.token.email.lower()))
+        && get(/databases/$(database)/documents/admins/$(request.auth.token.email.lower())).data.ativo == true;
     }
 
     function isAdmin() {
@@ -37,11 +40,13 @@ service cloud.firestore {
 
     // A lista de administradores nunca fica pública. Somente o administrador
     // principal pode criar, alterar, ativar, desativar ou remover registros.
-    match /admins/{uid} {
-      allow read: if request.auth != null
-        && request.auth.token.email_verified == true
-        && (request.auth.token.email == 'hewertonluann@gmail.com'
-            || request.auth.uid == uid);
+    // Cada usuário autorizado pode ler apenas o registro do próprio e-mail.
+    match /admins/{email} {
+      allow read: if isPrimaryAdmin()
+        || (request.auth != null
+            && request.auth.token.email != null
+            && request.auth.token.email_verified == true
+            && email == request.auth.token.email.lower());
       allow write: if isPrimaryAdmin();
     }
   }

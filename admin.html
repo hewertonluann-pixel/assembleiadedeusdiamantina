@@ -577,12 +577,11 @@ a{color:inherit;text-decoration:none;}
         <div class="config-section" style="margin-bottom:0;">
           <div class="config-section-header"><i class="fas fa-user-plus"></i><strong>Autorizar novo administrador</strong></div>
           <div class="config-section-body">
-            <p class="form-hint" style="margin:0;">A pessoa precisa ter uma conta criada no Firebase Authentication e conseguir entrar neste painel. O UID é encontrado em <strong style="color:var(--text);">Authentication → Users</strong> no Firebase Console.</p>
-            <div class="form-group"><label class="form-label" for="admin-uid">UID da conta Firebase *</label><input type="text" id="admin-uid" class="form-input" placeholder="Cole o UID exibido no Firebase Console" autocomplete="off" spellcheck="false" required /><small class="form-hint">Não use o e-mail como UID. O UID é o identificador exclusivo da conta.</small></div>
-            <div class="form-group"><label class="form-label" for="admin-email">E-mail da conta *</label><input type="email" id="admin-email" class="form-input" placeholder="pastor@exemplo.com" autocomplete="off" required /></div>
+            <p class="form-hint" style="margin:0;">Informe o e-mail que a pessoa usará para entrar neste painel. Ela precisa ter uma conta criada no Firebase Authentication e usar esse mesmo e-mail no login.</p>
+            <div class="form-group"><label class="form-label" for="admin-email">E-mail da conta *</label><input type="email" id="admin-email" class="form-input" placeholder="pastor@exemplo.com" autocomplete="off" required /><small class="form-hint">O e-mail é normalizado para minúsculas e será usado como identificador da autorização.</small></div>
             <div class="form-group"><label class="form-label" for="admin-nome">Nome para identificação</label><input type="text" id="admin-nome" class="form-input" placeholder="Nome do administrador" autocomplete="off" /></div>
             <button class="btn btn-gold" id="btn-add-admin" style="justify-content:center;"><i class="fas fa-user-shield"></i> Autorizar administrador</button>
-            <small class="form-hint">A autorização não cria senha nem conta de login. Ela apenas libera uma conta Firebase Authentication já existente.</small>
+            <small class="form-hint">A autorização não cria senha nem conta de login. A pessoa ainda precisa ter uma conta Firebase Authentication com e-mail verificado.</small>
           </div>
         </div>
         <div class="config-section" style="margin-bottom:0;">
@@ -820,14 +819,15 @@ async function checkPanelAccess(user){
   if(!user || !user.email || !user.emailVerified){
     return {allowed:false,message:'Use uma conta com e-mail verificado para acessar o painel.'};
   }
-  if(user.email.toLowerCase()===PRIMARY_ADMIN_EMAIL){
+  const emailKey=user.email.trim().toLowerCase();
+  if(emailKey===PRIMARY_ADMIN_EMAIL){
     return {allowed:true,primary:true};
   }
   try{
-    const adminSnap=await getDoc(doc(db,'admins',user.uid));
+    const adminSnap=await getDoc(doc(db,'admins',emailKey));
     const adminData=adminSnap.exists()?adminSnap.data():null;
     const registeredEmail=String(adminData?.email||'').trim().toLowerCase();
-    const emailMatches=!registeredEmail||registeredEmail===user.email.toLowerCase();
+    const emailMatches=!registeredEmail||registeredEmail===emailKey;
     if(adminData?.ativo===true && emailMatches){
       return {allowed:true,primary:false};
     }
@@ -897,19 +897,19 @@ function renderAdmins(){
     <div class="admin-row-actions"><span class="badge badge-gold">Principal</span></div>
   </article>`;
   const additionalRows=adminsData.map(item=>{
-    const uid=escapeHtml(item.id);
+    const emailKey=escapeHtml(item.id);
     const name=escapeHtml(item.nome||'Administrador');
-    const email=escapeHtml(item.email||'E-mail não informado');
+    const email=escapeHtml(item.email||item.id||'E-mail não informado');
     const status=item.ativo===true;
     return `<article class="admin-row">
       <div class="admin-row-main">
         <div class="admin-row-name">${name}</div>
         <div class="admin-row-email">${email}</div>
-        <div class="admin-row-meta"><span class="admin-status ${status?'active':'inactive'}"><i class="fas ${status?'fa-check-circle':'fa-pause-circle'}"></i> ${status?'Ativo':'Inativo'}</span><span><i class="fas fa-calendar-alt" style="margin-right:.25rem;"></i>Adicionado em ${formatAdminDate(item.criadoEm)}</span><span title="UID da conta">UID: ${uid}</span></div>
+        <div class="admin-row-meta"><span class="admin-status ${status?'active':'inactive'}"><i class="fas ${status?'fa-check-circle':'fa-pause-circle'}"></i> ${status?'Ativo':'Inativo'}</span><span><i class="fas fa-calendar-alt" style="margin-right:.25rem;"></i>Adicionado em ${formatAdminDate(item.criadoEm)}</span><span title="Identificador da autorização"><i class="fas fa-at" style="margin-right:.25rem;"></i>Autorizado por e-mail</span></div>
       </div>
       <div class="admin-row-actions">
-        <button type="button" class="btn btn-ghost" data-admin-toggle="${uid}"><i class="fas ${status?'fa-user-slash':'fa-user-check'}"></i> ${status?'Desativar':'Ativar'}</button>
-        <button type="button" class="btn btn-danger" data-admin-remove="${uid}"><i class="fas fa-trash"></i> Remover</button>
+        <button type="button" class="btn btn-ghost" data-admin-toggle="${emailKey}"><i class="fas ${status?'fa-user-slash':'fa-user-check'}"></i> ${status?'Desativar':'Ativar'}</button>
+        <button type="button" class="btn btn-danger" data-admin-remove="${emailKey}"><i class="fas fa-trash"></i> Remover</button>
       </div>
     </article>`;
   }).join('');
@@ -943,16 +943,15 @@ async function loadAdmins(){
 
 async function addAdmin(){
   if(!isPrimaryUser)return;
-  const uid=document.getElementById('admin-uid').value.trim();
   const email=document.getElementById('admin-email').value.trim().toLowerCase();
   const nome=document.getElementById('admin-nome').value.trim();
-  if(!uid||uid.includes('/')||uid.length<6){toast('Informe um UID válido copiado do Firebase Authentication.','error');return;}
-  if(!email||!email.includes('@')){toast('Informe o e-mail da conta Firebase.','error');return;}
+  const emailPattern=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!email||!emailPattern.test(email)){toast('Informe um e-mail válido da conta Firebase.','error');return;}
   if(email===PRIMARY_ADMIN_EMAIL){toast('O administrador principal já possui acesso garantido.','info');return;}
   const button=document.getElementById('btn-add-admin');
   button.disabled=true;
   try{
-    const adminRef=doc(db,'admins',uid);
+    const adminRef=doc(db,'admins',email);
     const existing=await getDoc(adminRef);
     const existingData=existing.exists()?existing.data():{};
     await setDoc(adminRef,{
@@ -964,7 +963,6 @@ async function addAdmin(){
       adicionadoPor:auth.currentUser?.email||PRIMARY_ADMIN_EMAIL,
       atualizadoEm:serverTimestamp()
     },{merge:true});
-    document.getElementById('admin-uid').value='';
     document.getElementById('admin-email').value='';
     document.getElementById('admin-nome').value='';
     toast('Administrador autorizado com sucesso.','success');
@@ -977,13 +975,13 @@ async function addAdmin(){
   }
 }
 
-async function toggleAdmin(uid){
+async function toggleAdmin(emailKey){
   if(!isPrimaryUser)return;
-  const item=adminsData.find(admin=>admin.id===uid);
+  const item=adminsData.find(admin=>admin.id===emailKey);
   if(!item)return;
   const nextStatus=item.ativo!==true;
   try{
-    await updateDoc(doc(db,'admins',uid),{ativo:nextStatus,atualizadoEm:serverTimestamp()});
+    await updateDoc(doc(db,'admins',emailKey),{ativo:nextStatus,atualizadoEm:serverTimestamp()});
     toast(nextStatus?'Administrador ativado.':'Administrador desativado.','success');
     await loadAdmins();
   }catch(error){
@@ -992,14 +990,14 @@ async function toggleAdmin(uid){
   }
 }
 
-async function removeAdmin(uid){
+async function removeAdmin(emailKey){
   if(!isPrimaryUser)return;
-  const item=adminsData.find(admin=>admin.id===uid);
+  const item=adminsData.find(admin=>admin.id===emailKey);
   if(!item)return;
-  const label=item.email||item.nome||uid;
+  const label=item.email||item.nome||emailKey;
   if(!window.confirm(`Remover a autorização de ${label}? A conta não será apagada do Firebase Authentication.`))return;
   try{
-    await deleteDoc(doc(db,'admins',uid));
+    await deleteDoc(doc(db,'admins',emailKey));
     toast('Autorização removida.','success');
     await loadAdmins();
   }catch(error){
