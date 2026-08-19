@@ -61,8 +61,8 @@
       <p class="hero-sub" id="hero-subtitle">Uma comunidade de fé, amor e esperança no coração de Diamantina, MG.</p>
       <div class="hero-buttons">
         <a href="#cultos" class="btn btn-primary">Ver Horários de Culto</a>
-        <a href="https://www.youtube.com/@assembleiadedeusdiamantina" target="_blank" class="btn btn-outline" id="hero-yt-btn">
-          <i class="fab fa-youtube"></i> Assistir ao Vivo
+        <a href="#contato" class="btn btn-outline" id="hero-contact-btn">
+          <i class="fas fa-praying-hands"></i> Pedido de oração/contato
         </a>
       </div>
     </div>
@@ -679,7 +679,6 @@
         if (d.facebook)  setHref('link-facebook', d.facebook);
         if (d.youtube) {
           setHref('link-youtube', d.youtube);
-          setHref('hero-yt-btn', d.youtube);
           const embedUrl = youtubeEmbedUrl(d.youtubeVideo);
           const iframe = document.getElementById('yt-iframe');
           const fallback = document.getElementById('yt-fallback');
