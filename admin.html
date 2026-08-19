@@ -395,6 +395,8 @@ a{color:inherit;text-decoration:none;}
             <div class="form-group"><label class="form-label"><i class="fab fa-facebook" style="color:#1877F2;margin-right:.3rem;"></i>Facebook</label><input type="url" id="rf-facebook" class="form-input" placeholder="https://facebook.com/" /></div>
             <div class="form-group"><label class="form-label"><i class="fab fa-youtube" style="color:#FF0000;margin-right:.3rem;"></i>YouTube</label><input type="url" id="rf-youtube" class="form-input" placeholder="https://youtube.com/@" /></div>
             <div class="form-group"><label class="form-label"><i class="fas fa-video" style="color:#FF0000;margin-right:.3rem;"></i>Vídeo em destaque</label><input type="url" id="rf-youtube-video" class="form-input" placeholder="https://www.youtube.com/watch?v=..." /><small class="form-hint">Opcional. Cole a URL de um vídeo específico do canal para exibi-lo na home.</small></div>
+            <div class="form-group"><label class="form-label"><i class="fas fa-radio" style="color:#D4A017;margin-right:.3rem;"></i>Página da rádio</label><input type="url" id="rf-radio-page" class="form-input" placeholder="https://www.radios.com.br/aovivo/..." /><small class="form-hint">Link que será aberto no botão do miniplayer.</small></div>
+            <div class="form-group"><label class="form-label"><i class="fas fa-broadcast-tower" style="color:#D4A017;margin-right:.3rem;"></i>URL direta do áudio</label><input type="url" id="rf-radio-stream" class="form-input" placeholder="https://servidor.exemplo.com:8000/stream" /><small class="form-hint">Necessária para o Play funcionar. É diferente da página do Radios.com.br.</small></div>
             <div class="form-group"><label class="form-label"><i class="fab fa-whatsapp" style="color:#25D366;margin-right:.3rem;"></i>WhatsApp</label><input type="tel" id="rf-whatsapp" class="form-input" placeholder="5538999999999" /></div>
           </div>
         </div>
@@ -1136,6 +1138,9 @@ IMG_SLOTS.forEach(slot=>{
 // ═══════════════════════════════════════
 // REDES CONFIG
 // ═══════════════════════════════════════
+const DEFAULT_RADIO_PAGE = 'https://www.radios.com.br/aovivo/radio-diamantina-gospel-fm/249014';
+const DEFAULT_RADIO_STREAM = 'https://stm7.voxhd.com.br:6852/;';
+
 async function loadRedesConfig(){
   showEl('redes-loading',true);showEl('redes-form',false);
   try{
@@ -1144,13 +1149,15 @@ async function loadRedesConfig(){
     document.getElementById('rf-facebook').value=d.facebook||'';
     document.getElementById('rf-youtube').value=d.youtube||'';
     document.getElementById('rf-youtube-video').value=d.youtubeVideo||'';
+    document.getElementById('rf-radio-page').value=d.radioPage||DEFAULT_RADIO_PAGE;
+    document.getElementById('rf-radio-stream').value=d.radioStream||DEFAULT_RADIO_STREAM;
     document.getElementById('rf-whatsapp').value=d.whatsapp||'';
     showEl('redes-form',true);
   }catch(e){toast('Erro: '+e.message,'error');}finally{showEl('redes-loading',false);}
 }
 document.getElementById('btn-save-redes').addEventListener('click',async()=>{
   try{
-    await setDoc(doc(db,'site','redes'),{instagram:document.getElementById('rf-instagram').value.trim(),facebook:document.getElementById('rf-facebook').value.trim(),youtube:document.getElementById('rf-youtube').value.trim(),youtubeVideo:document.getElementById('rf-youtube-video').value.trim(),whatsapp:document.getElementById('rf-whatsapp').value.trim()});
+    await setDoc(doc(db,'site','redes'),{instagram:document.getElementById('rf-instagram').value.trim(),facebook:document.getElementById('rf-facebook').value.trim(),youtube:document.getElementById('rf-youtube').value.trim(),youtubeVideo:document.getElementById('rf-youtube-video').value.trim(),radioPage:document.getElementById('rf-radio-page').value.trim(),radioStream:document.getElementById('rf-radio-stream').value.trim(),whatsapp:document.getElementById('rf-whatsapp').value.trim()});
     toast('Redes sociais atualizadas!');
   }catch(e){toast('Erro: '+e.message,'error');}
 });

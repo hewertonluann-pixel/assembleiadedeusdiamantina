@@ -79,7 +79,22 @@ O campo **YouTube** continua sendo o endereço do canal. O campo **Vídeo em des
 
 Confirme com a liderança antes de salvar se esses canais continuam oficiais. O campo WhatsApp deve ficar vazio até a definição do número oficial. Clique em **Salvar**.
 
-## 4. Ministérios
+## 4. Rádio ao vivo
+
+Na mesma seção **Redes Sociais**, preencha os campos da rádio:
+
+| Campo | Valor recomendado |
+|---|---|
+| Página da rádio | `https://www.radios.com.br/aovivo/radio-diamantina-gospel-fm/249014` |
+| URL direta do áudio | `https://stm7.voxhd.com.br:6852/;` |
+
+A **Página da rádio** é usada pelo ícone de acesso externo do miniplayer. A **URL direta do áudio** é a que permite ao botão Play reproduzir a transmissão no site. Não troque os dois valores: a página do Radios.com.br não é uma fonte de áudio direta.
+
+O miniplayer aparece depois que a URL direta estiver salva e oferece play/pause, volume, link externo e ocultar. A reprodução começa somente após o visitante clicar em Play, respeitando as políticas do navegador. Se o stream estiver temporariamente indisponível, o player exibirá uma mensagem de erro sem interromper o restante do site.
+
+Clique em **Salvar** e confirme **“Redes sociais atualizadas!”**. Depois recarregue a home com `Ctrl+F5`.
+
+## 5. Ministérios
 
 No menu lateral, clique em **Ministérios**. A home já encontrou cinco ministérios no Firestore, mas quase todos estão sem descrição. Não invente descrições. Para cada ministério, abra **Editar** e preencha uma descrição curta fornecida pela igreja:
 

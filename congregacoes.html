@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/radio-player.css" />
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
@@ -576,6 +577,23 @@
     <i class="fab fa-whatsapp"></i>
   </a>
 
+  <!-- MINIPLAYER DA RÁDIO -->
+  <aside class="radio-player" id="radio-player" hidden aria-label="Rádio ao vivo">
+    <audio id="radio-player-audio" preload="none"></audio>
+    <button class="radio-player__toggle" id="radio-player-toggle" type="button" aria-label="Tocar rádio" aria-pressed="false"><i class="fas fa-play" id="radio-player-toggle-icon"></i></button>
+    <div class="radio-player__body">
+      <span class="radio-player__label">Rádio ao vivo</span>
+      <strong class="radio-player__title" id="radio-player-title">Diamantina Gospel FM</strong>
+      <span class="radio-player__status" id="radio-player-status">Carregando…</span>
+    </div>
+    <div class="radio-player__actions">
+      <label class="radio-player__volume-label" aria-label="Volume"><i class="fas fa-volume-low"></i><input class="radio-player__volume" id="radio-player-volume" type="range" min="0" max="1" step="0.05" value="0.8" aria-label="Volume da rádio" /></label>
+      <a class="radio-player__link" id="radio-player-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Abrir página da rádio" hidden><i class="fas fa-external-link-alt"></i></a>
+      <button class="radio-player__close" id="radio-player-close" type="button" aria-label="Ocultar player da rádio">&times;</button>
+    </div>
+  </aside>
+  <script src="js/radio-player.js"></script>
+
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
@@ -781,6 +799,11 @@
           if (r.facebook)  document.getElementById('footer-facebook').href  = r.facebook;
           if (r.youtube)   document.getElementById('footer-youtube').href   = r.youtube;
           updateWhatsappLinks(r.whatsapp);
+          window.dispatchEvent(new CustomEvent('site:radio-config', { detail: {
+            radioPage: r.radioPage,
+            radioStream: r.radioStream,
+            radioName: r.radioName || 'Diamantina Gospel FM'
+          }}));
         }
 
       } catch (err) {

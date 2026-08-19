@@ -49,11 +49,15 @@ Este projeto usa o Firebase Firestore para armazenar e servir conteúdo dinâmic
   "facebook": "https://facebook.com/sua_pagina",
   "youtube": "https://youtube.com/@seu_canal",
   "youtubeVideo": "https://www.youtube.com/watch?v=VIDEO_ID",
+  "radioPage": "https://www.radios.com.br/aovivo/radio-diamantina-gospel-fm/249014",
+  "radioStream": "https://stm7.voxhd.com.br:6852/;",
   "whatsapp": "5538999999999"
 }
 ```
 
 **Campo `youtubeVideo`**: URL opcional de um vídeo específico do YouTube que será exibido no player em destaque da home. O link do canal permanece no campo `youtube`.
+
+**Campos `radioPage` e `radioStream`**: `radioPage` é a página pública da emissora, usada no botão de acesso externo. `radioStream` é a URL direta do áudio, usada pelo elemento `<audio>` do miniplayer. A página do Radios.com.br, sozinha, não é uma fonte reproduzível pelo navegador.
 
 ### `site/contato`
 ```json
