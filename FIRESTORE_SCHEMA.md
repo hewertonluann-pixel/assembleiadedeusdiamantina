@@ -71,14 +71,30 @@ Os campos `whatsappFloatEnabled` e `contributionFloatEnabled` controlam os botõ
 O documento começa vazio. O presidente aparece no Hero apenas quando pelo menos um campo oficial estiver preenchido; cada obreiro só é exibido quando tiver nome, função ou foto. Fotos são armazenadas no Firebase Storage em `img/lideranca/presidente-*` e `img/lideranca/obreiro-*`.
 
 ### `site/agenda`
+
+O documento mantém `eventos` como uma lista. Eventos novos usam datas ISO (`YYYY-MM-DD`) em `dataInicio` e `dataFim`; para eventos de um único dia, os dois campos recebem a mesma data. O campo `data` continua sendo gravado como texto de compatibilidade com registros antigos.
+
 ```json
 {
   "eventos": [
-    { "data": "15/05", "titulo": "Congresso de Jovens", "local": "Sede Central" },
-    { "data": "22/05", "titulo": "Culto de Missões", "local": "Sede Central" }
+    {
+      "id": "evento-1750000000000-ab12cd",
+      "data": "15/05–17/05",
+      "dataInicio": "2026-05-15",
+      "dataFim": "2026-05-17",
+      "titulo": "Congresso de Jovens",
+      "local": "Sede Central",
+      "descricao": "Programação oficial confirmada pela igreja.",
+      "cartazUrl": "https://firebasestorage.googleapis.com/...",
+      "cartazPath": "img/agenda/evento-1750000000000-ab12cd-1750000000000.png",
+      "cartazAlt": "Cartaz do Congresso de Jovens",
+      "ativo": true
+    }
   ]
 }
 ```
+
+`cartazUrl` e `cartazPath` são preenchidos pelo upload do painel. O arquivo é armazenado em `img/agenda/`, respeitando as regras de imagem do Firebase Storage. Registros antigos que tenham apenas `data`, `titulo` e `local` continuam sendo exibidos; ao editá-los, o painel preserva a data legada até que datas inicial e final sejam informadas.
 
 ### `site/ministerios`
 ```json

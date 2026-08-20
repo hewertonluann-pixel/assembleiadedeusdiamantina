@@ -119,10 +119,18 @@ a{color:inherit;text-decoration:none;}
 .theme-toggle:hover{background:var(--surface2);color:var(--text);}
 .agenda-list{display:flex;flex-direction:column;gap:0.75rem;}
 .agenda-item{display:flex;align-items:center;justify-content:space-between;gap:1rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:0.9rem 1rem;}
-.agenda-item-info{flex:1;}
+.agenda-item-info{flex:1;min-width:0;}
 .agenda-item-info strong{font-size:0.9rem;}
 .agenda-item-info span{font-size:0.8rem;color:var(--muted);}
-.agenda-item-date{font-family:var(--font-display);font-size:1.1rem;color:var(--gold);min-width:48px;text-align:center;}
+.agenda-item-date{font-family:var(--font-display);font-size:1.1rem;color:var(--gold);min-width:72px;text-align:center;line-height:1.2;}
+.agenda-item-poster{width:56px;height:72px;border-radius:.4rem;overflow:hidden;background:var(--surface3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--faint);flex:0 0 auto;}
+.agenda-item-poster img{width:100%;height:100%;object-fit:cover;}
+.agenda-item-poster i{font-size:1.2rem;}
+.event-poster-preview{width:100%;max-height:260px;aspect-ratio:3/4;background:var(--surface3);border:1px dashed var(--border);border-radius:var(--radius);overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--faint);font-size:2.2rem;}
+.event-poster-preview img{width:100%;height:100%;object-fit:contain;}
+.event-poster-actions{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;}
+.event-poster-name{font-size:.78rem;color:var(--muted);overflow-wrap:anywhere;}
+@media(max-width:560px){.agenda-item{align-items:flex-start;flex-wrap:wrap;}.agenda-item-info{min-width:calc(100% - 150px);}.agenda-item-actions{width:100%;justify-content:flex-end;}.agenda-item-date{min-width:64px;}.agenda-item-poster{width:48px;height:62px;}}
 .stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;margin-bottom:2rem;}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1rem;}
 .stat-card .stat-label{font-size:0.75rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:0.4rem;}
@@ -711,11 +719,26 @@ a{color:inherit;text-decoration:none;}
     <div class="modal-header"><h2 class="modal-title" id="evento-modal-title">Novo Evento</h2><button class="btn btn-ghost btn-icon" id="evento-modal-close" aria-label="Fechar"><i class="fas fa-times"></i></button></div>
     <div class="modal-body">
       <input type="hidden" id="evento-idx" value="-1" />
+      <input type="hidden" id="ev-data-legado" value="" />
+      <input type="hidden" id="ev-cartaz-url" value="" />
+      <input type="hidden" id="ev-cartaz-path" value="" />
+      <input type="hidden" id="ev-cartaz-original-url" value="" />
+      <input type="hidden" id="ev-cartaz-original-path" value="" />
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Data (DD/MM)</label><input type="text" id="ev-data" class="form-input" placeholder="15/06" maxlength="5" /></div>
-        <div class="form-group"><label class="form-label">Título do Evento *</label><input type="text" id="ev-titulo" class="form-input" required /></div>
+        <div class="form-group"><label class="form-label" for="ev-data-inicio">Data inicial</label><input type="date" id="ev-data-inicio" class="form-input" /><small class="form-hint">Use a data real de início.</small></div>
+        <div class="form-group"><label class="form-label" for="ev-data-fim">Data final</label><input type="date" id="ev-data-fim" class="form-input" /><small class="form-hint">Deixe igual à inicial para evento de um dia.</small></div>
       </div>
-      <div class="form-group"><label class="form-label">Local</label><input type="text" id="ev-local" class="form-input" placeholder="Sede Central" /></div>
+      <div class="form-group"><label class="form-label" for="ev-titulo">Título do Evento *</label><input type="text" id="ev-titulo" class="form-input" required /></div>
+      <div class="form-group"><label class="form-label" for="ev-local">Local</label><input type="text" id="ev-local" class="form-input" placeholder="Sede Central" /></div>
+      <div class="form-group"><label class="form-label" for="ev-descricao">Descrição</label><textarea id="ev-descricao" class="form-textarea" placeholder="Informações adicionais confirmadas pela igreja"></textarea></div>
+      <div class="form-group">
+        <label class="form-label">Cartaz do evento</label>
+        <div class="event-poster-preview" id="ev-cartaz-preview"><i class="fas fa-image"></i></div>
+        <label class="upload-drop" id="drop-evento-cartaz"><input type="file" id="file-evento-cartaz" accept="image/jpeg,image/webp,image/png" /><i class="fas fa-cloud-upload-alt"></i><strong>Clique ou arraste o cartaz aqui</strong><p>PNG/JPG/WEBP • máximo de 10 MB</p></label>
+        <div class="progress-bar-wrap" id="prog-wrap-evento-cartaz"><div class="progress-bar-fill" id="prog-evento-cartaz"></div></div>
+        <div class="event-poster-actions"><span class="event-poster-name" id="ev-cartaz-name">Nenhum cartaz anexado</span><button type="button" class="btn btn-ghost btn-small" id="btn-remove-evento-cartaz" style="display:none;"><i class="fas fa-times"></i> Remover cartaz</button></div>
+        <div class="form-group"><label class="form-label" for="ev-cartaz-alt">Texto alternativo do cartaz</label><input type="text" id="ev-cartaz-alt" class="form-input" placeholder="Cartaz do evento" /></div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" id="evento-modal-cancel">Cancelar</button>
@@ -749,7 +772,7 @@ import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, Googl
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, deleteDoc, orderBy, query, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL }
+import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL, deleteObject }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
@@ -1306,44 +1329,181 @@ document.getElementById('cong-modal-save').addEventListener('click',async()=>{
 // AGENDA
 // ═══════════════════════════════════════
 let agendaData=[];
+let eventoPosterFile=null;
+const AGENDA_MONTHS=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+function parseAgendaDate(value){
+  const parts=String(value||'').split('-').map(Number);
+  if(parts.length!==3||parts.some(n=>!Number.isInteger(n)))return null;
+  const [year,month,day]=parts;
+  const date=new Date(Date.UTC(year,month-1,day));
+  if(!year||!month||!day||date.getUTCFullYear()!==year||date.getUTCMonth()!==month-1||date.getUTCDate()!==day)return null;
+  return {iso:String(value),year,month,day,dayLabel:String(day).padStart(2,'0'),monthLabel:AGENDA_MONTHS[month]||String(month).padStart(2,'0')};
+}
+function agendaDateLabel(ev){
+  const start=parseAgendaDate(ev?.dataInicio);
+  const end=parseAgendaDate(ev?.dataFim||ev?.dataInicio);
+  if(!start)return String(ev?.data||'—');
+  const finalDate=end||start;
+  if(start.iso===finalDate.iso)return `${start.dayLabel} ${start.monthLabel}`;
+  if(start.year===finalDate.year&&start.month===finalDate.month)return `${start.dayLabel}–${String(finalDate.day).padStart(2,'0')} ${start.monthLabel}`;
+  return `${start.dayLabel} ${start.monthLabel} – ${String(finalDate.day).padStart(2,'0')} ${finalDate.monthLabel}`;
+}
+function agendaLegacyDate(start,end,legacy=''){
+  if(!start)return legacy;
+  const finalDate=end||start;
+  const first=`${start.dayLabel}/${String(start.month).padStart(2,'0')}`;
+  const last=`${String(finalDate.day).padStart(2,'0')}/${String(finalDate.month).padStart(2,'0')}`;
+  return start.iso===finalDate.iso?first:`${first}–${last}`;
+}
+function newAgendaEventId(){return `evento-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;}
+function renderEventoCartaz(url,label='Nenhum cartaz anexado'){
+  const preview=document.getElementById('ev-cartaz-preview');
+  const name=document.getElementById('ev-cartaz-name');
+  const remove=document.getElementById('btn-remove-evento-cartaz');
+  if(url){
+    preview.innerHTML=`<img src="${escapeHtml(url)}" alt="Pré-visualização do cartaz" />`;
+    name.textContent=label;
+    remove.style.display='inline-flex';
+  }else{
+    preview.innerHTML='<i class="fas fa-image"></i>';
+    name.textContent=label;
+    remove.style.display='none';
+  }
+}
+function setEventoCartaz(url='',path='',alt=''){
+  document.getElementById('ev-cartaz-url').value=url;
+  document.getElementById('ev-cartaz-path').value=path;
+  document.getElementById('ev-cartaz-alt').value=alt;
+  renderEventoCartaz(url,url?'Cartaz atual anexado':'Nenhum cartaz anexado');
+}
+function clearEventoCartaz(){
+  eventoPosterFile=null;
+  document.getElementById('ev-cartaz-url').value='';
+  document.getElementById('ev-cartaz-path').value='';
+  document.getElementById('file-evento-cartaz').value='';
+  renderEventoCartaz('');
+}
+function selectEventoCartaz(file){
+  if(!file)return;
+  if(!file.type.startsWith('image/')){toast('O cartaz precisa ser uma imagem.','error');return;}
+  if(file.size>10*1024*1024){toast('O cartaz deve ter no máximo 10 MB.','error');return;}
+  eventoPosterFile=file;
+  document.getElementById('ev-cartaz-url').value='';
+  document.getElementById('ev-cartaz-path').value='';
+  const previewUrl=URL.createObjectURL(file);
+  renderEventoCartaz(previewUrl,file.name);
+}
+async function uploadEventoCartaz(eventId,file){
+  const extension=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
+  const path=`img/agenda/${eventId}-${Date.now()}.${extension}`;
+  const task=uploadBytesResumable(storageRef(storage,path),file,{contentType:file.type,cacheControl:'public,max-age=31536000'});
+  const wrap=document.getElementById('prog-wrap-evento-cartaz');
+  const fill=document.getElementById('prog-evento-cartaz');
+  wrap.style.display='block';fill.style.width='0%';
+  await new Promise((resolve,reject)=>task.on('state_changed',snap=>{fill.style.width=Math.round((snap.bytesTransferred/snap.totalBytes)*100)+'%';},reject,resolve));
+  fill.style.width='100%';
+  setTimeout(()=>{wrap.style.display='none';fill.style.width='0%';},1000);
+  return {url:await getDownloadURL(task.snapshot.ref),path};
+}
+async function deleteKnownCartaz(path){
+  if(!path||!String(path).startsWith('img/agenda/'))return;
+  try{await deleteObject(storageRef(storage,path));}
+  catch(error){console.warn('Não foi possível remover o cartaz antigo:',error);}
+}
 async function loadAgenda(){
   showEl('agenda-loading',true);showEl('agenda-list',false);showEl('agenda-empty',false);
-  try{const snap=await getDoc(doc(db,'site','agenda'));agendaData=snap.data()?.eventos||[];renderAgenda();}
-  catch(e){toast('Erro agenda: '+e.message,'error');}finally{showEl('agenda-loading',false);}
+  try{
+    const snap=await getDoc(doc(db,'site','agenda'));
+    agendaData=(snap.data()?.eventos||[]).map((ev,i)=>({...ev,id:ev.id||`evento-legado-${i}`}));
+    renderAgenda();
+  }catch(e){toast('Erro agenda: '+e.message,'error');}finally{showEl('agenda-loading',false);}
 }
 function renderAgenda(){
   const list=document.getElementById('agenda-list');
   if(!agendaData.length){showEl('agenda-empty',true);showEl('agenda-list',false,'flex');showEl('agenda-save-row',false);return;}
   showEl('agenda-list',true,'flex');showEl('agenda-empty',false);showEl('agenda-save-row',true,'flex');
-  list.innerHTML=agendaData.map((ev,i)=>`<div class="agenda-item"><div class="agenda-item-date">${ev.data||'—'}</div><div class="agenda-item-info"><strong>${ev.titulo||'—'}</strong><br/><span>${ev.local||''}</span></div><div style="display:flex;gap:0.5rem;"><button class="btn btn-ghost btn-icon" onclick="editEvento(${i})"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-icon" onclick="deleteEvento(${i})"><i class="fas fa-trash"></i></button></div></div>`).join('');
+  list.innerHTML=agendaData.map((ev,i)=>{
+    const title=escapeHtml(ev.titulo||'—');
+    const local=escapeHtml(ev.local||'');
+    const description=escapeHtml(ev.descricao||'');
+    const date=escapeHtml(agendaDateLabel(ev));
+    const poster=ev.cartazUrl?`<div class="agenda-item-poster"><img src="${escapeHtml(ev.cartazUrl)}" alt="${escapeHtml(ev.cartazAlt||'Cartaz do evento')}" /></div>`:'<div class="agenda-item-poster" aria-hidden="true"><i class="fas fa-image"></i></div>';
+    return `<div class="agenda-item">${poster}<div class="agenda-item-date">${date}</div><div class="agenda-item-info"><strong>${title}</strong>${local?`<br/><span><i class="fas fa-location-dot"></i> ${local}</span>`:''}${description?`<br/><span>${description}</span>`:''}</div><div class="agenda-item-actions" style="display:flex;gap:0.5rem;"><button class="btn btn-ghost btn-icon" onclick="editEvento(${i})" aria-label="Editar evento"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-icon" onclick="deleteEvento(${i})" aria-label="Excluir evento"><i class="fas fa-trash"></i></button></div></div>`;
+  }).join('');
 }
 function openEventoModal(ev=null,idx=-1){
+  eventoPosterFile=null;
   document.getElementById('evento-modal-title').textContent=ev?'Editar Evento':'Novo Evento';
   document.getElementById('evento-idx').value=idx;
-  document.getElementById('ev-data').value=ev?.data||'';
+  document.getElementById('ev-data-inicio').value=ev?.dataInicio||'';
+  document.getElementById('ev-data-fim').value=ev?.dataFim||'';
+  document.getElementById('ev-data-legado').value=ev?.data&&!ev?.dataInicio?ev.data:'';
   document.getElementById('ev-titulo').value=ev?.titulo||'';
   document.getElementById('ev-local').value=ev?.local||'';
+  document.getElementById('ev-descricao').value=ev?.descricao||'';
+  document.getElementById('ev-cartaz-original-url').value=ev?.cartazUrl||'';
+  document.getElementById('ev-cartaz-original-path').value=ev?.cartazPath||'';
+  document.getElementById('file-evento-cartaz').value='';
+  setEventoCartaz(ev?.cartazUrl||'',ev?.cartazPath||'',ev?.cartazAlt||'');
   document.getElementById('evento-modal').classList.add('open');
   document.getElementById('ev-titulo').focus();
 }
-function closeEventoModal(){document.getElementById('evento-modal').classList.remove('open');}
+function closeEventoModal(){document.getElementById('evento-modal').classList.remove('open');eventoPosterFile=null;}
 window.editEvento=i=>openEventoModal(agendaData[i],i);
-window.deleteEvento=i=>{agendaData.splice(i,1);renderAgenda();saveAgenda();};
+window.deleteEvento=async i=>{
+  const ev=agendaData[i];
+  if(!ev)return;
+  if(!window.confirm(`Excluir o evento "${ev.titulo||'sem título'}"?`))return;
+  agendaData.splice(i,1);renderAgenda();const saved=await saveAgenda();if(!saved){agendaData.splice(i,0,ev);renderAgenda();return;}await deleteKnownCartaz(ev.cartazPath);
+};
 document.getElementById('btn-novo-evento').addEventListener('click',()=>openEventoModal());
 document.getElementById('evento-modal-close').addEventListener('click',closeEventoModal);
 document.getElementById('evento-modal-cancel').addEventListener('click',closeEventoModal);
 document.getElementById('evento-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeEventoModal();});
-document.getElementById('evento-modal-save').addEventListener('click',()=>{
+const eventoCartazInput=document.getElementById('file-evento-cartaz');
+eventoCartazInput.addEventListener('change',e=>selectEventoCartaz(e.target.files[0]));
+const eventoCartazDrop=document.getElementById('drop-evento-cartaz');
+eventoCartazDrop.addEventListener('dragover',e=>{e.preventDefault();eventoCartazDrop.classList.add('drag-over');});
+eventoCartazDrop.addEventListener('dragleave',()=>eventoCartazDrop.classList.remove('drag-over'));
+eventoCartazDrop.addEventListener('drop',e=>{e.preventDefault();eventoCartazDrop.classList.remove('drag-over');selectEventoCartaz(e.dataTransfer.files[0]);});
+document.getElementById('btn-remove-evento-cartaz').addEventListener('click',clearEventoCartaz);
+document.getElementById('evento-modal-save').addEventListener('click',async()=>{
+  const button=document.getElementById('evento-modal-save');
   const titulo=document.getElementById('ev-titulo').value.trim();
+  const inicio=document.getElementById('ev-data-inicio').value;
+  const fimInformado=document.getElementById('ev-data-fim').value;
   if(!titulo){toast('Título obrigatório.','error');return;}
-  const ev={data:document.getElementById('ev-data').value.trim(),titulo,local:document.getElementById('ev-local').value.trim()};
-  const idx=parseInt(document.getElementById('evento-idx').value);
-  if(idx>=0)agendaData[idx]=ev;else agendaData.push(ev);
-  closeEventoModal();renderAgenda();saveAgenda();
+  if(fimInformado&&!inicio){toast('Informe a data inicial antes da data final.','error');return;}
+  if(inicio&&fimInformado&&fimInformado<inicio){toast('A data final não pode ser anterior à inicial.','error');return;}
+  const idx=parseInt(document.getElementById('evento-idx').value,10);
+  const previous=idx>=0?(agendaData[idx]||{}):{};
+  const eventId=previous.id||newAgendaEventId();
+  const start=parseAgendaDate(inicio);
+  const end=parseAgendaDate(fimInformado||inicio);
+  const oldPath=document.getElementById('ev-cartaz-original-path').value||previous.cartazPath||'';
+  let cartazUrl=document.getElementById('ev-cartaz-url').value.trim();
+  let cartazPath=document.getElementById('ev-cartaz-path').value.trim();
+  button.disabled=true;
+  try{
+    if(eventoPosterFile){
+      const uploaded=await uploadEventoCartaz(eventId,eventoPosterFile);
+      cartazUrl=uploaded.url;cartazPath=uploaded.path;
+    }
+    const cartazAlt=cartazUrl?document.getElementById('ev-cartaz-alt').value.trim()||`Cartaz do evento: ${titulo}`:'';
+    const ev={...previous,id:eventId,data:agendaLegacyDate(start,end,document.getElementById('ev-data-legado').value.trim()),dataInicio:inicio||'',dataFim:fimInformado||inicio||'',titulo,local:document.getElementById('ev-local').value.trim(),descricao:document.getElementById('ev-descricao').value.trim(),cartazUrl,cartazPath,cartazAlt,ativo:previous.ativo!==false};
+    if(idx>=0)agendaData[idx]=ev;else agendaData.push(ev);
+    renderAgenda();
+    const saved=await saveAgenda();
+    if(!saved){if(cartazPath&&cartazPath!==oldPath)await deleteKnownCartaz(cartazPath);return;}
+    if(oldPath&&oldPath!==cartazPath)await deleteKnownCartaz(oldPath);
+    closeEventoModal();
+  }catch(error){toast('Erro ao salvar evento: '+error.message,'error');}
+  finally{button.disabled=false;}
 });
 async function saveAgenda(){
-  try{await setDoc(doc(db,'site','agenda'),{eventos:agendaData});toast('Agenda salva!');loadDashboard();}
-  catch(e){toast('Erro: '+e.message,'error');}
+  try{await setDoc(doc(db,'site','agenda'),{eventos:agendaData});toast('Agenda salva!');loadDashboard();return true;}
+  catch(e){toast('Erro: '+e.message,'error');return false;}
 }
 document.getElementById('btn-save-agenda').addEventListener('click',saveAgenda);
 

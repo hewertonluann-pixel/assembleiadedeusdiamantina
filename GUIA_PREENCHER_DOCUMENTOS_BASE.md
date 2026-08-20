@@ -131,13 +131,17 @@ Também confirme os ícones antes de alterá-los. O campo de ícone usa classes 
 
 No menu lateral, clique em **Agenda**. Não crie eventos fictícios. Para cada evento real, clique em **Novo Evento** e preencha:
 
-| Campo | Exemplo de formato |
+| Campo | Como preencher |
 |---|---|
-| Data | `25/12/2026` ou o formato que a igreja decidir usar de forma consistente |
-| Título | `Culto especial de Natal` |
-| Local | `Sede — Rua Getúlio Vargas, 235` |
+| Data inicial | Primeiro dia do evento, usando o seletor de data. |
+| Data final | Último dia do evento. Para um evento de um dia, use a mesma data da inicial. |
+| Título | Nome oficial, por exemplo `Congresso de Jovens`. |
+| Local | Endereço ou congregação, por exemplo `Sede — Rua Getúlio Vargas, 235`. |
+| Descrição | Somente informações confirmadas pela igreja. |
+| Cartaz | Envie o PNG, JPG ou WEBP oficial, com no máximo 10 MB. |
+| Texto alternativo | Descrição breve do cartaz para acessibilidade. |
 
-Depois salve a agenda. Se ainda não houver evento confirmado, a próxima melhoria de código deverá criar explicitamente o documento com `eventos: []`, para a home mostrar **“Nenhum evento programado”** em vez de permanecer sem estado.
+Na página pública, um evento de vários dias aparece como intervalo, por exemplo `15–17 Jun`, e o cartaz aparece como miniatura clicável. Se ainda não houver evento confirmado, mantenha a agenda vazia para a home mostrar **“Nenhum evento programado no momento”**.
 
 ## 8. Imagens do site
 

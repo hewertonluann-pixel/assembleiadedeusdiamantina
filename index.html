@@ -643,6 +643,24 @@
     }
 
     // ── 2. AGENDA ────────────────────────────────────────────────────────────
+    const AGENDA_MONTHS = ['', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    function parseAgendaDate(value) {
+      const parts = String(value || '').split('-').map(Number);
+      if (parts.length !== 3 || parts.some(n => !Number.isInteger(n))) return null;
+      const [year, month, day] = parts;
+      const date = new Date(Date.UTC(year, month - 1, day));
+      if (!year || !month || !day || date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return null;
+      return { iso: String(value), year, month, day, dayLabel: String(day).padStart(2, '0'), monthLabel: AGENDA_MONTHS[month] || String(month).padStart(2, '0') };
+    }
+    function agendaDateLabel(ev) {
+      const start = parseAgendaDate(ev?.dataInicio);
+      const end = parseAgendaDate(ev?.dataFim || ev?.dataInicio);
+      if (!start) return String(ev?.data || '—');
+      const finalDate = end || start;
+      if (start.iso === finalDate.iso) return `${start.dayLabel} ${start.monthLabel}`;
+      if (start.year === finalDate.year && start.month === finalDate.month) return `${start.dayLabel}–${String(finalDate.day).padStart(2, '0')} ${start.monthLabel}`;
+      return `${start.dayLabel} ${start.monthLabel} – ${String(finalDate.day).padStart(2, '0')} ${finalDate.monthLabel}`;
+    }
     async function loadAgenda() {
       try {
         const snap = await getDoc(doc(db, 'site', 'agenda'));
@@ -654,22 +672,23 @@
           return;
         }
 
-
-        lista.innerHTML = eventos.map(ev => {
-          const partes = (ev.data || '').split('/');
-          const dia = partes[0] || '—';
-          const mesNum = parseInt(partes[1]);
-          const meses = ['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-          const mes = meses[mesNum] || (partes[1] || '');
+        lista.innerHTML = eventos.filter(ev => ev?.ativo !== false).map(ev => {
+          const dateLabel = escapeHtml(agendaDateLabel(ev));
+          const titulo = escapeHtml(ev.titulo || '');
+          const local = escapeHtml(ev.local || '');
+          const descricao = escapeHtml(ev.descricao || '');
+          const cartaz = ev.cartazUrl ? `<a class="agenda-cartaz" href="${escapeHtml(ev.cartazUrl)}" target="_blank" rel="noopener" aria-label="Abrir cartaz de ${titulo}"><img src="${escapeHtml(ev.cartazUrl)}" alt="${escapeHtml(ev.cartazAlt || `Cartaz do evento: ${ev.titulo || ''}`)}" loading="lazy" /></a>` : '';
           return `
-            <li>
-              <span class="agenda-data">${dia}<br/>${mes}</span>
+            <li class="${cartaz ? 'agenda-com-cartaz' : ''}">
+              <span class="agenda-data">${dateLabel}</span>
               <div class="agenda-info">
-                <strong>${ev.titulo || ''}</strong>
-                <span>${ev.local ? ev.local : ''}</span>
+                <strong>${titulo}</strong>
+                ${local ? `<span><i class="fas fa-location-dot"></i> ${local}</span>` : ''}
+                ${descricao ? `<small>${descricao}</small>` : ''}
               </div>
+              ${cartaz}
             </li>`;
-        }).join('');
+        }).join('') || '<li class="agenda-empty">Nenhum evento programado no momento.</li>';
       } catch (e) { console.warn('loadAgenda:', e); }
     }
 
