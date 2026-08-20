@@ -83,7 +83,7 @@ function copiarPix() {
 }
 
 // === FADE IN ANIMATION ON SCROLL ===
-const fadeEls = document.querySelectorAll('.culto-info-card, .ministerio-card, .agenda-lista li, .rede-card');
+const fadeEls = document.querySelectorAll('.culto-card, .ministerio-card, .agenda-lista li, .rede-card');
 const fadeObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry, i) => {
     if (entry.isIntersecting) {

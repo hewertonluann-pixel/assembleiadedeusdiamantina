@@ -98,7 +98,7 @@
   </section>
 
   <!-- PRÓXIMOS CULTOS RÁPIDOS -->
-  <section class="cultos-rapidos">
+  <section class="cultos-rapidos" id="cultos" aria-label="Horários de cultos">
     <div class="container">
       <div class="cultos-grid" id="cultos-rapidos-grid">
         <!-- fallback enquanto carrega -->
@@ -149,35 +149,11 @@
     </div>
   </section>
 
-  <!-- CULTOS E AGENDA -->
-  <section class="cultos" id="cultos">
+  <!-- AGENDA -->
+  <section class="agenda-section" id="agenda" aria-labelledby="agenda-title">
     <div class="container">
-      <span class="section-tag center">Venha nos visitar</span>
-      <h2 class="section-title center">Cultos e Agenda</h2>
-      <div class="cultos-cards" id="cultos-cards">
-        <!-- fallback enquanto carrega -->
-        <div class="culto-info-card">
-          <div class="culto-icon"><i class="fas fa-church"></i></div>
-          <h3>Culto de Celebração</h3>
-          <p><i class="fas fa-calendar-day"></i> Domingos</p>
-          <p><i class="fas fa-clock"></i> 08h30 e 19h00</p>
-          <p>Louvor, adoração e pregação da Palavra.</p>
-        </div>
-        <div class="culto-info-card">
-          <div class="culto-icon"><i class="fas fa-pray"></i></div>
-          <h3>Culto de Oração</h3>
-          <p><i class="fas fa-calendar-day"></i> Terças-feiras</p>
-          <p><i class="fas fa-clock"></i> 19h00</p>
-          <p>Intercessão e busca pela presença de Deus.</p>
-        </div>
-        <div class="culto-info-card">
-          <div class="culto-icon"><i class="fas fa-book-open"></i></div>
-          <h3>Estudo Bíblico</h3>
-          <p><i class="fas fa-calendar-day"></i> Quintas-feiras</p>
-          <p><i class="fas fa-clock"></i> 19h00</p>
-          <p>Aprofundamento na Palavra de Deus.</p>
-        </div>
-      </div>
+      <span class="section-tag center">Programação especial</span>
+      <h2 class="section-title center" id="agenda-title">Agenda</h2>
       <div class="agenda-box">
         <h3><i class="fas fa-calendar-alt"></i> Próximos Eventos</h3>
         <ul class="agenda-lista" id="agenda-lista">
@@ -618,18 +594,6 @@
             <div class="culto-card">
               <i class="fas ${ICONS[i % ICONS.length]}"></i>
               <div><strong>${c.label || ''}</strong><span>${c.hora || ''}</span></div>
-            </div>`).join('');
-        }
-
-        // Cultos — cards detalhados (seção cultos)
-        if (d.cultos && d.cultos.length) {
-          const cardIcons = ['fa-church','fa-pray','fa-book-open','fa-star','fa-bible','fa-hands'];
-          const container = document.getElementById('cultos-cards');
-          container.innerHTML = d.cultos.map((c, i) => `
-            <div class="culto-info-card">
-              <div class="culto-icon"><i class="fas ${cardIcons[i % cardIcons.length]}"></i></div>
-              <h3>${c.label || ''}</h3>
-              <p><i class="fas fa-clock"></i> ${c.hora || ''}</p>
             </div>`).join('');
         }
 
