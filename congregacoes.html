@@ -653,7 +653,8 @@
     }
 
     function renderCard(docId, cong, index) {
-      const foto   = cong.foto || imgFallback(cong.nome || `congregacao-${index}`);
+      const igrejaNome = 'Assembleia de Deus';
+      const foto   = cong.foto || imgFallback(igrejaNome || `congregacao-${index}`);
       const badge  = cong.badge || `Congregação ${String(index).padStart(2, '0')}`;
       const mLink  = mapsUrl(cong.maps || cong.endereco);
       const pLink  = `congregacao.html?id=${encodeURIComponent(docId)}`;
@@ -662,16 +663,16 @@
       const article = document.createElement('article');
       article.className = 'cong-card fade-in';
       article.innerHTML = `
-        <a href="${pLink}" class="cong-card-img" aria-label="Ver perfil de ${cong.nome}">
+        <a href="${pLink}" class="cong-card-img" aria-label="Ver perfil de ${igrejaNome} — ${badge}">
           <img src="${foto}"
-               alt="${cong.nome}"
+               alt="${igrejaNome} — ${badge}"
                width="800" height="500" loading="lazy"
-               onerror="this.src='${imgFallback(cong.nome)}'" />
+               onerror="this.src='${imgFallback(igrejaNome)}'" />
           <span class="cong-badge">${badge}</span>
         </a>
         <div class="cong-card-body">
           <h3>
-            <a href="${pLink}" style="color:inherit;">${cong.nome}</a>
+            <a href="${pLink}" style="color:inherit;">${igrejaNome}</a>
           </h3>
           <div class="cong-address">
             <div class="cong-address-line">
@@ -687,13 +688,13 @@
           <div class="cong-card-actions">
             <a class="btn-perfil"
                href="${pLink}"
-               aria-label="Ver perfil de ${cong.nome}">
+               aria-label="Ver perfil de ${igrejaNome} — ${badge}">
               <i class="fas fa-church" aria-hidden="true"></i> Ver perfil
             </a>
             <a class="btn-map"
                href="${mLink}"
                target="_blank" rel="noopener noreferrer"
-               aria-label="Como chegar em ${cong.nome}">
+               aria-label="Como chegar em ${igrejaNome} — ${badge}">
               <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
             </a>
           </div>

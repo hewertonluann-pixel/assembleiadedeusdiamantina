@@ -630,13 +630,17 @@
       } catch (_) { return ''; }
     }
     let agendaPosterLastFocus = null;
+    const IGREJA_NOME = 'Assembleia de Deus';
     let agendaCongregacoes = new Map();
     function agendaCongregacaoLink(ev) {
       const id = String(ev?.congregacaoId || '').trim();
       if (!id) return '';
-      const nome = String(ev?.congregacaoNome || agendaCongregacoes.get(id)?.nome || '').trim() || 'Ver congregação';
+      const congregacao = agendaCongregacoes.get(id) || {};
+      const legado = String(ev?.congregacaoNome || '').trim();
+      const badge = String(congregacao.badge || ev?.congregacaoBadge || (legado && legado.toLowerCase() !== IGREJA_NOME.toLowerCase() ? legado : '')).trim();
+      const label = badge ? `${IGREJA_NOME} — ${badge}` : IGREJA_NOME;
       const href = `congregacao.html?id=${encodeURIComponent(id)}#eventos`;
-      return `<a class="agenda-card__congregation" href="${escapeHtml(href)}" aria-label="Ver página da congregação ${escapeHtml(nome)}"><i class="fas fa-church" aria-hidden="true"></i>${escapeHtml(nome)}</a>`;
+      return `<a class="agenda-card__congregation" href="${escapeHtml(href)}" aria-label="Ver página da congregação ${escapeHtml(label)}"><i class="fas fa-church" aria-hidden="true"></i>${escapeHtml(label)}</a>`;
     }
     function openAgendaPoster(target) {
       const url = agendaPosterUrl(target.dataset.agendaPosterUrl);

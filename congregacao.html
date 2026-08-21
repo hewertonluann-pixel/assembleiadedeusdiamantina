@@ -590,11 +590,13 @@ async function carregarPerfil(id) {
 
     const d = snap.data();
     document.getElementById('page-content').style.display = 'block';
-    document.title = `${d.nome || 'Congregação'} — AD Diamantina`;
+    const igrejaNome = 'Assembleia de Deus';
+    const badge = d.badge || 'Congregação';
+    document.title = `${igrejaNome} — ${badge} — Diamantina`;
 
-    setText('breadcrumb-nome', d.nome || 'Congregação');
-    setText('hero-nome',       d.nome || 'Congregação');
-    setText('hero-badge',      d.badge || 'Congregação');
+    setText('breadcrumb-nome', igrejaNome);
+    setText('hero-nome',       igrejaNome);
+    setText('hero-badge',      badge);
     setText('hero-endereco',   d.endereco || '—');
 
     if (d.cidade) setText('hero-cidade', d.cidade);

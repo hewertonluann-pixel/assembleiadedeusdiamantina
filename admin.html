@@ -624,7 +624,7 @@ a{color:inherit;text-decoration:none;}
 
       <!-- ABA 1: INFORMAÇÕES -->
       <div class="modal-tab-panel active" id="cong-tab-info" role="tabpanel">
-        <div class="form-group"><label class="form-label">Nome da Congregação *</label><input type="text" id="cong-nome" class="form-input" required /></div>
+        <div class="form-group"><label class="form-label">Nome institucional</label><input type="text" id="cong-nome" class="form-input" value="Assembleia de Deus" readonly aria-describedby="cong-nome-help" /><span id="cong-nome-help" style="font-size:0.75rem;color:var(--muted);">O nome da igreja é fixo. Use o badge abaixo para identificar a unidade, como Sede ou Pedra Grande.</span></div>
         <div class="form-group"><label class="form-label">Endereço completo *</label><input type="text" id="cong-end" class="form-input" required /></div>
         <div class="form-row">
           <div class="form-group"><label class="form-label">Cidade - UF</label><input type="text" id="cong-cidade" class="form-input" placeholder="Diamantina - MG" /></div>
@@ -632,7 +632,7 @@ a{color:inherit;text-decoration:none;}
         </div>
         <div class="form-group"><label class="form-label">Horários</label><input type="text" id="cong-horario" class="form-input" placeholder="Domingo 18h | Quarta 19:30h" /></div>
         <div class="form-group"><label class="form-label">Endereço para Maps</label><input type="text" id="cong-maps" class="form-input" /><span style="font-size:0.75rem;color:var(--muted);">Endereço completo para busca no Google Maps.</span></div>
-        <div class="form-group"><label class="form-label">Badge (opcional)</label><input type="text" id="cong-badge" class="form-input" placeholder="Ex: Congregação, Ponto de Apoio..." /></div>
+        <div class="form-group"><label class="form-label">Badge da unidade (opcional)</label><input type="text" id="cong-badge" class="form-input" placeholder="Ex: Sede, Pedra Grande..." /></div>
       </div>
 
       <!-- ABA 2: FOTOS & GALERIA -->
@@ -1257,7 +1257,7 @@ function openCongModal(cong=null){
   document.querySelectorAll('#cong-modal .modal-tab-panel').forEach((p,i)=>p.classList.toggle('active',i===0));
   // Campos aba 1
   document.getElementById('cong-id').value=cong?.id||'';
-  document.getElementById('cong-nome').value=cong?.nome||'';
+  document.getElementById('cong-nome').value='Assembleia de Deus';
   document.getElementById('cong-end').value=cong?.endereco||'';
   document.getElementById('cong-cidade').value=cong?.cidade||'';
   document.getElementById('cong-ordem').value=cong?.ordem||'';
@@ -1302,9 +1302,9 @@ document.getElementById('cong-modal-close').addEventListener('click',closeCongMo
 document.getElementById('cong-modal-cancel').addEventListener('click',closeCongModal);
 document.getElementById('cong-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeCongModal();});
 document.getElementById('cong-modal-save').addEventListener('click',async()=>{
-  const nome=document.getElementById('cong-nome').value.trim();
+  const nome='Assembleia de Deus';
   const end=document.getElementById('cong-end').value.trim();
-  if(!nome||!end){toast('Nome e endereço são obrigatórios.','error');return;}
+  if(!end){toast('O endereço é obrigatório.','error');return;}
   const id=document.getElementById('cong-id').value;
   const data={
     nome, endereco:end,
@@ -1438,13 +1438,15 @@ function updateEventoCongregacoes(){
   const select=document.getElementById('ev-congregacao');
   if(!select)return;
   const current=select.value;
-  const options=congsData.slice().sort((a,b)=>Number(a.ordem||99)-Number(b.ordem||99)||String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR')).map(c=>`<option value="${escapeHtml(c.id)}">${escapeHtml(c.nome||'Congregação sem nome')}</option>`).join('');
+  const options=congsData.slice().sort((a,b)=>Number(a.ordem||99)-Number(b.ordem||99)||String(a.badge||a.nome||'').localeCompare(String(b.badge||b.nome||''),'pt-BR')).map(c=>`<option value="${escapeHtml(c.id)}">Assembleia de Deus${c.badge?` — ${escapeHtml(c.badge)}`:''}</option>`).join('');
   select.innerHTML='<option value="">Evento geral / sem congregação específica</option>'+options;
   if(current)select.value=current;
 }
 function eventoCongregacaoLabel(ev){
   if(!ev?.congregacaoId)return '';
-  return ev.congregacaoNome||congsData.find(c=>c.id===ev.congregacaoId)?.nome||'Congregação vinculada';
+  const c=congsData.find(item=>item.id===ev.congregacaoId)||{};
+  const badge=ev.congregacaoBadge||c.badge||((ev.congregacaoNome||'').trim().toLowerCase()!=='assembleia de deus'?(ev.congregacaoNome||'').trim():'');
+  return badge?`Assembleia de Deus — ${badge}`:'Assembleia de Deus';
 }
 function openEventoModal(ev=null,idx=-1){
   eventoPosterFile=null;
@@ -1508,9 +1510,10 @@ document.getElementById('evento-modal-save').addEventListener('click',async()=>{
     }
     const cartazAlt=cartazUrl?document.getElementById('ev-cartaz-alt').value.trim()||`Cartaz do evento: ${titulo}`:'';
     const congregacaoId=document.getElementById('ev-congregacao').value||'';
-    const congregacaoNome=congregacaoId?(congsData.find(c=>c.id===congregacaoId)?.nome||''):
-      '';
-    const ev={...previous,id:eventId,data:agendaLegacyDate(start,end,document.getElementById('ev-data-legado').value.trim()),dataInicio:inicio||'',dataFim:fimInformado||inicio||'',titulo,local:document.getElementById('ev-local').value.trim(),congregacaoId,congregacaoNome,descricao:document.getElementById('ev-descricao').value.trim(),cartazUrl,cartazPath,cartazAlt,ativo:previous.ativo!==false};
+    const congregacao=congregacaoId?(congsData.find(c=>c.id===congregacaoId)||{}):{};
+    const congregacaoNome='Assembleia de Deus';
+    const congregacaoBadge=congregacao.badge||'';
+    const ev={...previous,id:eventId,data:agendaLegacyDate(start,end,document.getElementById('ev-data-legado').value.trim()),dataInicio:inicio||'',dataFim:fimInformado||inicio||'',titulo,local:document.getElementById('ev-local').value.trim(),congregacaoId,congregacaoNome,congregacaoBadge,descricao:document.getElementById('ev-descricao').value.trim(),cartazUrl,cartazPath,cartazAlt,ativo:previous.ativo!==false};
     if(idx>=0)agendaData[idx]=ev;else agendaData.push(ev);
     renderAgenda();
     const saved=await saveAgenda();

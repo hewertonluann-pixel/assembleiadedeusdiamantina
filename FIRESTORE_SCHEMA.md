@@ -84,6 +84,9 @@ O documento mantém `eventos` como uma lista. Eventos novos usam datas ISO (`YYY
       "dataFim": "2026-05-17",
       "titulo": "Congresso de Jovens",
       "local": "Sede Central",
+      "congregacaoId": "id-do-documento-da-congregacao",
+      "congregacaoNome": "Assembleia de Deus",
+      "congregacaoBadge": "Sede",
       "descricao": "Programação oficial confirmada pela igreja.",
       "cartazUrl": "https://firebasestorage.googleapis.com/...",
       "cartazPath": "img/agenda/evento-1750000000000-ab12cd-1750000000000.png",
@@ -94,7 +97,7 @@ O documento mantém `eventos` como uma lista. Eventos novos usam datas ISO (`YYY
 }
 ```
 
-`cartazUrl` e `cartazPath` são preenchidos pelo upload do painel. O arquivo é armazenado em `img/agenda/`, respeitando as regras de imagem do Firebase Storage. Registros antigos que tenham apenas `data`, `titulo` e `local` continuam sendo exibidos; ao editá-los, o painel preserva a data legada até que datas inicial e final sejam informadas.
+`congregacaoId` é a referência estável ao documento em `congregacoes/{id}` e é o único campo usado para filtrar eventos na página da congregação. `congregacaoNome` permanece como o nome institucional fixo `Assembleia de Deus`; `congregacaoBadge` identifica a unidade, como `Sede` ou `Pedra Grande`. O painel também consegue recuperar o badge diretamente do documento da congregação, mantendo compatibilidade com eventos antigos. `cartazUrl` e `cartazPath` são preenchidos pelo upload do painel. O arquivo é armazenado em `img/agenda/`, respeitando as regras de imagem do Firebase Storage. Registros antigos que tenham apenas `data`, `titulo` e `local` continuam sendo exibidos; ao editá-los, o painel preserva a data legada até que datas inicial e final sejam informadas.
 
 ### `site/ministerios`
 ```json
@@ -152,16 +155,16 @@ O documento mantém `eventos` como uma lista. Eventos novos usam datas ISO (`YYY
 
 ## Coleção: `congregacoes` (um documento por congregação)
 
-Cada documento representa uma congregação:
+Cada documento representa uma unidade da Assembleia de Deus. O campo `nome` é mantido como `Assembleia de Deus`; o campo `badge` diferencia a unidade publicamente, por exemplo `Sede` ou `Pedra Grande`.
 
 ```json
 {
-  "nome": "Congregação Jardim das Pedras",
+  "nome": "Assembleia de Deus",
   "endereco": "Rua das Flores, 45 – Jardim das Pedras",
   "cidade": "Diamantina – MG",
   "horario": "Domingo 18h | Quarta 19:30h",
   "foto": "https://link-para-imagem.jpg",
-  "badge": "Congregação",
+  "badge": "Pedra Grande",
   "maps": "Rua das Flores 45 Diamantina MG",
   "ordem": 1
 }
