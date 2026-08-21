@@ -53,6 +53,7 @@ function eventDateSortValue(event) {
 
 function eventTitle(event) { return String(event?.titulo || 'Evento sem título').trim(); }
 function eventLocation(event) { return String(event?.local || '').trim(); }
+function eventDescription(event) { return String(event?.descricao || '').trim(); }
 function posterUrl(event) { return safeUrl(event?.cartazUrl); }
 
 function showToast(message) {
@@ -168,11 +169,46 @@ function renderCollection(events) {
   collection.innerHTML = cards + note || `<div class="collection-card--no-poster">Nenhum cartaz disponível.</div>`;
 }
 
+function makeTimelineCard(event) {
+  const url = posterUrl(event);
+  const title = escapeHtml(eventTitle(event));
+  const location = escapeHtml(eventLocation(event));
+  const description = escapeHtml(eventDescription(event));
+  const date = escapeHtml(formatDate(event));
+  const alt = escapeHtml(event.cartazAlt || `Cartaz do evento: ${eventTitle(event)}`);
+  const locationHtml = location ? `<p class="timeline-card__location"><i class="fas fa-location-dot" aria-hidden="true"></i><span>${location}</span></p>` : '';
+  const descriptionHtml = description ? `<p class="timeline-card__description">${description}</p>` : '<p class="timeline-card__description timeline-card__description--empty">Descrição a confirmar</p>';
+  const media = url
+    ? `<div class="timeline-card__media" role="button" tabindex="0" data-poster-url="${escapeHtml(url)}" data-poster-title="${title}" data-poster-date="${date}" data-poster-location="${location}" aria-label="Abrir cartaz de ${title}"><img src="${escapeHtml(url)}" alt="${alt}" loading="lazy" /><span class="timeline-card__expand"><i class="fas fa-expand" aria-hidden="true"></i></span></div>`
+    : `<div class="timeline-card__media timeline-card__media--empty" aria-label="Cartaz não enviado"><i class="fas fa-image" aria-hidden="true"></i><span>Cartaz não enviado</span></div>`;
+
+  return `<article class="timeline-card">
+    ${media}
+    <div class="timeline-card__body">
+      <span class="timeline-card__date"><i class="fas fa-calendar-day" aria-hidden="true"></i>${date}</span>
+      <h3>${title}</h3>
+      ${locationHtml}
+      ${descriptionHtml}
+    </div>
+  </article>`;
+}
+
+function renderTimeline(events) {
+  const timeline = $('event-timeline');
+  if (!timeline) return;
+  if (!events.length) {
+    timeline.innerHTML = `<div class="timeline-empty"><i class="fas fa-calendar-xmark" aria-hidden="true"></i><strong>Nenhum evento corresponde ao filtro selecionado.</strong><span>Ajuste os filtros para visualizar a agenda cronológica.</span></div>`;
+    return;
+  }
+  timeline.innerHTML = events.map(makeTimelineCard).join('');
+}
+
 function render() {
   const events = filteredEvents();
   renderSummary(events);
   renderCarousel(events);
   renderCollection(events);
+  renderTimeline(events);
 }
 
 function openPoster(target) {
@@ -246,6 +282,8 @@ $('carousel-stage')?.addEventListener('click', handlePosterActivation);
 $('carousel-stage')?.addEventListener('keydown', handlePosterActivation);
 $('event-collection')?.addEventListener('click', handlePosterActivation);
 $('event-collection')?.addEventListener('keydown', handlePosterActivation);
+$('event-timeline')?.addEventListener('click', handlePosterActivation);
+$('event-timeline')?.addEventListener('keydown', handlePosterActivation);
 $('poster-dialog-close')?.addEventListener('click', closePoster);
 $('poster-dialog')?.addEventListener('click', (event) => {
   if (event.target === $('poster-dialog')) closePoster();

@@ -34,7 +34,7 @@
         <div>
           <span class="lab-eyebrow">Página de teste — não substitui a home</span>
           <h1>Qual visualização valoriza melhor os eventos?</h1>
-          <p>Compare duas possibilidades usando os mesmos eventos cadastrados no painel: uma vitrine de descoberta, inspirada em plataformas como o Sympla, e um carrossel de cartazes com a linguagem visual do card de dirigente.</p>
+          <p>Compare três possibilidades usando os mesmos eventos cadastrados no painel: uma vitrine de descoberta, inspirada em plataformas como o Sympla, um carrossel de cartazes e uma agenda cronológica resumida para visualizar as datas ocupadas.</p>
         </div>
         <div class="lab-intro__note">
           <i class="fas fa-circle-info" aria-hidden="true"></i>
@@ -102,12 +102,24 @@
       </article>
     </section>
 
+    <section class="lab-container experiment-panel experiment-panel--timeline" aria-labelledby="timeline-title">
+      <div class="experiment-panel__header">
+        <div>
+          <span class="option-label">Opção C</span>
+          <h2 id="timeline-title">Agenda cronológica resumida</h2>
+          <p>Cards compactos organizados pela data do evento, de cima para baixo e da esquerda para a direita. A miniatura preserva o cartaz inteiro, sem cortes.</p>
+        </div>
+        <span class="experiment-panel__icon"><i class="fas fa-calendar-days" aria-hidden="true"></i></span>
+      </div>
+      <div class="timeline-board" id="event-timeline"></div>
+    </section>
+
     <section class="lab-container lab-readout" aria-label="Observações do experimento">
       <div class="lab-readout__icon"><i class="fas fa-lightbulb" aria-hidden="true"></i></div>
       <div>
         <span class="lab-eyebrow">Como avaliar</span>
         <h2>Qual opção funciona melhor para a igreja?</h2>
-        <p>Observe se a pessoa entende rapidamente a data, identifica o evento e encontra o cartaz sem esforço. O carrossel cria mais destaque visual; a vitrine facilita comparar vários eventos ao mesmo tempo.</p>
+        <p>Observe qual opção ajuda melhor na divulgação e no planejamento das congregações. O carrossel cria destaque visual; a vitrine facilita comparar eventos; a agenda cronológica torna as datas ocupadas mais fáceis de consultar.</p>
       </div>
       <a class="lab-button lab-button--outline" href="index.html#agenda"><i class="fas fa-calendar-days" aria-hidden="true"></i> Ver agenda atual</a>
     </section>
@@ -128,6 +140,6 @@
   <div class="lab-toast" id="lab-toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous"></script>
-  <script type="module" src="js/eventos-experimento.js?v=2"></script>
+  <script type="module" src="js/eventos-experimento.js?v=3"></script>
 </body>
 </html>

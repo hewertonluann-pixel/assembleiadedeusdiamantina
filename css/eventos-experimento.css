@@ -123,6 +123,52 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 3px solid
 .collection-card--no-poster { grid-column: 1 / -1; padding: 14px; border-style: dashed; background: #fbfcff; color: var(--lab-muted); font-size: .78rem; }
 .collection-card--no-poster i { margin-right: 6px; color: var(--lab-gold); }
 
+.timeline-board {
+  column-count: 4;
+  column-gap: 16px;
+  column-fill: balance;
+}
+.timeline-card {
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 16px;
+  overflow: hidden;
+  break-inside: avoid;
+  border: 1px solid var(--lab-line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(16,43,104,.06);
+  vertical-align: top;
+  transition: transform 180ms var(--lab-ease), box-shadow 180ms var(--lab-ease);
+}
+.timeline-card:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(16,43,104,.12); }
+.timeline-card__media {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #f1f4f9;
+  cursor: zoom-in;
+}
+.timeline-card__media img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.timeline-card__media--empty { gap: 8px; padding: 20px; color: var(--lab-muted); cursor: default; text-align: center; }
+.timeline-card__media--empty i { color: var(--lab-gold); font-size: 1.6rem; }
+.timeline-card__media--empty span { font-size: .7rem; font-weight: 700; }
+.timeline-card__expand { position: absolute; right: 8px; bottom: 8px; display: grid; place-items: center; width: 27px; height: 27px; border-radius: 8px; color: #fff; background: rgba(16,43,104,.88); font-size: .65rem; pointer-events: none; }
+.timeline-card__body { padding: 12px 12px 14px; }
+.timeline-card__date { display: inline-flex; align-items: center; gap: 6px; color: var(--lab-primary); font-size: .68rem; font-weight: 800; }
+.timeline-card__date i { color: var(--lab-gold); }
+.timeline-card__body h3 { margin: 7px 0 0; color: var(--lab-navy); font-family: 'Playfair Display', Georgia, serif; font-size: 1rem; line-height: 1.17; }
+.timeline-card__location { display: flex; align-items: flex-start; gap: 6px; margin: 7px 0 0; color: var(--lab-muted); font-size: .73rem; line-height: 1.35; }
+.timeline-card__location i { margin-top: 2px; color: var(--lab-gold); }
+.timeline-card__description { display: -webkit-box; overflow: hidden; margin: 8px 0 0; color: #5f6b80; font-size: .74rem; line-height: 1.4; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+.timeline-card__description--empty { color: #9aa4b5; font-style: italic; }
+.timeline-empty { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 30px 16px; border: 1px dashed #cbd4e3; border-radius: 14px; color: var(--lab-muted); text-align: center; }
+.timeline-empty i { color: var(--lab-gold); font-size: 1.7rem; }
+.timeline-empty strong { color: var(--lab-navy); font-size: .9rem; }
+.timeline-empty span { font-size: .76rem; }
+
 .lab-readout { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 18px; margin-top: 22px; margin-bottom: 70px; padding: 24px 26px; border-radius: var(--lab-radius); background: var(--lab-gold-soft); border: 1px solid #f0dc99; }
 .lab-readout__icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 14px; color: #8d6500; background: #fff; font-size: 1.1rem; }
 .lab-readout h2 { margin: 5px 0 4px; color: var(--lab-navy); font-family: 'Playfair Display', Georgia, serif; font-size: 1.25rem; }
@@ -150,6 +196,7 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 3px solid
   .lab-intro__inner, .comparison-grid { grid-template-columns: 1fr; }
   .lab-intro__note { max-width: 560px; }
   .experiment-panel--collection { order: 2; }
+  .timeline-board { column-count: 3; column-gap: 12px; }
   .poster-dialog__content { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; }
   .poster-dialog__caption { padding: 18px 22px 22px; }
   .poster-dialog__caption h2 { font-size: 1.2rem; }
@@ -180,6 +227,12 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 3px solid
   .carousel-empty { min-height: min(72vw, 315px); }
 
   .event-poster-card__caption h3 { font-size: 1.18rem; }
+  .timeline-board { column-count: 1; }
+  .timeline-card { margin-bottom: 12px; }
+  .timeline-card__media { aspect-ratio: 16 / 10; }
+  .timeline-card__body { padding: 10px 10px 12px; }
+  .timeline-card__body h3 { font-size: .9rem; }
+  .timeline-card__description, .timeline-card__location { font-size: .68rem; }
   .carousel-arrow { width: 32px; height: 32px; }
   .event-collection { gap: 9px; }
   .collection-card__body { padding: 9px 9px 11px; }
