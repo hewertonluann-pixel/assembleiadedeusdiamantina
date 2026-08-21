@@ -129,6 +129,29 @@
   .info-card strong { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); }
   .info-card span { font-size: 0.95rem; color: var(--gray); }
 
+  .eventos-congregacao-section { padding: 90px 0; background: var(--light); }
+  .eventos-congregacao-intro { max-width: 620px; margin: -6px 0 30px; color: var(--gray); }
+  .cong-events-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+  .cong-event-card { display: flex; min-width: 0; overflow: hidden; flex-direction: column; border: 1px solid #e7eaf0; border-radius: 14px; background: #fff; box-shadow: 0 5px 15px rgba(16,43,104,.06); transition: transform .2s ease, box-shadow .2s ease; }
+  .cong-event-card:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(16,43,104,.12); }
+  .cong-event-card__media { display: grid; place-items: center; aspect-ratio: 4 / 3; overflow: hidden; background: #eef1f7; }
+  .cong-event-card__media img { width: 100%; height: 100%; object-fit: contain; }
+  .cong-event-card__media--empty { gap: 8px; padding: 22px 14px; color: var(--gray); text-align: center; }
+  .cong-event-card__media--empty i { color: var(--gold); font-size: 1.8rem; }
+  .cong-event-card__media--empty span { font-size: .72rem; font-weight: 700; }
+  .cong-event-card__body { display: flex; flex: 1; flex-direction: column; padding: 14px 16px 17px; }
+  .cong-event-card__date { display: inline-flex; align-items: center; align-self: flex-start; gap: 7px; padding: 7px 11px; border: 1px solid rgba(212,160,23,.38); border-radius: 10px; color: #fff; background: linear-gradient(135deg, var(--primary) 0%, #244aa8 100%); box-shadow: 0 5px 12px rgba(26,58,143,.16); font-size: .82rem; font-weight: 800; line-height: 1.25; }
+  .cong-event-card__date i { color: #f4d36b; }
+  .cong-event-card h3 { margin: 12px 0 0; color: var(--primary); font-family: 'Playfair Display', serif; font-size: 1.12rem; line-height: 1.25; }
+  .cong-event-card__meta { margin: 7px 0 0; color: var(--gray); font-size: .82rem; line-height: 1.35; }
+  .cong-event-card__meta i { margin-right: 4px; color: var(--primary); }
+  .cong-event-card__description { display: -webkit-box; overflow: hidden; margin: 9px 0 0; color: var(--gray); font-size: .78rem; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 4; }
+  .cong-event-card__link { display: inline-flex; align-items: center; gap: 7px; align-self: flex-start; margin-top: auto; padding-top: 14px; color: var(--primary); font-size: .78rem; font-weight: 700; }
+  .cong-event-card__link:hover { color: var(--gold); }
+  .cong-events-empty { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 42px 20px; border: 1px dashed #cfd7e8; border-radius: 14px; color: var(--gray); text-align: center; }
+  .cong-events-empty > i { color: #c5cfe8; font-size: 2.4rem; }
+  .cong-events-empty p { margin: 0; }
+
   .galeria-section { padding: 90px 0; background: var(--light); }
   .galeria-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 200px; gap: 12px; }
   .galeria-item { border-radius: var(--radius); overflow: hidden; cursor: pointer; position: relative; background: #dce3f3; }
@@ -197,9 +220,10 @@
     .dirigente-foto-wrap { max-width: 260px; margin: 0 auto 40px; }
     .galeria-grid { grid-template-columns: repeat(2, 1fr); }
     .galeria-item:first-child { grid-column: span 2; grid-row: span 1; }
+    .cong-events-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
     .footer-grid { grid-template-columns: 1fr; }
   }
-  @media (max-width: 480px) { .galeria-grid { grid-template-columns: 1fr; } .galeria-item:first-child { grid-column: span 1; } }
+  @media (max-width: 480px) { .galeria-grid { grid-template-columns: 1fr; } .galeria-item:first-child { grid-column: span 1; } .cong-events-grid { grid-template-columns: 1fr; } }
   @media (prefers-reduced-motion: reduce) { .fade-in { opacity: 1; transform: none; transition: none; } .whatsapp-float { animation: none; } }
 </style>
 </head>
@@ -343,6 +367,15 @@
     </div>
   </section>
 
+  <section class="eventos-congregacao-section fade-in" id="eventos" aria-labelledby="eventos-title">
+    <div class="container">
+      <span class="section-tag">Agenda local</span>
+      <h2 class="section-title" id="eventos-title">Eventos desta congregação</h2>
+      <p class="eventos-congregacao-intro">Confira os próximos eventos vinculados a esta congregação.</p>
+      <div class="cong-events-grid" id="cong-events-grid" aria-live="polite"></div>
+    </div>
+  </section>
+
   <section class="galeria-section fade-in" id="galeria-section">
     <div class="container">
       <span class="section-tag">Memórias</span>
@@ -477,6 +510,68 @@ function mapsUrl(maps) {
   if (maps.startsWith('http')) return maps;
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(maps)}`;
 }
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+}
+const EVENT_MONTHS = ['', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+function parseEventDate(value) {
+  const parts = String(value || '').split('-').map(Number);
+  if (parts.length !== 3 || parts.some(n => !Number.isInteger(n))) return null;
+  const [year, month, day] = parts;
+  const date = new Date(Date.UTC(year, month - 1, day));
+  if (!year || !month || !day || date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return null;
+  return { iso: String(value), year, month, day, dayLabel: String(day).padStart(2, '0'), monthLabel: EVENT_MONTHS[month] || String(month).padStart(2, '0') };
+}
+function eventDateLabel(ev) {
+  const start = parseEventDate(ev?.dataInicio || ev?.data);
+  const end = parseEventDate(ev?.dataFim || ev?.dataInicio || ev?.data);
+  if (!start) return String(ev?.data || 'Data a confirmar');
+  const finalDate = end || start;
+  if (start.iso === finalDate.iso) return `${start.dayLabel} ${start.monthLabel}`;
+  if (start.year === finalDate.year && start.month === finalDate.month) return `${start.dayLabel}–${String(finalDate.day).padStart(2, '0')} ${start.monthLabel}`;
+  return `${start.dayLabel} ${start.monthLabel} – ${String(finalDate.day).padStart(2, '0')} ${finalDate.monthLabel}`;
+}
+function eventSortValue(ev) {
+  const parsed = parseEventDate(ev?.dataInicio || ev?.data);
+  return parsed ? Date.UTC(parsed.year, parsed.month - 1, parsed.day) : Number.MAX_SAFE_INTEGER;
+}
+function safeEventImage(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  try {
+    const url = new URL(raw, window.location.href);
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+  } catch (_) { return ''; }
+}
+async function carregarEventosCongregacao(id) {
+  const grid = document.getElementById('cong-events-grid');
+  if (!grid) return;
+  try {
+    const snap = await getDoc(doc(db, 'site', 'agenda'));
+    const eventos = Array.isArray(snap.data()?.eventos) ? snap.data().eventos : [];
+    const vinculados = eventos
+      .filter(ev => ev?.ativo !== false && String(ev?.congregacaoId || '') === String(id))
+      .sort((a, b) => eventSortValue(a) - eventSortValue(b));
+    if (!vinculados.length) {
+      grid.innerHTML = `<div class="cong-events-empty"><i class="fas fa-calendar-xmark" aria-hidden="true"></i><p>Nenhum evento vinculado a esta congregação no momento.</p><a href="index.html#agenda" class="btn btn-outline-dark"><i class="fas fa-calendar-days"></i> Ver Agenda geral</a></div>`;
+      return;
+    }
+    grid.innerHTML = vinculados.map(ev => {
+      const titulo = escapeHtml(String(ev?.titulo || 'Evento sem título').trim());
+      const date = escapeHtml(eventDateLabel(ev));
+      const local = escapeHtml(String(ev?.local || '').trim());
+      const descricao = escapeHtml(String(ev?.descricao || '').trim());
+      const image = safeEventImage(ev?.cartazUrl);
+      const media = image
+        ? `<div class="cong-event-card__media"><img src="${escapeHtml(image)}" alt="${escapeHtml(ev?.cartazAlt || `Cartaz do evento: ${ev?.titulo || 'Evento'}`)}" loading="lazy" /></div>`
+        : `<div class="cong-event-card__media cong-event-card__media--empty" aria-label="Cartaz não enviado"><i class="fas fa-image" aria-hidden="true"></i><span>Cartaz não enviado</span></div>`;
+      return `<article class="cong-event-card">${media}<div class="cong-event-card__body"><span class="cong-event-card__date"><i class="fas fa-calendar-day" aria-hidden="true"></i>${date}</span><h3>${titulo}</h3>${local ? `<p class="cong-event-card__meta"><i class="fas fa-location-dot" aria-hidden="true"></i>${local}</p>` : ''}<p class="cong-event-card__description">${descricao || 'Descrição a confirmar'}</p><a href="index.html#agenda" class="cong-event-card__link"><i class="fas fa-arrow-right" aria-hidden="true"></i> Ver na Agenda geral</a></div></article>`;
+    }).join('');
+  } catch (err) {
+    console.warn('carregarEventosCongregacao:', err);
+    grid.innerHTML = `<div class="cong-events-empty"><i class="fas fa-calendar-xmark" aria-hidden="true"></i><p>Não foi possível carregar os eventos agora.</p></div>`;
+  }
+}
 
 const congId = new URLSearchParams(window.location.search).get('id');
 if (!congId) {
@@ -551,6 +646,7 @@ async function carregarPerfil(id) {
 
     const galeria = Array.isArray(d.galeria) ? d.galeria.filter(Boolean) : [];
     renderGaleria(galeria);
+    await carregarEventosCongregacao(id);
 
     const io = new IntersectionObserver(entries => {
       entries.forEach(e => {

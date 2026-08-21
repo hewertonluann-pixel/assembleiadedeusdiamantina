@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <title>Assembleia de Deus - Ministério de Diamantina</title>
   <meta name="description" content="Site oficial da Igreja Assembleia de Deus Ministério de Diamantina, MG. Cultos, agenda, ministérios e transmissões ao vivo." />
-  <link rel="stylesheet" href="css/style.css?v=19" />
+  <link rel="stylesheet" href="css/style.css?v=20" />
   <link rel="stylesheet" href="css/radio-player.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -630,6 +630,14 @@
       } catch (_) { return ''; }
     }
     let agendaPosterLastFocus = null;
+    let agendaCongregacoes = new Map();
+    function agendaCongregacaoLink(ev) {
+      const id = String(ev?.congregacaoId || '').trim();
+      if (!id) return '';
+      const nome = String(ev?.congregacaoNome || agendaCongregacoes.get(id)?.nome || '').trim() || 'Ver congregação';
+      const href = `congregacao.html?id=${encodeURIComponent(id)}#eventos`;
+      return `<a class="agenda-card__congregation" href="${escapeHtml(href)}" aria-label="Ver página da congregação ${escapeHtml(nome)}"><i class="fas fa-church" aria-hidden="true"></i>${escapeHtml(nome)}</a>`;
+    }
     function openAgendaPoster(target) {
       const url = agendaPosterUrl(target.dataset.agendaPosterUrl);
       const dialog = document.getElementById('agenda-poster-dialog');
@@ -668,7 +676,11 @@
     }
     async function loadAgenda() {
       try {
-        const snap = await getDoc(doc(db, 'site', 'agenda'));
+        const [snap, congregacoesSnap] = await Promise.all([
+          getDoc(doc(db, 'site', 'agenda')),
+          getDocs(collection(db, 'congregacoes')).catch(() => null)
+        ]);
+        agendaCongregacoes = new Map((congregacoesSnap?.docs || []).map(item => [item.id, item.data()]));
         const eventos = snap.data()?.eventos;
         const lista = document.getElementById('agenda-lista');
         if (!lista) return;
@@ -700,6 +712,7 @@
               <span class="agenda-data"><i class="fas fa-calendar-day" aria-hidden="true"></i>${dateLabel}</span>
               <div class="agenda-info">
                 <strong>${titulo}</strong>
+                ${agendaCongregacaoLink(ev)}
                 ${local ? `<span><i class="fas fa-location-dot" aria-hidden="true"></i>${local}</span>` : ''}
                 ${descricaoHtml}
               </div>

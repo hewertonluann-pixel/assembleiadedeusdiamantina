@@ -730,6 +730,7 @@ a{color:inherit;text-decoration:none;}
       </div>
       <div class="form-group"><label class="form-label" for="ev-titulo">Título do Evento *</label><input type="text" id="ev-titulo" class="form-input" required /></div>
       <div class="form-group"><label class="form-label" for="ev-local">Local</label><input type="text" id="ev-local" class="form-input" placeholder="Sede Central" /></div>
+      <div class="form-group"><label class="form-label" for="ev-congregacao"><i class="fas fa-church" style="color:var(--gold);margin-right:.35rem;"></i>Congregação relacionada</label><select id="ev-congregacao" class="form-input"><option value="">Evento geral / sem congregação específica</option></select><small class="form-hint">Associe o evento a uma congregação para criar o link na Agenda e exibi-lo no perfil dela.</small></div>
       <div class="form-group"><label class="form-label" for="ev-descricao">Descrição</label><textarea id="ev-descricao" class="form-textarea" placeholder="Informações adicionais confirmadas pela igreja"></textarea></div>
       <div class="form-group">
         <label class="form-label">Cartaz do evento</label>
@@ -820,7 +821,7 @@ document.querySelectorAll('[data-page]').forEach(btn=>{
     btn.classList.add('active');
     document.getElementById('page-'+btn.dataset.page)?.classList.add('active');
     if(btn.dataset.page==='congregacoes') loadCongs();
-    if(btn.dataset.page==='agenda') loadAgenda();
+    if(btn.dataset.page==='agenda'){ loadCongs(); loadAgenda(); }
     if(btn.dataset.page==='ministerios') loadMins();
     if(btn.dataset.page==='home-config') loadHomeConfig();
     if(btn.dataset.page==='imagens') loadImagens();
@@ -1052,7 +1053,7 @@ async function loadCongs(){
     let snap;
     try{snap=await getDocs(query(collection(db,'congregacoes'),orderBy('ordem','asc')));}
     catch(_){snap=await getDocs(collection(db,'congregacoes'));}
-    congsData=snap.docs.map(d=>({id:d.id,...d.data()})); renderCongs();
+    congsData=snap.docs.map(d=>({id:d.id,...d.data()})); renderCongs(); updateEventoCongregacoes();
   }catch(e){toast('Erro ao carregar congregações: '+e.message,'error');}
   finally{showEl('cong-loading',false);}
 }
@@ -1428,12 +1429,26 @@ function renderAgenda(){
     const local=escapeHtml(ev.local||'');
     const description=escapeHtml(ev.descricao||'');
     const date=escapeHtml(agendaDateLabel(ev));
+    const congregation=escapeHtml(eventoCongregacaoLabel(ev));
     const poster=ev.cartazUrl?`<div class="agenda-item-poster"><img src="${escapeHtml(ev.cartazUrl)}" alt="${escapeHtml(ev.cartazAlt||'Cartaz do evento')}" /></div>`:'<div class="agenda-item-poster" aria-hidden="true"><i class="fas fa-image"></i></div>';
-    return `<div class="agenda-item">${poster}<div class="agenda-item-date">${date}</div><div class="agenda-item-info"><strong>${title}</strong>${local?`<br/><span><i class="fas fa-location-dot"></i> ${local}</span>`:''}${description?`<br/><span>${description}</span>`:''}</div><div class="agenda-item-actions" style="display:flex;gap:0.5rem;"><button class="btn btn-ghost btn-icon" onclick="editEvento(${i})" aria-label="Editar evento"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-icon" onclick="deleteEvento(${i})" aria-label="Excluir evento"><i class="fas fa-trash"></i></button></div></div>`;
+    return `<div class="agenda-item">${poster}<div class="agenda-item-date">${date}</div><div class="agenda-item-info"><strong>${title}</strong>${congregation?`<br/><span><i class="fas fa-church"></i> ${congregation}</span>`:''}${local?`<br/><span><i class="fas fa-location-dot"></i> ${local}</span>`:''}${description?`<br/><span>${description}</span>`:''}</div><div class="agenda-item-actions" style="display:flex;gap:0.5rem;"><button class="btn btn-ghost btn-icon" onclick="editEvento(${i})" aria-label="Editar evento"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-icon" onclick="deleteEvento(${i})" aria-label="Excluir evento"><i class="fas fa-trash"></i></button></div></div>`;
   }).join('');
+}
+function updateEventoCongregacoes(){
+  const select=document.getElementById('ev-congregacao');
+  if(!select)return;
+  const current=select.value;
+  const options=congsData.slice().sort((a,b)=>Number(a.ordem||99)-Number(b.ordem||99)||String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR')).map(c=>`<option value="${escapeHtml(c.id)}">${escapeHtml(c.nome||'Congregação sem nome')}</option>`).join('');
+  select.innerHTML='<option value="">Evento geral / sem congregação específica</option>'+options;
+  if(current)select.value=current;
+}
+function eventoCongregacaoLabel(ev){
+  if(!ev?.congregacaoId)return '';
+  return ev.congregacaoNome||congsData.find(c=>c.id===ev.congregacaoId)?.nome||'Congregação vinculada';
 }
 function openEventoModal(ev=null,idx=-1){
   eventoPosterFile=null;
+  updateEventoCongregacoes();
   document.getElementById('evento-modal-title').textContent=ev?'Editar Evento':'Novo Evento';
   document.getElementById('evento-idx').value=idx;
   document.getElementById('ev-data-inicio').value=ev?.dataInicio||'';
@@ -1441,6 +1456,7 @@ function openEventoModal(ev=null,idx=-1){
   document.getElementById('ev-data-legado').value=ev?.data&&!ev?.dataInicio?ev.data:'';
   document.getElementById('ev-titulo').value=ev?.titulo||'';
   document.getElementById('ev-local').value=ev?.local||'';
+  document.getElementById('ev-congregacao').value=ev?.congregacaoId||'';
   document.getElementById('ev-descricao').value=ev?.descricao||'';
   document.getElementById('ev-cartaz-original-url').value=ev?.cartazUrl||'';
   document.getElementById('ev-cartaz-original-path').value=ev?.cartazPath||'';
@@ -1491,7 +1507,10 @@ document.getElementById('evento-modal-save').addEventListener('click',async()=>{
       cartazUrl=uploaded.url;cartazPath=uploaded.path;
     }
     const cartazAlt=cartazUrl?document.getElementById('ev-cartaz-alt').value.trim()||`Cartaz do evento: ${titulo}`:'';
-    const ev={...previous,id:eventId,data:agendaLegacyDate(start,end,document.getElementById('ev-data-legado').value.trim()),dataInicio:inicio||'',dataFim:fimInformado||inicio||'',titulo,local:document.getElementById('ev-local').value.trim(),descricao:document.getElementById('ev-descricao').value.trim(),cartazUrl,cartazPath,cartazAlt,ativo:previous.ativo!==false};
+    const congregacaoId=document.getElementById('ev-congregacao').value||'';
+    const congregacaoNome=congregacaoId?(congsData.find(c=>c.id===congregacaoId)?.nome||''):
+      '';
+    const ev={...previous,id:eventId,data:agendaLegacyDate(start,end,document.getElementById('ev-data-legado').value.trim()),dataInicio:inicio||'',dataFim:fimInformado||inicio||'',titulo,local:document.getElementById('ev-local').value.trim(),congregacaoId,congregacaoNome,descricao:document.getElementById('ev-descricao').value.trim(),cartazUrl,cartazPath,cartazAlt,ativo:previous.ativo!==false};
     if(idx>=0)agendaData[idx]=ev;else agendaData.push(ev);
     renderAgenda();
     const saved=await saveAgenda();
