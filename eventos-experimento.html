@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#102b68" />
+  <title>Laboratório de Eventos | AD Diamantina</title>
+  <link rel="icon" href="pwa-icon-192.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/eventos-experimento.css" />
+</head>
+<body>
+  <header class="lab-header">
+    <div class="lab-container lab-header__inner">
+      <a class="lab-brand" href="index.html" aria-label="Voltar para a página inicial">
+        <span class="lab-brand__mark"><img id="lab-logo" alt="" hidden /></span>
+        <span>
+          <strong>Assembleia de Deus</strong>
+          <small>Ministério de Diamantina</small>
+        </span>
+      </a>
+      <div class="lab-header__right">
+        <span class="lab-pill"><i class="fas fa-flask" aria-hidden="true"></i> Laboratório visual</span>
+        <a class="lab-back-link" href="index.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Voltar ao site</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="lab-intro">
+      <div class="lab-container lab-intro__inner">
+        <div>
+          <span class="lab-eyebrow">Página de teste — não substitui a home</span>
+          <h1>Qual visualização valoriza melhor os eventos?</h1>
+          <p>Compare duas possibilidades usando os mesmos eventos cadastrados no painel: uma vitrine de descoberta, inspirada em plataformas como o Sympla, e um carrossel de cartazes com a linguagem visual do card de dirigente.</p>
+        </div>
+        <div class="lab-intro__note">
+          <i class="fas fa-circle-info" aria-hidden="true"></i>
+          <div><strong>Dados reais, leitura somente</strong><span>Esta página lê a agenda do Firebase, mas não altera eventos, datas ou cartazes.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lab-container lab-controls" aria-label="Filtros de comparação">
+      <div class="lab-controls__title">
+        <span class="lab-eyebrow">Explorar a coleção</span>
+        <strong id="results-summary">Carregando eventos…</strong>
+      </div>
+      <div class="lab-controls__fields">
+        <label class="lab-select-label" for="filter-events">Exibir
+          <select id="filter-events" class="lab-select">
+            <option value="all">Todos os eventos</option>
+            <option value="posters">Somente com cartaz</option>
+          </select>
+        </label>
+        <label class="lab-select-label" for="sort-events">Ordenar
+          <select id="sort-events" class="lab-select">
+            <option value="date">Mais próximos</option>
+            <option value="name">Nome do evento</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="lab-container comparison-grid" aria-label="Comparação de visualizações">
+      <article class="experiment-panel experiment-panel--carousel">
+        <div class="experiment-panel__header">
+          <div>
+            <span class="option-label">Opção A</span>
+            <h2>Carrossel de cartazes</h2>
+            <p>Uma imagem em destaque por vez, com a data aplicada sobre o cartaz como a etiqueta “Dirigente” da página de congregação.</p>
+          </div>
+          <span class="experiment-panel__icon"><i class="fas fa-images" aria-hidden="true"></i></span>
+        </div>
+
+        <div class="carousel-shell" id="event-carousel-shell">
+          <button class="carousel-arrow carousel-arrow--prev" id="carousel-prev" type="button" aria-label="Evento anterior"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
+          <div class="carousel-viewport">
+            <div class="carousel-stage" id="carousel-stage"></div>
+          </div>
+          <button class="carousel-arrow carousel-arrow--next" id="carousel-next" type="button" aria-label="Próximo evento"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
+        </div>
+        <div class="carousel-footer">
+          <span id="carousel-position">—</span>
+          <div class="carousel-dots" id="carousel-dots" aria-label="Selecionar evento"></div>
+        </div>
+        <p class="panel-footnote"><i class="fas fa-expand" aria-hidden="true"></i> Clique em qualquer cartaz para abrir a imagem em tela cheia.</p>
+      </article>
+
+      <article class="experiment-panel experiment-panel--collection">
+        <div class="experiment-panel__header">
+          <div>
+            <span class="option-label">Opção B</span>
+            <h2>Vitrine de eventos</h2>
+            <p>Uma grade de descoberta com mais de um evento visível, filtro simples e ordenação, aproximando-se da lógica de uma coleção de eventos.</p>
+          </div>
+          <span class="experiment-panel__icon"><i class="fas fa-border-all" aria-hidden="true"></i></span>
+        </div>
+        <div class="event-collection" id="event-collection"></div>
+      </article>
+    </section>
+
+    <section class="lab-container lab-readout" aria-label="Observações do experimento">
+      <div class="lab-readout__icon"><i class="fas fa-lightbulb" aria-hidden="true"></i></div>
+      <div>
+        <span class="lab-eyebrow">Como avaliar</span>
+        <h2>Qual opção funciona melhor para a igreja?</h2>
+        <p>Observe se a pessoa entende rapidamente a data, identifica o evento e encontra o cartaz sem esforço. O carrossel cria mais destaque visual; a vitrine facilita comparar vários eventos ao mesmo tempo.</p>
+      </div>
+      <a class="lab-button lab-button--outline" href="index.html#agenda"><i class="fas fa-calendar-days" aria-hidden="true"></i> Ver agenda atual</a>
+    </section>
+  </main>
+
+  <dialog class="poster-dialog" id="poster-dialog" aria-labelledby="poster-dialog-title">
+    <button class="poster-dialog__close" id="poster-dialog-close" type="button" aria-label="Fechar cartaz"><i class="fas fa-times" aria-hidden="true"></i></button>
+    <div class="poster-dialog__content">
+      <img id="poster-dialog-image" alt="" />
+      <div class="poster-dialog__caption">
+        <span id="poster-dialog-date"></span>
+        <h2 id="poster-dialog-title">Cartaz do evento</h2>
+        <p id="poster-dialog-location"></p>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="lab-toast" id="lab-toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous"></script>
+  <script type="module" src="js/eventos-experimento.js?v=2"></script>
+</body>
+</html>
