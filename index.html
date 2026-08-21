@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <title>Assembleia de Deus - Ministério de Diamantina</title>
   <meta name="description" content="Site oficial da Igreja Assembleia de Deus Ministério de Diamantina, MG. Cultos, agenda, ministérios e transmissões ao vivo." />
-  <link rel="stylesheet" href="css/style.css?v=16" />
+  <link rel="stylesheet" href="css/style.css?v=17" />
   <link rel="stylesheet" href="css/radio-player.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -156,8 +156,18 @@
       <h2 class="section-title center" id="agenda-title">Agenda</h2>
       <div class="agenda-box">
         <div class="agenda-heading-row">
-          <h3><i class="fas fa-calendar-alt"></i> Próximos Eventos</h3>
-          <span class="agenda-heading-note"><i class="fas fa-list-check"></i> Confira as próximas programações</span>
+          <div class="agenda-heading-copy">
+            <h3><i class="fas fa-calendar-alt"></i> Próximos Eventos</h3>
+            <span class="agenda-heading-note"><i class="fas fa-list-check"></i> Confira as próximas programações</span>
+          </div>
+          <div class="agenda-view-switcher" role="group" aria-label="Modo de visualização da agenda">
+            <button class="agenda-view-button is-active" type="button" data-agenda-view="grid" aria-pressed="true" title="Exibir eventos com imagens">
+              <i class="fas fa-table-cells-large" aria-hidden="true"></i><span>Vitrine</span>
+            </button>
+            <button class="agenda-view-button" type="button" data-agenda-view="list" aria-pressed="false" title="Exibir lista sem imagens">
+              <i class="fas fa-list" aria-hidden="true"></i><span>Lista</span>
+            </button>
+          </div>
         </div>
         <div class="agenda-grid" id="agenda-lista" aria-live="polite">
           <div class="agenda-empty" id="agenda-empty">Nenhum evento programado no momento.</div>
@@ -1026,6 +1036,20 @@
     });
 
     const agendaLista = document.getElementById('agenda-lista');
+    const agendaViewButtons = [...document.querySelectorAll('[data-agenda-view]')];
+    function setAgendaView(view) {
+      const isList = view === 'list';
+      agendaLista?.classList.toggle('agenda-list-view', isList);
+      agendaViewButtons.forEach(button => {
+        const isActive = button.dataset.agendaView === view;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+      });
+    }
+    agendaViewButtons.forEach(button => {
+      button.addEventListener('click', () => setAgendaView(button.dataset.agendaView || 'grid'));
+    });
+    setAgendaView('grid');
     agendaLista?.addEventListener('click', handleAgendaPosterActivation);
     agendaLista?.addEventListener('keydown', handleAgendaPosterActivation);
     document.getElementById('agenda-poster-close')?.addEventListener('click', closeAgendaPoster);

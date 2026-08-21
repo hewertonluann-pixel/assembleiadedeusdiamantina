@@ -291,9 +291,16 @@ ul { list-style: none; }
   box-shadow: var(--shadow);
 }
 .agenda-heading-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 24px; }
+.agenda-heading-copy { min-width: 0; }
 .agenda-box h3 { margin: 0; font-size: 1.2rem; color: var(--primary); display: flex; gap: 10px; align-items: center; }
 .agenda-heading-note { display: inline-flex; align-items: center; gap: 7px; color: var(--gray); font-size: .76rem; }
 .agenda-heading-note i { color: var(--gold); }
+.agenda-view-switcher { display: inline-flex; flex: 0 0 auto; gap: 4px; padding: 4px; border: 1px solid #e1e6f0; border-radius: 12px; background: #f7f8fc; }
+.agenda-view-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 34px; padding: 7px 11px; border: 0; border-radius: 8px; color: var(--gray); background: transparent; font: inherit; font-size: .74rem; font-weight: 800; cursor: pointer; transition: var(--transition); }
+.agenda-view-button:hover { color: var(--primary); background: #edf1fc; }
+.agenda-view-button.is-active { color: #fff; background: var(--primary); box-shadow: 0 4px 10px rgba(26,58,143,.18); }
+.agenda-view-button:focus-visible { outline: 3px solid rgba(212,160,23,.55); outline-offset: 2px; }
+.agenda-view-button i { font-size: .78rem; }
 .agenda-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(205px, 1fr)); gap: 18px; align-items: stretch; }
 .agenda-card { display: flex; min-width: 0; overflow: hidden; flex-direction: column; border: 1px solid #e7eaf0; border-radius: 14px; background: #fff; box-shadow: 0 5px 15px rgba(16,43,104,.06); transition: transform .2s ease, box-shadow .2s ease; }
 .agenda-card:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(16,43,104,.12); }
@@ -313,6 +320,15 @@ ul { list-style: none; }
 .agenda-info small { display: -webkit-box; overflow: hidden; margin-top: 8px; color: var(--gray); font-size: .76rem; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 4; }
 .agenda-info small.agenda-description-empty { color: #9ba4b3; font-style: italic; }
 .agenda-card--without-poster .agenda-card__body { min-height: 145px; }
+.agenda-grid.agenda-list-view { display: flex; flex-direction: column; gap: 10px; }
+.agenda-grid.agenda-list-view .agenda-card { display: flex; flex-direction: row; border-radius: 12px; }
+.agenda-grid.agenda-list-view .agenda-card__media { display: none; }
+.agenda-grid.agenda-list-view .agenda-card__body { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 16px; padding: 14px 16px; }
+.agenda-grid.agenda-list-view .agenda-card--without-poster .agenda-card__body { min-height: 0; }
+.agenda-grid.agenda-list-view .agenda-data { margin: 0; white-space: nowrap; }
+.agenda-grid.agenda-list-view .agenda-info strong { margin-top: 0; }
+.agenda-grid.agenda-list-view .agenda-info span { margin-top: 5px; }
+.agenda-grid.agenda-list-view .agenda-info small { margin-top: 6px; }
 .agenda-empty { grid-column: 1 / -1; padding: 24px 16px; border: 1px dashed #d9d9d9; border-radius: 12px; color: var(--gray); background: transparent; font-size: .95rem; text-align: center; }
 .agenda-poster-dialog[hidden] { display: none; }
 .agenda-poster-dialog { position: fixed; z-index: 1200; inset: 0; display: grid; place-items: center; padding: 20px; }
@@ -331,6 +347,8 @@ ul { list-style: none; }
 body.agenda-dialog-open { overflow: hidden; }
 @media (max-width: 700px) {
   .agenda-heading-row { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .agenda-view-switcher { align-self: stretch; }
+  .agenda-view-button { flex: 1; }
   .agenda-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .agenda-box { padding: 24px 18px; }
   .agenda-card__body { padding: 11px 11px 13px; }
@@ -347,6 +365,8 @@ body.agenda-dialog-open { overflow: hidden; }
 }
 @media (max-width: 430px) {
   .agenda-grid { grid-template-columns: 1fr; }
+  .agenda-grid.agenda-list-view .agenda-card__body { grid-template-columns: 1fr; gap: 8px; }
+  .agenda-grid.agenda-list-view .agenda-data { justify-self: start; }
 }
 
 /* === MINISTÉRIOS === */
