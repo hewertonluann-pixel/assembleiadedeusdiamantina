@@ -772,35 +772,21 @@
       window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
     }
     async function shareAgendaPoster() {
-      if (!agendaPosterShareData) return;
-      const { title, date, location } = agendaPosterShareData;
-      const text = [date, title, location].filter(Boolean).join(' · ');
-      const pageUrl = getAgendaShareUrl();
-      let posterFile = null;
+      if (typeof navigator.share !== 'function') {
+        throw new Error('Seu navegador não permite compartilhar imagens diretamente.');
+      }
+      const { blob } = await fetchAgendaPosterBlob();
+      const posterFile = new File([blob], agendaPosterFileName(), { type: blob.type || 'image/png' });
+      if (typeof navigator.canShare === 'function' && !navigator.canShare({ files: [posterFile] })) {
+        throw new Error('Seu navegador não permite compartilhar este cartaz como imagem.');
+      }
       try {
-        const { blob } = await fetchAgendaPosterBlob();
-        posterFile = new File([blob], agendaPosterFileName(), { type: blob.type || 'image/png' });
-      } catch (_) {}
-      if (posterFile && typeof navigator.share === 'function' && navigator.canShare?.({ files: [posterFile] })) {
-        try {
-          await navigator.share({ title: title || 'Evento da igreja', text, files: [posterFile] });
-          showAgendaShareStatus('Cartaz compartilhado.');
-          return;
-        } catch (error) {
-          if (error?.name === 'AbortError') return;
-        }
+        await navigator.share({ files: [posterFile] });
+        showAgendaShareStatus('Cartaz compartilhado como imagem.');
+      } catch (error) {
+        if (error?.name === 'AbortError') return;
+        throw new Error('Não foi possível compartilhar o cartaz como imagem.');
       }
-      if (typeof navigator.share === 'function') {
-        try {
-          await navigator.share({ title: title || 'Evento da igreja', text, url: pageUrl });
-          showAgendaShareStatus('Compartilhamento aberto.');
-          return;
-        } catch (error) {
-          if (error?.name === 'AbortError') return;
-        }
-      }
-      const copied = await copyAgendaShareText(`${text}\n${pageUrl}`);
-      showAgendaShareStatus(copied ? 'Link do evento copiado.' : 'Não foi possível compartilhar automaticamente.');
     }
     async function handleAgendaShareAction(action) {
       closeAgendaShareMenu();
