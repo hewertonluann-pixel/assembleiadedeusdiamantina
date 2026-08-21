@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'ad-diamantina-pwa-v19';
+const CACHE_VERSION = 'ad-diamantina-pwa-v20';
 const FIRESTORE_IMAGES_URL = 'https://firestore.googleapis.com/v1/projects/ad-diamantina/databases/(default)/documents/site/imagens';
 const DYNAMIC_ICON_ROUTES = {
   '/pwa-icon-192.png': { field: 'favicon192', dataField: 'faviconData192', fallbackField: 'favicon', fallback: '/icons/icon-192.png' },
@@ -37,6 +37,33 @@ function responseFromDataUrl(dataUrl) {
   return new Response(bytes, { headers: { 'Content-Type': mime, 'Cache-Control': 'no-cache' } });
 }
 
+async function withWhiteIconBackground(response) {
+  if (!self.OffscreenCanvas || !self.createImageBitmap) return response;
+  const fallback = response.clone();
+  try {
+    const blob = await response.blob();
+    const bitmap = await self.createImageBitmap(blob);
+    const size = Math.max(bitmap.width, bitmap.height);
+    const canvas = new self.OffscreenCanvas(size, size);
+    const context = canvas.getContext('2d');
+    if (!context) {
+      bitmap.close?.();
+      return fallback;
+    }
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, size, size);
+    const scale = Math.min(size / bitmap.width, size / bitmap.height);
+    const width = Math.round(bitmap.width * scale);
+    const height = Math.round(bitmap.height * scale);
+    context.drawImage(bitmap, Math.round((size - width) / 2), Math.round((size - height) / 2), width, height);
+    bitmap.close?.();
+    const output = await canvas.convertToBlob({ type: 'image/png' });
+    return new Response(output, { headers: { 'Content-Type': 'image/png', 'Cache-Control': 'no-cache' } });
+  } catch (error) {
+    return fallback;
+  }
+}
+
 async function getDynamicIconResponse(request, config) {
   const cache = await caches.open(CACHE_VERSION);
   try {
@@ -45,19 +72,21 @@ async function getDynamicIconResponse(request, config) {
       const payload = await firestoreResponse.json();
       const dataUrl = payload.fields?.[config.dataField]?.stringValue;
       if (dataUrl?.startsWith('data:image/png;base64,')) {
-        const iconResponse = responseFromDataUrl(dataUrl);
-        if (iconResponse) {
-          await cache.put(request, iconResponse.clone());
-          return iconResponse;
-        }
+          const iconResponse = responseFromDataUrl(dataUrl);
+          if (iconResponse) {
+            const whiteIconResponse = await withWhiteIconBackground(iconResponse);
+            await cache.put(request, whiteIconResponse.clone());
+            return whiteIconResponse;
+          }
       }
       const dynamicUrl = payload.fields?.[config.field]?.stringValue || payload.fields?.[config.fallbackField]?.stringValue;
       if (dynamicUrl) {
         try {
           const iconResponse = await fetch(dynamicUrl, { mode: 'cors', cache: 'no-store' });
           if (iconResponse.ok && iconResponse.type !== 'opaque') {
-            await cache.put(request, iconResponse.clone());
-            return iconResponse;
+            const whiteIconResponse = await withWhiteIconBackground(iconResponse);
+            await cache.put(request, whiteIconResponse.clone());
+            return whiteIconResponse;
           }
         } catch (error) {
           // O Storage sem CORS cai para o PNG same-origin abaixo.
