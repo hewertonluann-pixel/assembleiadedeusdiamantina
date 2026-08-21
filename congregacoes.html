@@ -426,8 +426,9 @@
           <li><a href="index.html#cultos"      class="nav-link">Cultos</a></li>
           <li><a href="index.html#ministerios" class="nav-link">Ministérios</a></li>
           <li><a href="index.html#midia"       class="nav-link">Mídia</a></li>
-          <li><a href="congregacoes.html"      class="nav-link active">Congregações</a></li>
+          <li><a href="congregacoes.html"      class="nav-link active" aria-current="page">Congregações</a></li>
           <li><a href="index.html#contato"     class="nav-link">Contato</a></li>
+          <li id="nav-contribuicao" hidden><a href="index.html#contribuicao" class="nav-link">Contribuição</a></li>
         </ul>
       </nav>
       <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false">
@@ -804,6 +805,13 @@
           const c = contatoDoc.data();
           document.getElementById('footer-endereco').innerHTML =
             `${c.rua || ''}<br/>${c.bairro || ''}<br/>${c.cidade || ''}<br/>${c.cep || ''}`;
+        }
+
+        const contribuicaoDoc = await getDoc(doc(db, 'site', 'contribuicao'));
+        const contribuicao = contribuicaoDoc.exists() ? (contribuicaoDoc.data() || {}) : {};
+        const navContribution = document.getElementById('nav-contribuicao');
+        if (navContribution) {
+          navContribution.hidden = !(contribuicao.pixKey && contribuicao.receiverName && contribuicao.receiverCity && contribuicao.qrCode);
         }
 
         const imagensDoc = await getDoc(doc(db, 'site', 'imagens'));
