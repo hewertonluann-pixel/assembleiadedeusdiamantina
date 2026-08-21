@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1A3A8F" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="AD Diamantina" />
+  <link rel="manifest" href="manifest.webmanifest?v=7" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <title>A Igreja — Assembleia de Deus · Ministério de Diamantina</title>
+  <meta name="description" content="Conheça a história, a missão, a visão e os valores da Assembleia de Deus Ministério de Diamantina." />
+  <link rel="stylesheet" href="css/style.css?v=18" />
+  <link rel="stylesheet" href="css/igreja.css?v=1" />
+  <link rel="stylesheet" href="css/radio-player.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link id="site-favicon" rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <script src="js/favicon.js"></script>
+  <script src="js/pwa.js"></script>
+</head>
+<body>
+  <header class="header" id="header">
+    <div class="container nav-container">
+      <a href="index.html#home" class="logo" aria-label="Voltar para a página inicial">
+        <img id="site-logo" src="img/logo.png" alt="Logo AD Diamantina" onerror="this.style.display='none'" />
+        <div class="logo-text">
+          <span class="logo-title">Assembleia de Deus</span>
+          <span class="logo-sub">Ministério de Diamantina</span>
+        </div>
+      </a>
+      <nav class="nav" id="nav" aria-label="Navegação principal">
+        <ul class="nav-list">
+          <li><a href="index.html#home" class="nav-link">Início</a></li>
+          <li><a href="igreja.html" class="nav-link active" aria-current="page">A Igreja</a></li>
+          <li><a href="index.html#cultos" class="nav-link">Cultos</a></li>
+          <li><a href="index.html#ministerios" class="nav-link">Ministérios</a></li>
+          <li><a href="index.html#midia" class="nav-link">Mídia</a></li>
+          <li><a href="congregacoes.html" class="nav-link">Congregações</a></li>
+          <li><a href="index.html#contato" class="nav-link">Contato</a></li>
+        </ul>
+      </nav>
+      <button class="hamburger" id="hamburger" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="igreja-page-hero" aria-labelledby="igreja-page-title">
+      <div class="container igreja-page-hero__content">
+        <nav class="igreja-breadcrumb" aria-label="Trilha de navegação">
+          <a href="index.html#home">Início</a>
+          <i class="fas fa-chevron-right" aria-hidden="true"></i>
+          <span>A Igreja</span>
+        </nav>
+        <span class="section-tag">Conheça nossa história</span>
+        <h1 id="igreja-page-title">A Igreja</h1>
+        <p>Conheça os fundamentos que orientam a Assembleia de Deus Ministério de Diamantina.</p>
+      </div>
+    </section>
+
+    <section class="sobre igreja-sobre" aria-labelledby="igreja-sobre-title">
+      <div class="container sobre-grid">
+        <div class="sobre-img igreja-sobre__image">
+          <img id="site-igreja" src="img/igreja.jpg" alt="Igreja Assembleia de Deus Diamantina" onerror="this.style.display='none'" />
+          <div class="sobre-img-placeholder" id="site-igreja-placeholder" hidden aria-hidden="true"><i class="fas fa-church"></i></div>
+        </div>
+        <div class="sobre-texto">
+          <span class="section-tag">Nossa identidade</span>
+          <h2 class="section-title" id="igreja-sobre-title">Uma comunidade de fé, amor e esperança</h2>
+          <p id="sobre-p1">A Assembleia de Deus Ministério de Diamantina foi fundada em 07 de julho de 2009, com o propósito de proclamar o evangelho de Jesus Cristo no coração de Diamantina e região.</p>
+          <p id="sobre-p2">Sob a liderança do Pr. Airton Vitorino da Silva, nossa igreja cresce em fé, servindo à comunidade com amor, palavra e oração.</p>
+          <div class="sobre-valores" aria-label="Missão, visão e valores">
+            <div class="valor">
+              <i class="fas fa-cross" aria-hidden="true"></i>
+              <div>
+                <strong>Missão</strong>
+                <p>Pregar o Evangelho e fazer discípulos de Jesus Cristo.</p>
+              </div>
+            </div>
+            <div class="valor">
+              <i class="fas fa-eye" aria-hidden="true"></i>
+              <div>
+                <strong>Visão</strong>
+                <p>Ser uma igreja que transforma vidas e impacta Diamantina.</p>
+              </div>
+            </div>
+            <div class="valor">
+              <i class="fas fa-heart" aria-hidden="true"></i>
+              <div>
+                <strong>Valores</strong>
+                <p>Fé, família, comunhão e serviço ao próximo.</p>
+              </div>
+            </div>
+          </div>
+          <a href="index.html#contato" class="btn btn-primary"><i class="fas fa-envelope" aria-hidden="true"></i> Entre em contato</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="igreja-invite" aria-label="Próximos caminhos">
+      <div class="container igreja-invite__inner">
+        <div>
+          <span class="section-tag">Faça parte</span>
+          <h2 class="section-title">Caminhe conosco</h2>
+          <p>Encontre um horário de culto, conheça nossas congregações e acompanhe a programação do Ministério de Diamantina.</p>
+        </div>
+        <div class="igreja-invite__actions">
+          <a href="index.html#cultos" class="btn btn-primary"><i class="fas fa-church" aria-hidden="true"></i> Ver cultos</a>
+          <a href="congregacoes.html" class="btn btn-outline igreja-invite__outline"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Ver congregações</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <div class="logo" style="margin-bottom:16px">
+          <div class="logo-text">
+            <span class="logo-title" style="color:#fff">Assembleia de Deus</span>
+            <span class="logo-sub" style="color:#D4A017">Ministério de Diamantina</span>
+          </div>
+        </div>
+        <p>Pregando o Evangelho e servindo a comunidade desde 2009.</p>
+        <div class="footer-social">
+          <a id="footer-instagram" href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a id="footer-facebook" href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+          <a id="footer-youtube" href="#" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          <a id="footer-whatsapp" href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" hidden><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Links Rápidos</h4>
+        <ul>
+          <li><a href="index.html#home">Início</a></li>
+          <li><a href="igreja.html">A Igreja</a></li>
+          <li><a href="index.html#cultos">Cultos e Agenda</a></li>
+          <li><a href="index.html#ministerios">Ministérios</a></li>
+          <li><a href="index.html#midia">Mídia</a></li>
+          <li><a href="congregacoes.html">Congregações</a></li>
+          <li><a href="index.html#contato">Contato</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Cultos</h4>
+        <ul id="footer-cultos"><li>Carregando…</li></ul>
+      </div>
+      <div class="footer-col">
+        <h4>Endereço</h4>
+        <p id="footer-endereco">Carregando…</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Assembleia de Deus Ministério de Diamantina. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <a id="whatsapp-float" href="#" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale pelo WhatsApp" hidden>
+    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+  </a>
+
+  <aside class="radio-player" id="radio-player" hidden aria-label="Rádio ao vivo">
+    <audio id="radio-player-audio" preload="none"></audio>
+    <button class="radio-player__toggle" id="radio-player-toggle" type="button" aria-label="Tocar rádio" aria-pressed="false"><i class="fas fa-play" id="radio-player-toggle-icon"></i></button>
+    <div class="radio-player__body">
+      <span class="radio-player__label">Rádio ao vivo</span>
+      <strong class="radio-player__title" id="radio-player-title">Diamantina Gospel FM</strong>
+      <span class="radio-player__status" id="radio-player-status">Carregando…</span>
+    </div>
+    <div class="radio-player__actions">
+      <label class="radio-player__volume-label" aria-label="Volume"><i class="fas fa-volume-low"></i><input class="radio-player__volume" id="radio-player-volume" type="range" min="0" max="1" step="0.05" value="0.8" aria-label="Volume da rádio" /></label>
+      <a class="radio-player__link" id="radio-player-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Abrir página da rádio" hidden><i class="fas fa-external-link-alt"></i></a>
+      <button class="radio-player__close" id="radio-player-close" type="button" aria-label="Ocultar player da rádio">&times;</button>
+    </div>
+  </aside>
+  <script src="js/radio-player.js"></script>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: 'AIzaSyBtMB9qs34H8qMjaA_XavJdrUSpOASYBos',
+      authDomain: 'ad-diamantina.firebaseapp.com',
+      projectId: 'ad-diamantina',
+      storageBucket: 'ad-diamantina.firebasestorage.app',
+      messagingSenderId: '430449368435',
+      appId: '1:430449368435:web:c2d94116f9761fd4c87906'
+    };
+
+    const db = getFirestore(initializeApp(firebaseConfig));
+
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (el && value) el.textContent = value;
+    }
+
+    function updateWhatsappLinks(rawNumber) {
+      const number = String(rawNumber || '').replace(/\D/g, '');
+      const url = number ? `https://wa.me/${number}` : '';
+      document.querySelectorAll('#footer-whatsapp, #whatsapp-float').forEach((el) => {
+        if (url) {
+          el.href = url;
+          el.hidden = false;
+        } else {
+          el.hidden = true;
+          el.removeAttribute('href');
+        }
+      });
+    }
+
+    async function carregarDadosInstitucionais() {
+      try {
+        const homeSnap = await getDoc(doc(db, 'site', 'home'));
+        if (homeSnap.exists()) {
+          const home = homeSnap.data();
+          setText('sobre-p1', home.sobre_p1);
+          setText('sobre-p2', home.sobre_p2);
+          const footerCultos = document.getElementById('footer-cultos');
+          if (footerCultos && Array.isArray(home.cultos) && home.cultos.length) {
+            footerCultos.innerHTML = home.cultos.map((culto) => `<li>${culto.label || ''} — ${culto.hora || ''}</li>`).join('');
+          }
+        }
+
+        const imagensSnap = await getDoc(doc(db, 'site', 'imagens'));
+        if (imagensSnap.exists()) {
+          const imagens = imagensSnap.data();
+          if (window.setSiteFavicon) window.setSiteFavicon(imagens.favicon, imagens.favicon192);
+          const logo = document.getElementById('site-logo');
+          if (logo && imagens.logo) logo.src = imagens.logo;
+          const igreja = document.getElementById('site-igreja');
+          if (igreja && imagens.igreja) igreja.src = imagens.igreja;
+        }
+
+        const contatoSnap = await getDoc(doc(db, 'site', 'contato'));
+        if (contatoSnap.exists()) {
+          const contato = contatoSnap.data();
+          const endereco = document.getElementById('footer-endereco');
+          if (endereco) {
+            endereco.innerHTML = [contato.rua, contato.bairro, contato.cidade, contato.cep].filter(Boolean).join('<br/>');
+          }
+        }
+
+        const redesSnap = await getDoc(doc(db, 'site', 'redes'));
+        if (redesSnap.exists()) {
+          const redes = redesSnap.data();
+          if (redes.instagram) document.getElementById('footer-instagram').href = redes.instagram;
+          if (redes.facebook) document.getElementById('footer-facebook').href = redes.facebook;
+          if (redes.youtube) document.getElementById('footer-youtube').href = redes.youtube;
+          updateWhatsappLinks(redes.whatsapp);
+          const defaultRadioPage = 'https://player.brsrv.xyz/player-app-multi-plataforma/7238';
+          const defaultRadioStream = 'https://stm16.brsrv.xyz:7238/stream';
+          window.dispatchEvent(new CustomEvent('site:radio-config', { detail: {
+            radioPage: redes.radioPage || defaultRadioPage,
+            radioStream: redes.radioStream || defaultRadioStream,
+            radioName: redes.radioName || 'Diamantina Gospel FM'
+          }}));
+        }
+      } catch (error) {
+        console.warn('Não foi possível carregar os dados institucionais:', error);
+      }
+    }
+
+    carregarDadosInstitucionais();
+  </script>
+
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const nav = document.getElementById('nav');
+    hamburger.addEventListener('click', () => {
+      const isOpen = nav.classList.toggle('open');
+      hamburger.classList.toggle('open', isOpen);
+      hamburger.setAttribute('aria-expanded', String(isOpen));
+      hamburger.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+    });
+    document.querySelectorAll('.nav-link').forEach((link) => link.addEventListener('click', () => {
+      nav.classList.remove('open');
+      hamburger.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      hamburger.setAttribute('aria-label', 'Abrir menu');
+    }));
+
+    window.addEventListener('scroll', () => {
+      document.getElementById('header').style.boxShadow = window.scrollY > 40
+        ? '0 4px 24px rgba(26,58,143,0.15)'
+        : '0 2px 16px rgba(26,58,143,0.08)';
+    });
+  </script>
+</body>
+</html>

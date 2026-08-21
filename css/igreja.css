@@ -1,0 +1,183 @@
+/* === PÁGINA A IGREJA === */
+.igreja-page-hero {
+  position: relative;
+  min-height: 360px;
+  padding-top: 80px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(15,31,92,.96), rgba(26,58,143,.88) 58%, rgba(45,90,200,.84)),
+    url('../img/igreja.jpg') center / cover no-repeat;
+}
+
+.igreja-page-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 78% 24%, rgba(244,211,107,.20), transparent 34%);
+  pointer-events: none;
+}
+
+.igreja-page-hero__content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding-top: 54px;
+  padding-bottom: 54px;
+}
+
+.igreja-page-hero .section-tag {
+  color: #f4d36b;
+  background: rgba(244,211,107,.16);
+}
+
+.igreja-page-hero h1 {
+  color: #fff;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.3rem, 6vw, 4rem);
+  line-height: 1.1;
+  margin-bottom: 14px;
+}
+
+.igreja-page-hero p {
+  max-width: 600px;
+  color: rgba(255,255,255,.82);
+  font-size: clamp(1rem, 2vw, 1.15rem);
+}
+
+.igreja-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 20px;
+  color: rgba(255,255,255,.58);
+  font-size: .83rem;
+}
+
+.igreja-breadcrumb a { transition: color .2s ease; }
+.igreja-breadcrumb a:hover { color: #f4d36b; }
+.igreja-breadcrumb i { font-size: .65rem; }
+
+.igreja-sobre {
+  padding-top: 94px;
+  padding-bottom: 94px;
+}
+
+.igreja-sobre__image {
+  position: relative;
+}
+
+.igreja-sobre__image img {
+  min-height: 360px;
+}
+
+.igreja-sobre__image .sobre-img-placeholder {
+  width: 100%;
+  min-height: 360px;
+  height: 100%;
+}
+
+.igreja-invite {
+  padding: 72px 0;
+  background: var(--light);
+}
+
+.igreja-invite__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 42px;
+  padding: 34px 40px;
+  border-left: 5px solid var(--gold);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.igreja-invite .section-title {
+  margin-bottom: 10px;
+}
+
+.igreja-invite p {
+  max-width: 650px;
+  color: var(--gray);
+}
+
+.igreja-invite__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+.igreja-invite__outline {
+  color: var(--primary);
+  border-color: rgba(26,58,143,.32);
+}
+
+.igreja-invite__outline:hover {
+  color: #fff;
+  background: var(--primary);
+}
+
+@media (max-width: 760px) {
+  .igreja-page-hero {
+    min-height: 320px;
+  }
+
+  .igreja-page-hero__content {
+    padding-top: 48px;
+    padding-bottom: 44px;
+  }
+
+  .igreja-sobre {
+    padding-top: 68px;
+    padding-bottom: 68px;
+  }
+
+  .igreja-sobre__image img,
+  .igreja-sobre__image .sobre-img-placeholder {
+    min-height: 250px;
+  }
+
+  .igreja-invite {
+    padding: 54px 0;
+  }
+
+  .igreja-invite__inner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 24px;
+    padding: 28px 24px;
+  }
+
+  .igreja-invite__actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .igreja-page-hero {
+    padding-top: 96px;
+  }
+
+  .igreja-breadcrumb {
+    margin-bottom: 16px;
+  }
+
+  .igreja-invite__actions,
+  .igreja-invite__actions .btn {
+    width: 100%;
+  }
+
+  .igreja-invite__actions .btn {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .igreja-breadcrumb a { transition: none; }
+}
