@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <title>Assembleia de Deus - Ministério de Diamantina</title>
   <meta name="description" content="Site oficial da Igreja Assembleia de Deus Ministério de Diamantina, MG. Cultos, agenda, ministérios e transmissões ao vivo." />
-  <link rel="stylesheet" href="css/style.css?v=11" />
+  <link rel="stylesheet" href="css/style.css?v=12" />
   <link rel="stylesheet" href="css/radio-player.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -453,10 +453,27 @@
       <button class="agenda-poster-dialog__close" id="agenda-poster-close" type="button" aria-label="Fechar cartaz">&times;</button>
       <div class="agenda-poster-dialog__image-wrap">
         <img id="agenda-poster-image" alt="" />
-        <button class="agenda-poster-dialog__share" id="agenda-poster-share" type="button" aria-label="Compartilhar evento">
+        <button class="agenda-poster-dialog__share" id="agenda-poster-share" type="button" aria-label="Abrir opções de compartilhamento" aria-haspopup="menu" aria-expanded="false" aria-controls="agenda-poster-share-menu">
           <i class="fas fa-share-nodes" aria-hidden="true"></i>
           <span>Compartilhar</span>
         </button>
+        <div class="agenda-poster-share-menu" id="agenda-poster-share-menu" hidden role="menu" aria-label="Ações do cartaz">
+          <button type="button" role="menuitem" data-agenda-share-action="copy-image">
+            <i class="fas fa-copy" aria-hidden="true"></i><span>Copiar imagem</span>
+          </button>
+          <button type="button" role="menuitem" data-agenda-share-action="download-image">
+            <i class="fas fa-download" aria-hidden="true"></i><span>Baixar imagem</span>
+          </button>
+          <button type="button" role="menuitem" data-agenda-share-action="share">
+            <i class="fas fa-share-nodes" aria-hidden="true"></i><span>Compartilhar</span>
+          </button>
+          <button type="button" role="menuitem" data-agenda-share-action="open-image">
+            <i class="fas fa-up-right-from-square" aria-hidden="true"></i><span>Abrir no navegador</span>
+          </button>
+          <button type="button" role="menuitem" data-agenda-share-action="copy-url">
+            <i class="fas fa-link" aria-hidden="true"></i><span>Copiar endereço da imagem</span>
+          </button>
+        </div>
       </div>
       <div class="agenda-poster-dialog__caption">
         <span id="agenda-poster-date"></span>
@@ -676,10 +693,16 @@
       window.clearTimeout(showAgendaShareStatus.timer);
       showAgendaShareStatus.timer = window.setTimeout(() => { status.textContent = ''; }, 2600);
     }
+    function agendaShareWithTimeout(promise, message = 'A operação demorou mais que o esperado.') {
+      return Promise.race([
+        promise,
+        new Promise((_, reject) => window.setTimeout(() => reject(new Error(message)), 2500))
+      ]);
+    }
     async function copyAgendaShareText(value) {
       try {
         if (navigator.clipboard?.writeText) {
-          await navigator.clipboard.writeText(value);
+          await agendaShareWithTimeout(navigator.clipboard.writeText(value), 'Não foi possível acessar a área de transferência.');
           return true;
         }
       } catch (_) {}
@@ -695,22 +718,132 @@
       textarea.remove();
       return copied;
     }
+    function getAgendaPosterImageUrl() {
+      const image = document.getElementById('agenda-poster-image');
+      return agendaPosterUrl(image?.currentSrc || image?.src || '');
+    }
+    function agendaPosterFileName() {
+      const title = String(agendaPosterShareData?.title || 'evento-da-igreja')
+        .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')
+        .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'evento-da-igreja';
+      return `cartaz-${title}.jpg`;
+    }
+    async function fetchAgendaPosterBlob() {
+      const url = getAgendaPosterImageUrl();
+      if (!url) throw new Error('Cartaz indisponível.');
+      const response = await fetch(url, { mode: 'cors', cache: 'no-store' });
+      if (!response.ok) throw new Error('Não foi possível carregar o cartaz.');
+      const blob = await response.blob();
+      if (!blob.type.startsWith('image/')) throw new Error('O arquivo do cartaz não é uma imagem.');
+      return { url, blob };
+    }
+    function closeAgendaShareMenu({ focusButton = false } = {}) {
+      const menu = document.getElementById('agenda-poster-share-menu');
+      const button = document.getElementById('agenda-poster-share');
+      if (menu) menu.hidden = true;
+      if (button) button.setAttribute('aria-expanded', 'false');
+      if (focusButton) button?.focus();
+    }
+    function toggleAgendaShareMenu() {
+      const menu = document.getElementById('agenda-poster-share-menu');
+      const button = document.getElementById('agenda-poster-share');
+      if (!menu || !button) return;
+      const opening = menu.hidden;
+      menu.hidden = !opening;
+      button.setAttribute('aria-expanded', String(opening));
+      if (opening) menu.querySelector('[role="menuitem"]')?.focus();
+    }
+    async function copyAgendaPosterImage() {
+      if (!navigator.clipboard?.write || typeof ClipboardItem === 'undefined') throw new Error('Seu navegador não permite copiar imagens diretamente.');
+      const { blob } = await fetchAgendaPosterBlob();
+      const type = blob.type || 'image/png';
+      await agendaShareWithTimeout(navigator.clipboard.write([new ClipboardItem({ [type]: blob })]), 'Não foi possível copiar a imagem neste navegador.');
+    }
+    async function downloadAgendaPoster() {
+      const { blob } = await fetchAgendaPosterBlob();
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = agendaPosterFileName();
+      link.rel = 'noopener';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+    }
     async function shareAgendaPoster() {
       if (!agendaPosterShareData) return;
       const { title, date, location } = agendaPosterShareData;
-      const url = getAgendaShareUrl();
       const text = [date, title, location].filter(Boolean).join(' · ');
+      const pageUrl = getAgendaShareUrl();
+      let posterFile = null;
+      try {
+        const { blob } = await fetchAgendaPosterBlob();
+        posterFile = new File([blob], agendaPosterFileName(), { type: blob.type || 'image/png' });
+      } catch (_) {}
+      if (posterFile && typeof navigator.share === 'function' && navigator.canShare?.({ files: [posterFile] })) {
+        try {
+          await navigator.share({ title: title || 'Evento da igreja', text, files: [posterFile] });
+          showAgendaShareStatus('Cartaz compartilhado.');
+          return;
+        } catch (error) {
+          if (error?.name === 'AbortError') return;
+        }
+      }
       if (typeof navigator.share === 'function') {
         try {
-          await navigator.share({ title: title || 'Evento da igreja', text, url });
+          await navigator.share({ title: title || 'Evento da igreja', text, url: pageUrl });
           showAgendaShareStatus('Compartilhamento aberto.');
           return;
         } catch (error) {
           if (error?.name === 'AbortError') return;
         }
       }
-      const copied = await copyAgendaShareText(`${text}\n${url}`);
+      const copied = await copyAgendaShareText(`${text}\n${pageUrl}`);
       showAgendaShareStatus(copied ? 'Link do evento copiado.' : 'Não foi possível compartilhar automaticamente.');
+    }
+    async function handleAgendaShareAction(action) {
+      closeAgendaShareMenu();
+      try {
+        if (action === 'copy-image') {
+          await copyAgendaPosterImage();
+          showAgendaShareStatus('Imagem copiada.');
+        } else if (action === 'download-image') {
+          await downloadAgendaPoster();
+          showAgendaShareStatus('Download iniciado.');
+        } else if (action === 'share') {
+          await shareAgendaPoster();
+        } else if (action === 'open-image') {
+          const url = getAgendaPosterImageUrl();
+          if (!url) throw new Error('Cartaz indisponível.');
+          window.open(url, '_blank', 'noopener,noreferrer');
+          showAgendaShareStatus('Cartaz aberto em uma nova aba.');
+        } else if (action === 'copy-url') {
+          const url = getAgendaPosterImageUrl();
+          if (!url) throw new Error('Cartaz indisponível.');
+          const copied = await copyAgendaShareText(url);
+          showAgendaShareStatus(copied ? 'Endereço da imagem copiado.' : 'Não foi possível copiar o endereço.');
+        }
+      } catch (error) {
+        showAgendaShareStatus(error?.message || 'Não foi possível concluir essa ação.');
+      }
+    }
+    function handleAgendaShareMenuKeydown(event) {
+      const items = [...document.querySelectorAll('#agenda-poster-share-menu [role="menuitem"]')];
+      if (!items.length) return;
+      const current = items.indexOf(document.activeElement);
+      let next = current;
+      if (event.key === 'ArrowDown') next = (current + 1) % items.length;
+      else if (event.key === 'ArrowUp') next = (current - 1 + items.length) % items.length;
+      else if (event.key === 'Home') next = 0;
+      else if (event.key === 'End') next = items.length - 1;
+      else if (event.key === 'Escape') {
+        event.preventDefault();
+        closeAgendaShareMenu({ focusButton: true });
+        return;
+      } else return;
+      event.preventDefault();
+      items[next]?.focus();
     }
     function openAgendaPoster(target) {
       const url = agendaPosterUrl(target.dataset.agendaPosterUrl);
@@ -731,6 +864,7 @@
       title.textContent = agendaPosterShareData.title;
       date.textContent = agendaPosterShareData.date;
       location.textContent = agendaPosterShareData.location ? `Local: ${agendaPosterShareData.location}` : '';
+      closeAgendaShareMenu();
       showAgendaShareStatus('');
       dialog.hidden = false;
       document.body.classList.add('agenda-dialog-open');
@@ -743,6 +877,7 @@
       dialog.hidden = true;
       document.body.classList.remove('agenda-dialog-open');
       if (image) image.removeAttribute('src');
+      closeAgendaShareMenu();
       agendaPosterShareData = null;
       showAgendaShareStatus('');
       agendaPosterLastFocus?.focus?.();
@@ -1071,6 +1206,9 @@
     contributionClose?.addEventListener('click', closeContributionPopover);
     document.addEventListener('click', event => {
       if (contributionPopover && !contributionPopover.hidden && !contributionPopover.contains(event.target) && event.target !== contributionFloat && !contributionFloat?.contains(event.target)) closeContributionPopover();
+      const shareMenu = document.getElementById('agenda-poster-share-menu');
+      const shareButton = document.getElementById('agenda-poster-share');
+      if (shareMenu && !shareMenu.hidden && !shareMenu.contains(event.target) && event.target !== shareButton && !shareButton?.contains(event.target)) closeAgendaShareMenu();
     });
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape') closeContributionPopover();
@@ -1089,11 +1227,25 @@
     agendaLista?.addEventListener('click', handleAgendaPosterActivation);
     agendaLista?.addEventListener('keydown', handleAgendaPosterActivation);
     document.getElementById('agenda-poster-close')?.addEventListener('click', closeAgendaPoster);
-    document.getElementById('agenda-poster-share')?.addEventListener('click', shareAgendaPoster);
+    document.getElementById('agenda-poster-share')?.addEventListener('click', event => {
+      event.stopPropagation();
+      toggleAgendaShareMenu();
+    });
+    document.getElementById('agenda-poster-share-menu')?.addEventListener('click', event => {
+      const action = event.target.closest('[data-agenda-share-action]')?.dataset.agendaShareAction;
+      if (action) handleAgendaShareAction(action);
+    });
+    document.getElementById('agenda-poster-share-menu')?.addEventListener('keydown', handleAgendaShareMenuKeydown);
     document.querySelector('[data-agenda-dialog-close]')?.addEventListener('click', closeAgendaPoster);
     document.addEventListener('keydown', event => {
       const dialog = document.getElementById('agenda-poster-dialog');
-      if (event.key === 'Escape' && dialog && !dialog.hidden) closeAgendaPoster();
+      const menu = document.getElementById('agenda-poster-share-menu');
+      if (event.key === 'Escape' && menu && !menu.hidden) {
+        event.preventDefault();
+        closeAgendaShareMenu({ focusButton: true });
+      } else if (event.key === 'Escape' && dialog && !dialog.hidden) {
+        closeAgendaPoster();
+      }
     });
 
     // ── Disparar tudo em paralelo ─────────────────────────────────────────────
