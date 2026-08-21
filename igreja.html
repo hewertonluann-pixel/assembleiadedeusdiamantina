@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="css/style.css?v=19" />
   <link rel="stylesheet" href="css/igreja.css?v=1" />
   <link rel="stylesheet" href="css/radio-player.css" />
+  <link rel="stylesheet" href="css/floating-actions.css?v=1" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -22,6 +23,7 @@
   <link id="site-favicon" rel="icon" type="image/svg+xml" href="favicon.svg" />
   <script src="js/favicon.js"></script>
   <script src="js/pwa.js"></script>
+  <script src="js/floating-actions.js"></script>
 </head>
 <body>
   <header class="header" id="header">
@@ -162,9 +164,26 @@
     </div>
   </footer>
 
-  <a id="whatsapp-float" href="#" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale pelo WhatsApp" hidden>
-    <i class="fab fa-whatsapp" aria-hidden="true"></i>
-  </a>
+  <!-- AÇÕES FLUTUANTES -->
+  <div class="floating-actions" id="floating-actions" hidden aria-label="Ações rápidas">
+    <button class="contribution-float" id="contribution-float" type="button" aria-label="Abrir contribuição via Pix" aria-expanded="false" aria-controls="contribution-float-popover" hidden>
+      <span class="contribution-icon contribution-float__icon"><i class="fas fa-hand-holding-heart" aria-hidden="true"></i></span>
+    </button>
+    <a href="#" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Fale pelo WhatsApp" id="whatsapp-float" hidden>
+      <i class="fab fa-whatsapp" aria-hidden="true"></i>
+    </a>
+  </div>
+  <div class="contribution-float-popover" id="contribution-float-popover" hidden role="dialog" aria-modal="false" aria-labelledby="contribution-float-title">
+    <button class="contribution-float-popover__close" id="contribution-float-close" type="button" aria-label="Fechar contribuição">&times;</button>
+    <span class="section-kicker">Participe da obra</span>
+    <h3 id="contribution-float-title">Contribua via Pix</h3>
+    <p id="contribuicao-float-recipient" class="contribution-float-popover__recipient"></p>
+    <div class="contribution-float-popover__key-row">
+      <code id="contribuicao-float-key"></code>
+      <button class="btn btn-primary" id="contribuicao-float-copy" type="button"><i class="fas fa-copy"></i> Copiar chave</button>
+    </div>
+    <p class="contribution-float-popover__hint">Confira o nome do recebedor no aplicativo do seu banco antes de confirmar.</p>
+  </div>
 
   <aside class="radio-player" id="radio-player" hidden aria-label="Rádio ao vivo">
     <audio id="radio-player-audio" preload="none"></audio>
@@ -205,7 +224,7 @@
     function updateWhatsappLinks(rawNumber) {
       const number = String(rawNumber || '').replace(/\D/g, '');
       const url = number ? `https://wa.me/${number}` : '';
-      document.querySelectorAll('#footer-whatsapp, #whatsapp-float').forEach((el) => {
+      document.querySelectorAll('#footer-whatsapp').forEach((el) => {
         if (url) {
           el.href = url;
           el.hidden = false;
@@ -214,6 +233,7 @@
           el.removeAttribute('href');
         }
       });
+      window.siteFloatingActions?.setWhatsappNumber(number);
     }
 
     async function carregarDadosInstitucionais() {
@@ -221,6 +241,10 @@
         const homeSnap = await getDoc(doc(db, 'site', 'home'));
         if (homeSnap.exists()) {
           const home = homeSnap.data();
+          window.siteFloatingActions?.setConfig({
+            whatsappFloatEnabled: home.whatsappFloatEnabled !== false,
+            contributionFloatEnabled: home.contributionFloatEnabled === true
+          });
           setText('sobre-p1', home.sobre_p1);
           setText('sobre-p2', home.sobre_p2);
           const footerCultos = document.getElementById('footer-cultos');
@@ -247,6 +271,9 @@
             endereco.innerHTML = [contato.rua, contato.bairro, contato.cidade, contato.cep].filter(Boolean).join('<br/>');
           }
         }
+
+        const contribuicaoSnap = await getDoc(doc(db, 'site', 'contribuicao'));
+        if (contribuicaoSnap.exists()) window.siteFloatingActions?.setContributionData(contribuicaoSnap.data() || {});
 
         const redesSnap = await getDoc(doc(db, 'site', 'redes'));
         if (redesSnap.exists()) {

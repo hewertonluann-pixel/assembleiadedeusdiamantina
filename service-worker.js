@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'ad-diamantina-pwa-v25';
+const CACHE_VERSION = 'ad-diamantina-pwa-v26';
 const FIRESTORE_IMAGES_URL = 'https://firestore.googleapis.com/v1/projects/ad-diamantina/databases/(default)/documents/site/imagens';
 const DYNAMIC_ICON_ROUTES = {
   '/pwa-icon-192.png': { field: 'favicon192', dataField: 'faviconData192', fallbackField: 'favicon', fallback: '/icons/icon-192.png' },
@@ -17,12 +17,14 @@ const APP_SHELL = [
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   '/css/style.css',
+  '/css/floating-actions.css?v=1',
   '/css/igreja.css',
   '/css/radio-player.css',
   '/js/favicon.js',
   '/js/main.js',
   '/js/pwa.js',
-  '/js/radio-player.js'
+  '/js/radio-player.js',
+  '/js/floating-actions.js'
 ];
 
 function responseFromDataUrl(dataUrl) {
