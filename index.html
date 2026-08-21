@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <title>Assembleia de Deus - Ministério de Diamantina</title>
   <meta name="description" content="Site oficial da Igreja Assembleia de Deus Ministério de Diamantina, MG. Cultos, agenda, ministérios e transmissões ao vivo." />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=10" />
   <link rel="stylesheet" href="css/radio-player.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -155,10 +155,13 @@
       <span class="section-tag center">Programação especial</span>
       <h2 class="section-title center" id="agenda-title">Agenda</h2>
       <div class="agenda-box">
-        <h3><i class="fas fa-calendar-alt"></i> Próximos Eventos</h3>
-        <ul class="agenda-lista" id="agenda-lista">
-          <li class="agenda-empty" id="agenda-empty">Nenhum evento programado no momento.</li>
-        </ul>
+        <div class="agenda-heading-row">
+          <h3><i class="fas fa-calendar-alt"></i> Próximos Eventos</h3>
+          <span class="agenda-heading-note"><i class="fas fa-list-check"></i> Confira as próximas programações</span>
+        </div>
+        <div class="agenda-grid" id="agenda-lista" aria-live="polite">
+          <div class="agenda-empty" id="agenda-empty">Nenhum evento programado no momento.</div>
+        </div>
       </div>
     </div>
   </section>
@@ -443,6 +446,20 @@
     <p class="contribution-float-popover__hint">Confira o nome do recebedor no aplicativo do seu banco antes de confirmar.</p>
   </div>
 
+  <!-- VISUALIZADOR DE CARTAZ DA AGENDA -->
+  <div class="agenda-poster-dialog" id="agenda-poster-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="agenda-poster-title">
+    <div class="agenda-poster-dialog__backdrop" data-agenda-dialog-close></div>
+    <div class="agenda-poster-dialog__panel" role="document">
+      <button class="agenda-poster-dialog__close" id="agenda-poster-close" type="button" aria-label="Fechar cartaz">&times;</button>
+      <div class="agenda-poster-dialog__image-wrap"><img id="agenda-poster-image" alt="" /></div>
+      <div class="agenda-poster-dialog__caption">
+        <span id="agenda-poster-date"></span>
+        <h2 id="agenda-poster-title"></h2>
+        <p id="agenda-poster-location"></p>
+      </div>
+    </div>
+  </div>
+
   <!-- MINIPLAYER DA RÁDIO -->
   <aside class="radio-player" id="radio-player" hidden aria-label="Rádio ao vivo">
     <audio id="radio-player-audio" preload="none"></audio>
@@ -617,13 +634,61 @@
       return { iso: String(value), year, month, day, dayLabel: String(day).padStart(2, '0'), monthLabel: AGENDA_MONTHS[month] || String(month).padStart(2, '0') };
     }
     function agendaDateLabel(ev) {
-      const start = parseAgendaDate(ev?.dataInicio);
-      const end = parseAgendaDate(ev?.dataFim || ev?.dataInicio);
+      const start = parseAgendaDate(ev?.dataInicio || ev?.data);
+      const end = parseAgendaDate(ev?.dataFim || ev?.dataInicio || ev?.data);
       if (!start) return String(ev?.data || '—');
       const finalDate = end || start;
       if (start.iso === finalDate.iso) return `${start.dayLabel} ${start.monthLabel}`;
       if (start.year === finalDate.year && start.month === finalDate.month) return `${start.dayLabel}–${String(finalDate.day).padStart(2, '0')} ${start.monthLabel}`;
       return `${start.dayLabel} ${start.monthLabel} – ${String(finalDate.day).padStart(2, '0')} ${finalDate.monthLabel}`;
+    }
+    function agendaSortValue(ev) {
+      const parsed = parseAgendaDate(ev?.dataInicio || ev?.data);
+      return parsed ? Date.UTC(parsed.year, parsed.month - 1, parsed.day) : Number.MAX_SAFE_INTEGER;
+    }
+    function agendaPosterUrl(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return '';
+      try {
+        const url = new URL(raw, window.location.href);
+        return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+      } catch (_) { return ''; }
+    }
+    let agendaPosterLastFocus = null;
+    function openAgendaPoster(target) {
+      const url = agendaPosterUrl(target.dataset.agendaPosterUrl);
+      const dialog = document.getElementById('agenda-poster-dialog');
+      const image = document.getElementById('agenda-poster-image');
+      const title = document.getElementById('agenda-poster-title');
+      const date = document.getElementById('agenda-poster-date');
+      const location = document.getElementById('agenda-poster-location');
+      if (!url || !dialog || !image || !title || !date || !location) return;
+      agendaPosterLastFocus = document.activeElement;
+      image.src = url;
+      image.alt = `Cartaz do evento: ${target.dataset.agendaPosterTitle || ''}`;
+      title.textContent = target.dataset.agendaPosterTitle || 'Cartaz do evento';
+      date.textContent = target.dataset.agendaPosterDate || '';
+      location.textContent = target.dataset.agendaPosterLocation ? `Local: ${target.dataset.agendaPosterLocation}` : '';
+      dialog.hidden = false;
+      document.body.classList.add('agenda-dialog-open');
+      document.getElementById('agenda-poster-close')?.focus();
+    }
+    function closeAgendaPoster() {
+      const dialog = document.getElementById('agenda-poster-dialog');
+      const image = document.getElementById('agenda-poster-image');
+      if (!dialog) return;
+      dialog.hidden = true;
+      document.body.classList.remove('agenda-dialog-open');
+      if (image) image.removeAttribute('src');
+      agendaPosterLastFocus?.focus?.();
+      agendaPosterLastFocus = null;
+    }
+    function handleAgendaPosterActivation(event) {
+      const target = event.target.closest('[data-agenda-poster-url]');
+      if (!target) return;
+      if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
+      event.preventDefault();
+      openAgendaPoster(target);
     }
     async function loadAgenda() {
       try {
@@ -631,28 +696,40 @@
         const eventos = snap.data()?.eventos;
         const lista = document.getElementById('agenda-lista');
         if (!lista) return;
-        if (!Array.isArray(eventos) || !eventos.length) {
-          lista.innerHTML = '<li class="agenda-empty">Nenhum evento programado no momento.</li>';
+        const ativos = Array.isArray(eventos) ? eventos.filter(ev => ev?.ativo !== false).sort((a, b) => agendaSortValue(a) - agendaSortValue(b)) : [];
+        if (!ativos.length) {
+          lista.innerHTML = '<div class="agenda-empty">Nenhum evento programado no momento.</div>';
           return;
         }
 
-        lista.innerHTML = eventos.filter(ev => ev?.ativo !== false).map(ev => {
+        lista.innerHTML = ativos.map(ev => {
           const dateLabel = escapeHtml(agendaDateLabel(ev));
-          const titulo = escapeHtml(ev.titulo || '');
-          const local = escapeHtml(ev.local || '');
-          const descricao = escapeHtml(ev.descricao || '');
-          const cartaz = ev.cartazUrl ? `<a class="agenda-cartaz" href="${escapeHtml(ev.cartazUrl)}" target="_blank" rel="noopener" aria-label="Abrir cartaz de ${titulo}"><img src="${escapeHtml(ev.cartazUrl)}" alt="${escapeHtml(ev.cartazAlt || `Cartaz do evento: ${ev.titulo || ''}`)}" loading="lazy" /></a>` : '';
-          return `
-            <li class="${cartaz ? 'agenda-com-cartaz' : ''}">
-              <span class="agenda-data">${dateLabel}</span>
+          const tituloTexto = String(ev?.titulo || 'Evento sem título').trim();
+          const titulo = escapeHtml(tituloTexto);
+          const localTexto = String(ev?.local || '').trim();
+          const local = escapeHtml(localTexto);
+          const descricaoTexto = String(ev?.descricao || '').trim();
+          const descricao = escapeHtml(descricaoTexto);
+          const cartazUrl = agendaPosterUrl(ev?.cartazUrl);
+          const cartazAlt = escapeHtml(ev?.cartazAlt || `Cartaz do evento: ${tituloTexto}`);
+          const media = cartazUrl
+            ? `<div class="agenda-card__media" role="button" tabindex="0" data-agenda-poster-url="${escapeHtml(cartazUrl)}" data-agenda-poster-title="${titulo}" data-agenda-poster-date="${dateLabel}" data-agenda-poster-location="${local}" aria-label="Abrir cartaz de ${tituloTexto}"><img src="${escapeHtml(cartazUrl)}" alt="${cartazAlt}" loading="lazy" /><span class="agenda-card__expand"><i class="fas fa-expand" aria-hidden="true"></i></span></div>`
+            : '<div class="agenda-card__media agenda-card__media--empty" aria-label="Cartaz não enviado"><i class="fas fa-image" aria-hidden="true"></i><span>Cartaz não enviado</span></div>';
+          const descricaoHtml = descricao
+            ? `<small>${descricao}</small>`
+            : '<small class="agenda-description-empty">Descrição a confirmar</small>';
+          return `<article class="agenda-card ${cartazUrl ? '' : 'agenda-card--without-poster'}">
+            ${media}
+            <div class="agenda-card__body">
+              <span class="agenda-data"><i class="fas fa-calendar-day" aria-hidden="true"></i>${dateLabel}</span>
               <div class="agenda-info">
                 <strong>${titulo}</strong>
-                ${local ? `<span><i class="fas fa-location-dot"></i> ${local}</span>` : ''}
-                ${descricao ? `<small>${descricao}</small>` : ''}
+                ${local ? `<span><i class="fas fa-location-dot" aria-hidden="true"></i>${local}</span>` : ''}
+                ${descricaoHtml}
               </div>
-              ${cartaz}
-            </li>`;
-        }).join('') || '<li class="agenda-empty">Nenhum evento programado no momento.</li>';
+            </div>
+          </article>`;
+        }).join('');
       } catch (e) { console.warn('loadAgenda:', e); }
     }
 
@@ -941,6 +1018,16 @@
       } else {
         document.getElementById('radio-player-toggle')?.click();
       }
+    });
+
+    const agendaLista = document.getElementById('agenda-lista');
+    agendaLista?.addEventListener('click', handleAgendaPosterActivation);
+    agendaLista?.addEventListener('keydown', handleAgendaPosterActivation);
+    document.getElementById('agenda-poster-close')?.addEventListener('click', closeAgendaPoster);
+    document.querySelector('[data-agenda-dialog-close]')?.addEventListener('click', closeAgendaPoster);
+    document.addEventListener('keydown', event => {
+      const dialog = document.getElementById('agenda-poster-dialog');
+      if (event.key === 'Escape' && dialog && !dialog.hidden) closeAgendaPoster();
     });
 
     // ── Disparar tudo em paralelo ─────────────────────────────────────────────
