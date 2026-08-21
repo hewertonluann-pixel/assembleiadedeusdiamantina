@@ -340,7 +340,7 @@ body.agenda-dialog-open { overflow: hidden; }
   .agenda-poster-dialog__panel { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; max-height: 94vh; }
   .agenda-poster-dialog__image-wrap { min-height: 0; padding: 18px; }
   .agenda-poster-dialog__image-wrap img { max-height: 58vh; }
-  .agenda-poster-dialog__hold-hint { display: block; right: 12px; bottom: 10px; left: 12px; font-size: .64rem; }
+  .agenda-poster-dialog__hold-hint { display: block; position: static; width: 100%; margin-top: 8px; font-size: .64rem; }
   .agenda-poster-dialog__caption { padding: 18px 22px 22px; }
   .agenda-poster-dialog__caption #agenda-poster-date { font-size: .92rem; }
   .agenda-poster-dialog__caption h2 { font-size: 1.25rem; }
