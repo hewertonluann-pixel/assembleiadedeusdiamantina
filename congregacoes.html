@@ -413,7 +413,7 @@
   <header class="header" id="header">
     <div class="container nav-container">
       <a href="index.html" class="logo" aria-label="Voltar para a página inicial">
-        <img src="img/logo.png" alt="Logo AD Diamantina" onerror="this.style.display='none'" />
+        <img id="site-logo" src="img/logo.png" alt="Logo AD Diamantina" onerror="this.style.display='none'" />
         <div class="logo-text">
           <span class="logo-title">Assembleia de Deus</span>
           <span class="logo-sub">Ministério de Diamantina</span>
@@ -815,9 +815,14 @@
         }
 
         const imagensDoc = await getDoc(doc(db, 'site', 'imagens'));
-        if (imagensDoc.exists() && window.setSiteFavicon) {
+        if (imagensDoc.exists()) {
           const imagens = imagensDoc.data() || {};
-          window.setSiteFavicon(imagens.favicon, imagens.favicon192);
+          const logo = document.getElementById('site-logo');
+          if (logo && imagens.logo) {
+            logo.src = imagens.logo;
+            logo.style.display = '';
+          }
+          if (window.setSiteFavicon) window.setSiteFavicon(imagens.favicon, imagens.favicon192);
         }
 
         const redesDoc = await getDoc(doc(db, 'site', 'redes'));
