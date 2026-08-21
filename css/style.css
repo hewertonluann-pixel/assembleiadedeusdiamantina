@@ -304,8 +304,8 @@ ul { list-style: none; }
 .agenda-card__media--empty span { font-size: .72rem; font-weight: 700; }
 .agenda-card__expand { position: absolute; right: 9px; bottom: 9px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; color: #fff; background: rgba(26,58,143,.9); font-size: .65rem; pointer-events: none; }
 .agenda-card__body { display: flex; flex: 1; flex-direction: column; padding: 14px 14px 16px; }
-.agenda-data { display: inline-flex; align-items: center; align-self: flex-start; gap: 6px; padding: 5px 9px; border-radius: 999px; color: var(--primary); background: #edf1fc; font-weight: 800; font-size: .7rem; line-height: 1.25; }
-.agenda-data i { color: var(--gold); }
+.agenda-data { display: inline-flex; align-items: center; align-self: flex-start; gap: 7px; padding: 7px 11px; border: 1px solid rgba(212,160,23,.38); border-radius: 10px; color: #fff; background: linear-gradient(135deg, var(--primary) 0%, #244aa8 100%); box-shadow: 0 5px 12px rgba(26,58,143,.16); font-weight: 800; font-size: .82rem; letter-spacing: .015em; line-height: 1.25; }
+.agenda-data i { color: #f4d36b; font-size: .9rem; }
 .agenda-info { display: flex; min-width: 0; flex: 1; flex-direction: column; }
 .agenda-info strong { display: block; margin-top: 10px; color: var(--primary); font-size: 1rem; line-height: 1.25; }
 .agenda-info span { display: block; margin-top: 7px; color: var(--gray); font-size: .8rem; line-height: 1.35; }
@@ -324,7 +324,9 @@ ul { list-style: none; }
 .agenda-poster-dialog__hold-hint { position: absolute; right: 18px; bottom: 12px; left: 18px; z-index: 2; margin: 0; padding: 5px 9px; border-radius: 999px; color: rgba(255,255,255,.92); background: rgba(7,18,45,.62); font-size: .68rem; font-weight: 700; letter-spacing: .01em; line-height: 1.25; text-align: center; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,.3); }
 .agenda-poster-dialog__caption { align-self: center; padding: 34px 28px; }
 .agenda-poster-dialog__caption > span { color: var(--gold); font-size: .75rem; font-weight: 800; text-transform: uppercase; }
-.agenda-poster-dialog__caption h2 { margin: 9px 0 0; color: var(--primary); font-family: 'Playfair Display', Georgia, serif; font-size: 1.65rem; line-height: 1.15; }
+.agenda-poster-dialog__caption #agenda-poster-date { display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px; border: 1px solid rgba(212,160,23,.38); border-radius: 10px; color: var(--primary); background: #fff7da; box-shadow: 0 4px 12px rgba(212,160,23,.14); font-size: 1.05rem; letter-spacing: .02em; line-height: 1.2; text-transform: none; }
+.agenda-poster-dialog__caption #agenda-poster-date::before { content: '\f073'; color: var(--gold); font-family: 'Font Awesome 6 Free'; font-weight: 900; }
+.agenda-poster-dialog__caption h2 { margin: 12px 0 0; color: var(--primary); font-family: 'Playfair Display', Georgia, serif; font-size: 1.65rem; line-height: 1.15; }
 .agenda-poster-dialog__caption p { margin: 12px 0 0; color: var(--gray); font-size: .9rem; }
 body.agenda-dialog-open { overflow: hidden; }
 @media (max-width: 700px) {
@@ -332,6 +334,7 @@ body.agenda-dialog-open { overflow: hidden; }
   .agenda-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .agenda-box { padding: 24px 18px; }
   .agenda-card__body { padding: 11px 11px 13px; }
+  .agenda-data { padding: 6px 9px; font-size: .76rem; }
   .agenda-info strong { font-size: .9rem; }
   .agenda-info span, .agenda-info small { font-size: .72rem; }
   .agenda-poster-dialog__panel { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; max-height: 94vh; }
@@ -339,6 +342,7 @@ body.agenda-dialog-open { overflow: hidden; }
   .agenda-poster-dialog__image-wrap img { max-height: 58vh; }
   .agenda-poster-dialog__hold-hint { right: 12px; bottom: 10px; left: 12px; font-size: .64rem; }
   .agenda-poster-dialog__caption { padding: 18px 22px 22px; }
+  .agenda-poster-dialog__caption #agenda-poster-date { font-size: .92rem; }
   .agenda-poster-dialog__caption h2 { font-size: 1.25rem; }
 }
 @media (max-width: 430px) {
