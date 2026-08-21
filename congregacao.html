@@ -378,7 +378,7 @@
 
   <section class="eventos-congregacao-section fade-in" id="eventos" aria-labelledby="eventos-title">
     <div class="container">
-      <span class="section-tag">Agenda local</span>
+      <span class="section-tag">Agenda da congregação</span>
       <h2 class="section-title" id="eventos-title">Eventos desta congregação</h2>
       <p class="eventos-congregacao-intro">Confira os próximos eventos vinculados a esta congregação.</p>
       <div class="cong-events-grid" id="cong-events-grid" aria-live="polite"></div>
@@ -570,7 +570,7 @@ function safeEventImage(value) {
     return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
   } catch (_) { return ''; }
 }
-async function carregarEventosCongregacao(id) {
+async function carregarEventosCongregacao(id, congregacaoLabel = '') {
   const grid = document.getElementById('cong-events-grid');
   if (!grid) return;
   try {
@@ -586,13 +586,13 @@ async function carregarEventosCongregacao(id) {
     grid.innerHTML = vinculados.map(ev => {
       const titulo = escapeHtml(String(ev?.titulo || 'Evento sem título').trim());
       const date = escapeHtml(eventDateLabel(ev));
-      const local = escapeHtml(String(ev?.local || '').trim());
+      const congregacao = escapeHtml(congregacaoLabel || 'Assembleia de Deus');
       const descricao = escapeHtml(String(ev?.descricao || '').trim());
       const image = safeEventImage(ev?.cartazUrl);
       const media = image
         ? `<div class="cong-event-card__media"><img src="${escapeHtml(image)}" alt="${escapeHtml(ev?.cartazAlt || `Cartaz do evento: ${ev?.titulo || 'Evento'}`)}" loading="lazy" /></div>`
         : `<div class="cong-event-card__media cong-event-card__media--empty" aria-label="Cartaz não enviado"><i class="fas fa-image" aria-hidden="true"></i><span>Cartaz não enviado</span></div>`;
-      return `<article class="cong-event-card">${media}<div class="cong-event-card__body"><span class="cong-event-card__date"><i class="fas fa-calendar-day" aria-hidden="true"></i>${date}</span><h3>${titulo}</h3>${local ? `<p class="cong-event-card__meta"><i class="fas fa-location-dot" aria-hidden="true"></i>${local}</p>` : ''}<p class="cong-event-card__description">${descricao || 'Descrição a confirmar'}</p><a href="index.html#agenda" class="cong-event-card__link"><i class="fas fa-arrow-right" aria-hidden="true"></i> Ver na Agenda geral</a></div></article>`;
+      return `<article class="cong-event-card">${media}<div class="cong-event-card__body"><span class="cong-event-card__date"><i class="fas fa-calendar-day" aria-hidden="true"></i>${date}</span><h3>${titulo}</h3><p class="cong-event-card__meta"><i class="fas fa-location-dot" aria-hidden="true"></i>Congregação: ${congregacao}</p><p class="cong-event-card__description">${descricao || 'Descrição a confirmar'}</p><a href="index.html#agenda" class="cong-event-card__link"><i class="fas fa-arrow-right" aria-hidden="true"></i> Ver na Agenda geral</a></div></article>`;
     }).join('');
   } catch (err) {
     console.warn('carregarEventosCongregacao:', err);
@@ -675,7 +675,8 @@ async function carregarPerfil(id) {
 
     const galeria = Array.isArray(d.galeria) ? d.galeria.filter(Boolean) : [];
     renderGaleria(galeria);
-    await carregarEventosCongregacao(id);
+    const congregacaoLabel = `Assembleia de Deus${d.badge ? ` — ${d.badge}` : ''}`;
+    await carregarEventosCongregacao(id, congregacaoLabel);
 
     const io = new IntersectionObserver(entries => {
       entries.forEach(e => {

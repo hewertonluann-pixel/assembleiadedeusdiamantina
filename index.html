@@ -632,15 +632,20 @@
     let agendaPosterLastFocus = null;
     const IGREJA_NOME = 'Assembleia de Deus';
     let agendaCongregacoes = new Map();
-    function agendaCongregacaoLink(ev) {
+    function agendaCongregacaoLabel(ev) {
       const id = String(ev?.congregacaoId || '').trim();
       if (!id) return '';
       const congregacao = agendaCongregacoes.get(id) || {};
       const legado = String(ev?.congregacaoNome || '').trim();
       const badge = String(congregacao.badge || ev?.congregacaoBadge || (legado && legado.toLowerCase() !== IGREJA_NOME.toLowerCase() ? legado : '')).trim();
-      const label = badge ? `${IGREJA_NOME} — ${badge}` : IGREJA_NOME;
+      return badge ? `${IGREJA_NOME} — ${badge}` : IGREJA_NOME;
+    }
+    function agendaCongregacaoLink(ev) {
+      const id = String(ev?.congregacaoId || '').trim();
+      const label = agendaCongregacaoLabel(ev);
+      if (!id || !label) return '';
       const href = `congregacao.html?id=${encodeURIComponent(id)}#eventos`;
-      return `<a class="agenda-card__congregation" href="${escapeHtml(href)}" aria-label="Ver página da congregação ${escapeHtml(label)}"><i class="fas fa-church" aria-hidden="true"></i>${escapeHtml(label)}</a>`;
+      return `<a class="agenda-card__congregation" href="${escapeHtml(href)}" aria-label="Ver página da congregação ${escapeHtml(label)}"><i class="fas fa-location-dot" aria-hidden="true"></i>Congregação: ${escapeHtml(label)}</a>`;
     }
     function openAgendaPoster(target) {
       const url = agendaPosterUrl(target.dataset.agendaPosterUrl);
@@ -656,7 +661,9 @@
       image.alt = `Cartaz do evento: ${posterTitle}`;
       title.textContent = posterTitle;
       date.textContent = target.dataset.agendaPosterDate || '';
-      location.textContent = target.dataset.agendaPosterLocation ? `Local: ${target.dataset.agendaPosterLocation}` : '';
+      location.innerHTML = target.dataset.agendaPosterCongregation
+        ? `<i class="fas fa-location-dot" aria-hidden="true"></i> Congregação: ${escapeHtml(target.dataset.agendaPosterCongregation)}`
+        : '';
       dialog.hidden = false;
       document.body.classList.add('agenda-dialog-open');
       document.getElementById('agenda-poster-close')?.focus();
@@ -698,14 +705,14 @@
           const dateLabel = escapeHtml(agendaDateLabel(ev));
           const tituloTexto = String(ev?.titulo || 'Evento sem título').trim();
           const titulo = escapeHtml(tituloTexto);
-          const localTexto = String(ev?.local || '').trim();
-          const local = escapeHtml(localTexto);
+          const congregacaoLabel = agendaCongregacaoLabel(ev);
+          const congregacao = escapeHtml(congregacaoLabel);
           const descricaoTexto = String(ev?.descricao || '').trim();
           const descricao = escapeHtml(descricaoTexto);
           const cartazUrl = agendaPosterUrl(ev?.cartazUrl);
           const cartazAlt = escapeHtml(ev?.cartazAlt || `Cartaz do evento: ${tituloTexto}`);
           const media = cartazUrl
-            ? `<div class="agenda-card__media" role="button" tabindex="0" data-agenda-poster-url="${escapeHtml(cartazUrl)}" data-agenda-poster-title="${titulo}" data-agenda-poster-date="${dateLabel}" data-agenda-poster-location="${local}" aria-label="Abrir cartaz de ${tituloTexto}"><img src="${escapeHtml(cartazUrl)}" alt="${cartazAlt}" loading="lazy" /><span class="agenda-card__expand"><i class="fas fa-expand" aria-hidden="true"></i></span></div>`
+            ? `<div class="agenda-card__media" role="button" tabindex="0" data-agenda-poster-url="${escapeHtml(cartazUrl)}" data-agenda-poster-title="${titulo}" data-agenda-poster-date="${dateLabel}" data-agenda-poster-congregation="${congregacao}" aria-label="Abrir cartaz de ${tituloTexto}"><img src="${escapeHtml(cartazUrl)}" alt="${cartazAlt}" loading="lazy" /><span class="agenda-card__expand"><i class="fas fa-expand" aria-hidden="true"></i></span></div>`
             : '<div class="agenda-card__media agenda-card__media--empty" aria-label="Cartaz não enviado"><i class="fas fa-image" aria-hidden="true"></i><span>Cartaz não enviado</span></div>';
           const descricaoHtml = descricao
             ? `<small>${descricao}</small>`
@@ -717,7 +724,6 @@
               <div class="agenda-info">
                 <strong>${titulo}</strong>
                 ${agendaCongregacaoLink(ev)}
-                ${local ? `<span><i class="fas fa-location-dot" aria-hidden="true"></i>${local}</span>` : ''}
                 ${descricaoHtml}
               </div>
             </div>
