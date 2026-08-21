@@ -638,7 +638,7 @@
       const congregacao = agendaCongregacoes.get(id) || {};
       const legado = String(ev?.congregacaoNome || '').trim();
       const badge = String(congregacao.badge || ev?.congregacaoBadge || (legado && legado.toLowerCase() !== IGREJA_NOME.toLowerCase() ? legado : '')).trim();
-      return badge ? `${IGREJA_NOME} — ${badge}` : IGREJA_NOME;
+      return badge || 'Sem badge cadastrado';
     }
     function agendaCongregacaoLink(ev) {
       const id = String(ev?.congregacaoId || '').trim();

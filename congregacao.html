@@ -675,7 +675,7 @@ async function carregarPerfil(id) {
 
     const galeria = Array.isArray(d.galeria) ? d.galeria.filter(Boolean) : [];
     renderGaleria(galeria);
-    const congregacaoLabel = `Assembleia de Deus${d.badge ? ` — ${d.badge}` : ''}`;
+    const congregacaoLabel = String(d.badge || '').trim() || 'Sem badge cadastrado';
     await carregarEventosCongregacao(id, congregacaoLabel);
 
     const io = new IntersectionObserver(entries => {
