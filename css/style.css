@@ -321,23 +321,11 @@ ul { list-style: none; }
 .agenda-poster-dialog__close { position: absolute; z-index: 2; top: 12px; right: 12px; display: grid; place-items: center; width: 38px; height: 38px; border: 0; border-radius: 50%; color: #fff; background: rgba(16,43,104,.9); font-size: 1.55rem; line-height: 1; cursor: pointer; }
 .agenda-poster-dialog__image-wrap { position: relative; display: grid; min-height: 320px; place-items: center; padding: 24px; background: #eef1f7; }
 .agenda-poster-dialog__image-wrap img { display: block; max-width: 100%; max-height: calc(92vh - 48px); width: auto; height: auto; object-fit: contain; }
-.agenda-poster-dialog__share { position: absolute; left: 24px; bottom: 24px; display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 9px 13px; border: 1px solid rgba(255,255,255,.5); border-radius: 999px; color: #fff; background: rgba(16,43,104,.92); box-shadow: 0 6px 18px rgba(7,18,45,.22); font: inherit; font-size: .78rem; font-weight: 700; cursor: pointer; }
-.agenda-poster-dialog__share:hover { background: var(--primary); }
-.agenda-poster-dialog__share:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
-.agenda-poster-dialog__share i { color: var(--gold); }
-.agenda-poster-share-menu[hidden] { display: none; }
-.agenda-poster-share-menu { position: absolute; z-index: 4; left: 24px; bottom: 72px; display: grid; min-width: 228px; max-width: calc(100% - 48px); padding: 6px; border: 1px solid rgba(16,43,104,.12); border-radius: 14px; background: #fff; box-shadow: 0 14px 34px rgba(7,18,45,.25); transform-origin: bottom left; }
-.agenda-poster-share-menu button { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 40px; padding: 9px 11px; border: 0; border-radius: 9px; color: var(--primary); background: transparent; font: inherit; font-size: .78rem; font-weight: 700; text-align: left; cursor: pointer; }
-.agenda-poster-share-menu button:hover, .agenda-poster-share-menu button:focus-visible { color: #fff; background: var(--primary); }
-.agenda-poster-share-menu button:active { transform: scale(.98); }
-.agenda-poster-share-menu button i { width: 18px; color: var(--gold); text-align: center; }
-.agenda-poster-share-menu button:hover i, .agenda-poster-share-menu button:focus-visible i { color: #fff; }
-.agenda-poster-share-menu button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.agenda-poster-dialog__hold-hint { position: absolute; right: 18px; bottom: 12px; left: 18px; z-index: 2; margin: 0; padding: 5px 9px; border-radius: 999px; color: rgba(255,255,255,.92); background: rgba(7,18,45,.62); font-size: .68rem; font-weight: 700; letter-spacing: .01em; line-height: 1.25; text-align: center; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,.3); }
 .agenda-poster-dialog__caption { align-self: center; padding: 34px 28px; }
 .agenda-poster-dialog__caption > span { color: var(--gold); font-size: .75rem; font-weight: 800; text-transform: uppercase; }
 .agenda-poster-dialog__caption h2 { margin: 9px 0 0; color: var(--primary); font-family: 'Playfair Display', Georgia, serif; font-size: 1.65rem; line-height: 1.15; }
 .agenda-poster-dialog__caption p { margin: 12px 0 0; color: var(--gray); font-size: .9rem; }
-.agenda-poster-dialog__share-status { min-height: 1.2em; color: var(--primary) !important; font-size: .78rem !important; font-weight: 700; }
 body.agenda-dialog-open { overflow: hidden; }
 @media (max-width: 700px) {
   .agenda-heading-row { align-items: flex-start; flex-direction: column; gap: 8px; }
@@ -349,8 +337,7 @@ body.agenda-dialog-open { overflow: hidden; }
   .agenda-poster-dialog__panel { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; max-height: 94vh; }
   .agenda-poster-dialog__image-wrap { min-height: 0; padding: 18px; }
   .agenda-poster-dialog__image-wrap img { max-height: 58vh; }
-  .agenda-poster-dialog__share { left: 18px; bottom: 18px; min-height: 36px; padding: 8px 11px; font-size: .74rem; }
-  .agenda-poster-share-menu { left: 18px; bottom: 64px; min-width: 220px; max-width: calc(100% - 36px); }
+  .agenda-poster-dialog__hold-hint { right: 12px; bottom: 10px; left: 12px; font-size: .64rem; }
   .agenda-poster-dialog__caption { padding: 18px 22px 22px; }
   .agenda-poster-dialog__caption h2 { font-size: 1.25rem; }
 }
