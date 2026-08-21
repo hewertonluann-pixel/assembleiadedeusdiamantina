@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <title>Assembleia de Deus - Ministério de Diamantina</title>
   <meta name="description" content="Site oficial da Igreja Assembleia de Deus Ministério de Diamantina, MG. Cultos, agenda, ministérios e transmissões ao vivo." />
-  <link rel="stylesheet" href="css/style.css?v=10" />
+  <link rel="stylesheet" href="css/style.css?v=11" />
   <link rel="stylesheet" href="css/radio-player.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -451,11 +451,18 @@
     <div class="agenda-poster-dialog__backdrop" data-agenda-dialog-close></div>
     <div class="agenda-poster-dialog__panel" role="document">
       <button class="agenda-poster-dialog__close" id="agenda-poster-close" type="button" aria-label="Fechar cartaz">&times;</button>
-      <div class="agenda-poster-dialog__image-wrap"><img id="agenda-poster-image" alt="" /></div>
+      <div class="agenda-poster-dialog__image-wrap">
+        <img id="agenda-poster-image" alt="" />
+        <button class="agenda-poster-dialog__share" id="agenda-poster-share" type="button" aria-label="Compartilhar evento">
+          <i class="fas fa-share-nodes" aria-hidden="true"></i>
+          <span>Compartilhar</span>
+        </button>
+      </div>
       <div class="agenda-poster-dialog__caption">
         <span id="agenda-poster-date"></span>
         <h2 id="agenda-poster-title"></h2>
         <p id="agenda-poster-location"></p>
+        <p class="agenda-poster-dialog__share-status" id="agenda-poster-share-status" role="status" aria-live="polite"></p>
       </div>
     </div>
   </div>
@@ -655,6 +662,56 @@
       } catch (_) { return ''; }
     }
     let agendaPosterLastFocus = null;
+    let agendaPosterShareData = null;
+    function getAgendaShareUrl() {
+      const url = new URL(window.location.href);
+      url.search = '';
+      url.hash = 'agenda';
+      return url.href;
+    }
+    function showAgendaShareStatus(message) {
+      const status = document.getElementById('agenda-poster-share-status');
+      if (!status) return;
+      status.textContent = message;
+      window.clearTimeout(showAgendaShareStatus.timer);
+      showAgendaShareStatus.timer = window.setTimeout(() => { status.textContent = ''; }, 2600);
+    }
+    async function copyAgendaShareText(value) {
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(value);
+          return true;
+        }
+      } catch (_) {}
+      const textarea = document.createElement('textarea');
+      textarea.value = value;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      let copied = false;
+      try { copied = document.execCommand('copy'); } catch (_) {}
+      textarea.remove();
+      return copied;
+    }
+    async function shareAgendaPoster() {
+      if (!agendaPosterShareData) return;
+      const { title, date, location } = agendaPosterShareData;
+      const url = getAgendaShareUrl();
+      const text = [date, title, location].filter(Boolean).join(' · ');
+      if (typeof navigator.share === 'function') {
+        try {
+          await navigator.share({ title: title || 'Evento da igreja', text, url });
+          showAgendaShareStatus('Compartilhamento aberto.');
+          return;
+        } catch (error) {
+          if (error?.name === 'AbortError') return;
+        }
+      }
+      const copied = await copyAgendaShareText(`${text}\n${url}`);
+      showAgendaShareStatus(copied ? 'Link do evento copiado.' : 'Não foi possível compartilhar automaticamente.');
+    }
     function openAgendaPoster(target) {
       const url = agendaPosterUrl(target.dataset.agendaPosterUrl);
       const dialog = document.getElementById('agenda-poster-dialog');
@@ -664,11 +721,17 @@
       const location = document.getElementById('agenda-poster-location');
       if (!url || !dialog || !image || !title || !date || !location) return;
       agendaPosterLastFocus = document.activeElement;
+      agendaPosterShareData = {
+        title: target.dataset.agendaPosterTitle || 'Evento da igreja',
+        date: target.dataset.agendaPosterDate || '',
+        location: target.dataset.agendaPosterLocation || ''
+      };
       image.src = url;
-      image.alt = `Cartaz do evento: ${target.dataset.agendaPosterTitle || ''}`;
-      title.textContent = target.dataset.agendaPosterTitle || 'Cartaz do evento';
-      date.textContent = target.dataset.agendaPosterDate || '';
-      location.textContent = target.dataset.agendaPosterLocation ? `Local: ${target.dataset.agendaPosterLocation}` : '';
+      image.alt = `Cartaz do evento: ${agendaPosterShareData.title}`;
+      title.textContent = agendaPosterShareData.title;
+      date.textContent = agendaPosterShareData.date;
+      location.textContent = agendaPosterShareData.location ? `Local: ${agendaPosterShareData.location}` : '';
+      showAgendaShareStatus('');
       dialog.hidden = false;
       document.body.classList.add('agenda-dialog-open');
       document.getElementById('agenda-poster-close')?.focus();
@@ -680,6 +743,8 @@
       dialog.hidden = true;
       document.body.classList.remove('agenda-dialog-open');
       if (image) image.removeAttribute('src');
+      agendaPosterShareData = null;
+      showAgendaShareStatus('');
       agendaPosterLastFocus?.focus?.();
       agendaPosterLastFocus = null;
     }
@@ -1024,6 +1089,7 @@
     agendaLista?.addEventListener('click', handleAgendaPosterActivation);
     agendaLista?.addEventListener('keydown', handleAgendaPosterActivation);
     document.getElementById('agenda-poster-close')?.addEventListener('click', closeAgendaPoster);
+    document.getElementById('agenda-poster-share')?.addEventListener('click', shareAgendaPoster);
     document.querySelector('[data-agenda-dialog-close]')?.addEventListener('click', closeAgendaPoster);
     document.addEventListener('keydown', event => {
       const dialog = document.getElementById('agenda-poster-dialog');
