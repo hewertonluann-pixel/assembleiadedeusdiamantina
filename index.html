@@ -430,7 +430,8 @@
       <div class="agenda-poster-dialog__caption">
         <span id="agenda-poster-date"></span>
         <h2 id="agenda-poster-title"></h2>
-        <p id="agenda-poster-location"></p>
+        <p id="agenda-poster-congregation" hidden></p>
+        <p id="agenda-poster-address" hidden></p>
       </div>
     </div>
   </div>
@@ -645,7 +646,7 @@
       const label = agendaCongregacaoLabel(ev);
       if (!id || !label) return '';
       const href = `congregacao.html?id=${encodeURIComponent(id)}#eventos`;
-      return `<a class="agenda-card__congregation" href="${escapeHtml(href)}" aria-label="Ver página da congregação ${escapeHtml(label)}"><i class="fas fa-location-dot" aria-hidden="true"></i>Congregação: ${escapeHtml(label)}</a>`;
+      return `<a class="agenda-card__congregation" href="${escapeHtml(href)}" aria-label="Ver página da congregação ${escapeHtml(label)}"><i class="fas fa-church" aria-hidden="true"></i>Congregação: ${escapeHtml(label)}</a>`;
     }
     function openAgendaPoster(target) {
       const url = agendaPosterUrl(target.dataset.agendaPosterUrl);
@@ -653,17 +654,25 @@
       const image = document.getElementById('agenda-poster-image');
       const title = document.getElementById('agenda-poster-title');
       const date = document.getElementById('agenda-poster-date');
-      const location = document.getElementById('agenda-poster-location');
-      if (!url || !dialog || !image || !title || !date || !location) return;
+      const congregation = document.getElementById('agenda-poster-congregation');
+      const address = document.getElementById('agenda-poster-address');
+      if (!url || !dialog || !image || !title || !date || !congregation || !address) return;
       agendaPosterLastFocus = document.activeElement;
       const posterTitle = target.dataset.agendaPosterTitle || 'Evento da igreja';
       image.src = url;
       image.alt = `Cartaz do evento: ${posterTitle}`;
       title.textContent = posterTitle;
       date.textContent = target.dataset.agendaPosterDate || '';
-      location.innerHTML = target.dataset.agendaPosterCongregation
-        ? `<i class="fas fa-location-dot" aria-hidden="true"></i> Congregação: ${escapeHtml(target.dataset.agendaPosterCongregation)}`
+      const congregationLabel = target.dataset.agendaPosterCongregation || '';
+      const addressLabel = target.dataset.agendaPosterAddress || '';
+      congregation.innerHTML = congregationLabel
+        ? `<i class="fas fa-church" aria-hidden="true"></i> Congregação: ${escapeHtml(congregationLabel)}`
         : '';
+      congregation.hidden = !congregationLabel;
+      address.innerHTML = addressLabel
+        ? `<i class="fas fa-location-dot" aria-hidden="true"></i> Endereço: ${escapeHtml(addressLabel)}`
+        : '';
+      address.hidden = !addressLabel;
       dialog.hidden = false;
       document.body.classList.add('agenda-dialog-open');
       document.getElementById('agenda-poster-close')?.focus();
@@ -707,12 +716,14 @@
           const titulo = escapeHtml(tituloTexto);
           const congregacaoLabel = agendaCongregacaoLabel(ev);
           const congregacao = escapeHtml(congregacaoLabel);
+          const enderecoTexto = String(ev?.local || '').trim();
+          const endereco = escapeHtml(enderecoTexto);
           const descricaoTexto = String(ev?.descricao || '').trim();
           const descricao = escapeHtml(descricaoTexto);
           const cartazUrl = agendaPosterUrl(ev?.cartazUrl);
           const cartazAlt = escapeHtml(ev?.cartazAlt || `Cartaz do evento: ${tituloTexto}`);
           const media = cartazUrl
-            ? `<div class="agenda-card__media" role="button" tabindex="0" data-agenda-poster-url="${escapeHtml(cartazUrl)}" data-agenda-poster-title="${titulo}" data-agenda-poster-date="${dateLabel}" data-agenda-poster-congregation="${congregacao}" aria-label="Abrir cartaz de ${tituloTexto}"><img src="${escapeHtml(cartazUrl)}" alt="${cartazAlt}" loading="lazy" /><span class="agenda-card__expand"><i class="fas fa-expand" aria-hidden="true"></i></span></div>`
+            ? `<div class="agenda-card__media" role="button" tabindex="0" data-agenda-poster-url="${escapeHtml(cartazUrl)}" data-agenda-poster-title="${titulo}" data-agenda-poster-date="${dateLabel}" data-agenda-poster-congregation="${congregacao}" data-agenda-poster-address="${endereco}" aria-label="Abrir cartaz de ${tituloTexto}"><img src="${escapeHtml(cartazUrl)}" alt="${cartazAlt}" loading="lazy" /><span class="agenda-card__expand"><i class="fas fa-expand" aria-hidden="true"></i></span></div>`
             : '<div class="agenda-card__media agenda-card__media--empty" aria-label="Cartaz não enviado"><i class="fas fa-image" aria-hidden="true"></i><span>Cartaz não enviado</span></div>';
           const descricaoHtml = descricao
             ? `<small>${descricao}</small>`
@@ -724,6 +735,7 @@
               <div class="agenda-info">
                 <strong>${titulo}</strong>
                 ${agendaCongregacaoLink(ev)}
+                ${endereco ? `<span class="agenda-card__address"><i class="fas fa-location-dot" aria-hidden="true"></i>Endereço: ${endereco}</span>` : ''}
                 ${descricaoHtml}
               </div>
             </div>
