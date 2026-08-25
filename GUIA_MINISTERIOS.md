@@ -10,7 +10,7 @@ Também existe um link **Ministérios** no menu lateral do [`admin.html`](https:
 
 Clique em **Novo Ministério** e preencha o nome, o ícone opcional e a descrição. O identificador do link pode ficar vazio: nesse caso, o painel gera um slug a partir do nome. Esse slug aparece na URL da página individual e deve permanecer estável depois que o ministério já tiver sido divulgado.
 
-A foto de fundo pode ser informada por uma URL pública ou enviada pelo próprio painel. Quando uma imagem é enviada, ela fica no Firebase Storage em `ministerios/{slug}/`. A imagem deve ser JPG, PNG ou WEBP e ter até 10 MB. O texto alternativo deve descrever a imagem para usuários que utilizam leitores de tela.
+A foto de fundo pode ser informada por uma URL pública ou enviada pelo próprio painel. Quando uma imagem é enviada, ela fica no Firebase Storage em `img/ministerios/{slug}/`, caminho compatível com a regra geral de imagens institucionais. A imagem deve ser JPG, PNG ou WEBP e ter até 10 MB. O texto alternativo deve descrever a imagem para usuários que utilizam leitores de tela.
 
 Os campos **Dias de reunião** e **Ensaios** aceitam texto com quebras de linha. Isso permite informar mais de um dia ou horário sem forçar um formato único. No **Quadro de avisos**, use um aviso por linha; linhas vazias são ignoradas e o sistema publica no máximo vinte avisos.
 
@@ -44,4 +44,4 @@ As informações ficam no documento `site/ministerios`, no campo `lista`. Cada i
 }
 ```
 
-As regras do Storage precisam conter o bloco `match /ministerios/{allPaths=**}` para que os uploads funcionem. O arquivo `storage.rules` atualizado está no repositório e deve ser publicado no Firebase Console junto com as regras atuais.
+Os uploads utilizam o caminho `img/ministerios/{slug}/`, que já está coberto pelo bloco `match /img/{allPaths=**}`. O arquivo `storage.rules` também mantém um bloco explícito para `ministerios/`, caso existam arquivos antigos nessa pasta; publique a versão atualizada no Firebase Console quando possível.

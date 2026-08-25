@@ -306,7 +306,7 @@
         let savedBackgroundUrl = backgroundUrl;
         let savedBackgroundPath = backgroundPath;
         if (pendingBackgroundFile) {
-          const uploaded = await uploadImage(pendingBackgroundFile.file, `ministerios/${slug}/fundo-${Date.now()}-${fileName(pendingBackgroundFile.file.name)}`, 'background-progress');
+          const uploaded = await uploadImage(pendingBackgroundFile.file, `img/ministerios/${slug}/fundo-${Date.now()}-${fileName(pendingBackgroundFile.file.name)}`, 'background-progress');
           savedBackgroundUrl = uploaded.url; savedBackgroundPath = uploaded.path; uploadedPaths.push(uploaded.path);
         } else if (backgroundUrl.startsWith('blob:')) {
           savedBackgroundUrl = '';
@@ -315,7 +315,7 @@
         for (let index = 0; index < galleryItems.length; index += 1) {
           const item = galleryItems[index];
           if (item.pendingFile) {
-            const uploaded = await uploadImage(item.pendingFile, `ministerios/${slug}/foto-${Date.now()}-${index}-${fileName(item.pendingFile.name)}`, 'gallery-progress');
+            const uploaded = await uploadImage(item.pendingFile, `img/ministerios/${slug}/foto-${Date.now()}-${index}-${fileName(item.pendingFile.name)}`, 'gallery-progress');
             savedPhotos.push({ url: uploaded.url, path: uploaded.path, alt: item.alt || `Foto ${index + 1}` }); uploadedPaths.push(uploaded.path);
           } else {
             savedPhotos.push({ url: item.url, path: item.path || '', alt: item.alt || `Foto ${index + 1}` });
@@ -344,7 +344,8 @@
       } catch (error) {
         console.error('saveMinistry:', error);
         await Promise.all(uploadedPaths.map(deletePath));
-        toast(`Não foi possível salvar o ministério: ${error.message}`,'error');
+        const storageHint = error?.code === 'storage/unauthorized' ? ' O upload usa img/ministerios/ e exige as regras atuais do Firebase Storage publicadas.' : '';
+        toast(`Não foi possível salvar o ministério: ${error.message}.${storageHint}`,'error');
       } finally { saveButton.disabled = false; resetProgressBars(); }
     }
 

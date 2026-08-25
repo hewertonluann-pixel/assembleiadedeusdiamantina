@@ -101,7 +101,7 @@ O documento mantém `eventos` como uma lista. Eventos novos usam datas ISO (`YYY
 
 ### `site/ministerios`
 
-O documento mantém uma lista de ministérios. O `slug` é o identificador estável usado na URL de `ministerio.html`; quando não informado no cadastro, ele é gerado a partir do nome. `fotos` aceita no máximo cinco objetos e as imagens enviadas pelo painel ficam no Storage em `ministerios/{slug}/`.
+O documento mantém uma lista de ministérios. O `slug` é o identificador estável usado na URL de `ministerio.html`; quando não informado no cadastro, ele é gerado a partir do nome. `fotos` aceita no máximo cinco objetos e as imagens enviadas pelo painel ficam no Storage em `img/ministerios/{slug}/`, caminho já coberto pelas regras gerais de imagens institucionais.
 
 ```json
 {
@@ -112,13 +112,13 @@ O documento mantém uma lista de ministérios. O `slug` é o identificador está
       "desc": "Descrição do ministério...",
       "icone": "fa-child",
       "fotoFundoUrl": "https://...",
-      "fotoFundoPath": "ministerios/ministerio-infantil/fundo.png",
+      "fotoFundoPath": "img/ministerios/ministerio-infantil/fundo.png",
       "fotoFundoAlt": "Crianças do ministério infantil",
       "reunioes": "Domingos, às 9h.",
       "ensaios": "Sábados, às 15h.",
       "avisos": ["Aviso confirmado pela liderança."],
       "fotos": [
-        { "url": "https://...", "path": "ministerios/ministerio-infantil/foto-0.jpg", "alt": "Encontro do ministério" }
+        { "url": "https://...", "path": "img/ministerios/ministerio-infantil/foto-0.jpg", "alt": "Encontro do ministério" }
       ]
     }
   ],
