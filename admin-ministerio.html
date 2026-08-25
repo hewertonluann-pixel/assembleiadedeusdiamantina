@@ -69,7 +69,6 @@
                   <h3><i class="fas fa-id-card"></i> Identidade</h3>
                   <div class="form-grid">
                     <div class="form-group"><label class="form-label" for="ministry-name">Nome *</label><input class="form-input" id="ministry-name" type="text" placeholder="Ex.: Ministério de Mulheres" required /></div>
-                    <div class="form-group"><label class="form-label" for="ministry-icon">Ícone Font Awesome</label><input class="form-input" id="ministry-icon" type="text" placeholder="fa-people-group" /><span class="form-help">Opcional. Use apenas o nome do ícone, como <strong>fa-child</strong> ou <strong>fa-music</strong>.</span></div>
                     <div class="form-group form-group--full"><label class="form-label" for="ministry-slug">Identificador do link (opcional)</label><input class="form-input" id="ministry-slug" type="text" placeholder="Gerado automaticamente a partir do nome" /><span class="form-help">Use letras minúsculas, números e hífens. Se ficar vazio, o sistema gera o link automaticamente.</span></div>
                     <div class="form-group form-group--full"><label class="form-label" for="ministry-description">Descrição do card e da página</label><textarea class="form-textarea" id="ministry-description" rows="3" placeholder="Apresente brevemente este ministério."></textarea></div>
                   </div>
@@ -77,7 +76,7 @@
 
                 <div class="form-section">
                   <h3><i class="fas fa-image"></i> Foto de fundo do card</h3>
-                  <div class="editor-preview" id="editor-preview"><div class="editor-preview__copy"><small>Prévia do card</small><strong id="preview-name">Nome do ministério</strong><span id="preview-description">A descrição aparecerá aqui.</span></div></div>
+                  <div class="editor-preview" id="editor-preview"><div class="editor-preview__footer"><div class="editor-preview__copy"><small>Prévia do card</small><strong id="preview-name">Nome do ministério</strong></div><span class="ministerio-card__arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></span></div></div>
                   <div class="form-grid" style="margin-top:.9rem;">
                     <div class="form-group form-group--full"><label class="form-label" for="ministry-bg-url">URL da imagem de fundo</label><input class="form-input" id="ministry-bg-url" type="url" placeholder="https://..." /><span class="form-help">Você pode colar uma URL pública ou enviar uma imagem abaixo.</span></div>
                     <div class="form-group"><label class="form-label" for="ministry-bg-alt">Texto alternativo</label><input class="form-input" id="ministry-bg-alt" type="text" placeholder="Imagem do ministério" /></div>
@@ -161,11 +160,6 @@
       if (!raw) return '';
       try { const url = new URL(raw, window.location.href); return ['http:', 'https:'].includes(url.protocol) ? url.href : ''; } catch (_) { return ''; }
     }
-    function safeIcon(value) {
-      const raw = String(value || '').trim();
-      const icon = raw ? (raw.startsWith('fa-') ? raw : `fa-${raw}`) : 'fa-church';
-      return /^[a-z0-9-]+$/.test(icon) ? icon : 'fa-church';
-    }
     function normalizedPhotos(value) {
       return (Array.isArray(value) ? value : []).map(item => {
         const url = safeUrl(typeof item === 'string' ? item : item?.url);
@@ -190,17 +184,14 @@
       list.innerHTML = ministries.map((item, index) => {
         const name = escapeHtml(item.nome || 'Ministério sem nome');
         const image = safeUrl(item.fotoFundoUrl || item.fotoFundo || item.backgroundUrl);
-        const icon = escapeHtml(safeIcon(item.icone));
-        return `<button class="min-list-item${index === editingIndex ? ' active' : ''}" type="button" data-ministry-index="${index}"><span class="min-list-thumb">${image ? `<img src="${escapeHtml(image)}" alt="" loading="lazy" />` : `<i class="fas ${icon}" aria-hidden="true"></i>`}</span><span class="min-list-copy"><strong>${name}</strong><span>${Array.isArray(item.fotos) ? Math.min(item.fotos.length, MAX_PHOTOS) : 0}/5 fotos</span></span><i class="fas fa-chevron-right" style="margin-left:auto;font-size:.7rem;color:var(--admin-faint);" aria-hidden="true"></i></button>`;
+        return `<button class="min-list-item${index === editingIndex ? ' active' : ''}" type="button" data-ministry-index="${index}"><span class="min-list-thumb">${image ? `<img src="${escapeHtml(image)}" alt="" loading="lazy" />` : '<i class="fas fa-image" aria-hidden="true"></i>'}</span><span class="min-list-copy"><strong>${name}</strong><span>${Array.isArray(item.fotos) ? Math.min(item.fotos.length, MAX_PHOTOS) : 0}/5 fotos</span></span><i class="fas fa-chevron-right" style="margin-left:auto;font-size:.7rem;color:var(--admin-faint);" aria-hidden="true"></i></button>`;
       }).join('');
       list.querySelectorAll('[data-ministry-index]').forEach(button => button.addEventListener('click', () => openEditor(Number(button.dataset.ministryIndex))));
     }
 
     function updatePreview() {
       const name = $('ministry-name').value.trim() || 'Nome do ministério';
-      const description = $('ministry-description').value.trim() || 'A descrição aparecerá aqui.';
       $('preview-name').textContent = name;
-      $('preview-description').textContent = description;
       const preview = $('editor-preview');
       preview.style.backgroundImage = backgroundUrl ? `linear-gradient(145deg,rgba(8,18,57,.22),rgba(7,15,43,.9)),url("${backgroundUrl}")` : 'linear-gradient(145deg,#1A3A8F,#122a6e)';
     }
@@ -217,7 +208,7 @@
       revokePendingUrls();
       editingIndex = -1;
       backgroundUrl = ''; backgroundPath = ''; backgroundAlt = ''; pendingBackgroundFile = null; galleryItems = [];
-      $('ministry-index').value = '-1'; $('ministry-name').value = ''; $('ministry-slug').value = ''; $('ministry-icon').value = '';
+      $('ministry-index').value = '-1'; $('ministry-name').value = ''; $('ministry-slug').value = '';
       $('ministry-description').value = ''; $('ministry-bg-url').value = ''; $('ministry-bg-alt').value = ''; $('ministry-bg-file').value = '';
       $('ministry-meetings').value = ''; $('ministry-rehearsals').value = ''; $('ministry-notices').value = ''; $('gallery-file').value = '';
       $('background-file-name').textContent = ''; $('editor-status').textContent = 'Novo cadastro'; $('delete-ministry-btn').hidden = true;
@@ -237,7 +228,7 @@
       pendingBackgroundFile = null;
       galleryItems = normalizedPhotos(item.fotos);
       $('ministry-index').value = String(index); $('ministry-name').value = name; $('ministry-slug').value = String(item.slug || slugify(name));
-      $('ministry-icon').value = String(item.icone || ''); $('ministry-description').value = String(item.desc || item.descricao || '');
+      $('ministry-description').value = String(item.desc || item.descricao || '');
       $('ministry-bg-url').value = backgroundUrl; $('ministry-bg-alt').value = backgroundAlt; $('ministry-bg-file').value = '';
       $('ministry-meetings').value = String(item.reunioes || item.diasReuniao || item.dias || ''); $('ministry-rehearsals').value = String(item.ensaios || item.ensaio || '');
       $('ministry-notices').value = normalizedNotices(item.avisos).join('\n'); $('gallery-file').value = '';
@@ -326,7 +317,6 @@
           nome: name,
           slug,
           desc: $('ministry-description').value.trim(),
-          icone: $('ministry-icon').value.trim(),
           fotoFundoUrl: savedBackgroundUrl.startsWith('blob:') ? '' : savedBackgroundUrl,
           fotoFundoPath: savedBackgroundPath,
           fotoFundoAlt: $('ministry-bg-alt').value.trim(),
@@ -335,6 +325,7 @@
           avisos: $('ministry-notices').value.split('\n').map(item => item.trim()).filter(Boolean).slice(0, 20),
           fotos: savedPhotos.slice(0, MAX_PHOTOS)
         };
+        delete savedItem.icone;
         if (editingIndex >= 0) ministries[editingIndex] = savedItem; else { ministries.push(savedItem); editingIndex = ministries.length - 1; }
         await setDoc(doc(db, 'site', 'ministerios'), { lista: ministries, atualizadoEm: serverTimestamp() }, { merge: true });
         const keepPaths = [savedBackgroundPath, ...savedPhotos.map(item => item.path)].filter(Boolean);

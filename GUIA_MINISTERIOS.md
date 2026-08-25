@@ -8,7 +8,7 @@ Também existe um link **Ministérios** no menu lateral do [`admin.html`](https:
 
 ## Cadastro
 
-Clique em **Novo Ministério** e preencha o nome, o ícone opcional e a descrição. O identificador do link pode ficar vazio: nesse caso, o painel gera um slug a partir do nome. Esse slug aparece na URL da página individual e deve permanecer estável depois que o ministério já tiver sido divulgado.
+Clique em **Novo Ministério** e preencha o nome e a descrição. O identificador do link pode ficar vazio: nesse caso, o painel gera um slug a partir do nome. Esse slug aparece na URL da página individual e deve permanecer estável depois que o ministério já tiver sido divulgado.
 
 A foto de fundo pode ser informada por uma URL pública ou enviada pelo próprio painel. Quando uma imagem é enviada, ela fica no Firebase Storage em `img/ministerios/{slug}/`, caminho compatível com a regra geral de imagens institucionais. A imagem deve ser JPG, PNG ou WEBP e ter até 10 MB. O texto alternativo deve descrever a imagem para usuários que utilizam leitores de tela.
 
@@ -18,7 +18,7 @@ A galeria aceita no máximo cinco fotos por ministério. As imagens podem ser se
 
 ## Página pública
 
-Cada card da seção **Nossos Ministérios** passa a funcionar como um link para `ministerio.html?id={slug}`. Os cards usam a foto de fundo configurada, uma camada de contraste para preservar a leitura e um indicador de acesso à página individual. Sem imagem cadastrada, o card usa o gradiente institucional e o ícone escolhido.
+Cada card da seção **Nossos Ministérios** passa a funcionar como um link para `ministerio.html?id={slug}`. Os cards usam a foto de fundo configurada e deixam a área central da imagem livre e clara. O nome fica em uma faixa separada na parte inferior, com o indicador de acesso à página individual. Sem imagem cadastrada, o card usa o gradiente institucional.
 
 A página individual exibe descrição, dias de reunião, ensaios, quadro de avisos e galeria com visualizador. Quando uma informação ainda não foi cadastrada, a página mostra um estado informativo e não inventa dados.
 
@@ -31,9 +31,8 @@ As informações ficam no documento `site/ministerios`, no campo `lista`. Cada i
   "nome": "Ministério Infantil",
   "slug": "ministerio-infantil",
   "desc": "Descrição confirmada pela liderança.",
-  "icone": "fa-child",
   "fotoFundoUrl": "https://...",
-  "fotoFundoPath": "ministerios/ministerio-infantil/fundo.png",
+  "fotoFundoPath": "img/ministerios/ministerio-infantil/fundo.png",
   "fotoFundoAlt": "Atividade do Ministério Infantil",
   "reunioes": "Domingos, às 9h.",
   "ensaios": "Sábados, às 15h.",

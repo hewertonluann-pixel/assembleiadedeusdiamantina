@@ -388,30 +388,32 @@ body.agenda-dialog-open { overflow: hidden; }
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 28px 24px 24px;
+  padding: 0;
   border-radius: var(--radius);
   color: #fff;
   background: linear-gradient(145deg, #1A3A8F, #122a6e);
+  background-position: center;
+  background-size: cover;
   box-shadow: var(--shadow);
-  isolation: isolate;
   transition: transform .28s ease, box-shadow .28s ease;
 }
-.ministerio-card.has-background { background-image: linear-gradient(145deg, rgba(8,18,57,.25), rgba(7,15,43,.9)), var(--ministerio-bg); background-size: cover; background-position: center; }
+.ministerio-card.has-background { background-image: var(--ministerio-bg); }
 .ministerio-card:hover { transform: translateY(-6px); box-shadow: 0 16px 34px rgba(26,58,143,.2); }
 .ministerio-card:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
-.ministerio-card__wash { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(9,22,69,.08) 10%, rgba(7,15,43,.88) 100%); }
-.ministerio-card__fallback-icon {
-  position: absolute; top: 20px; left: 20px; z-index: 1;
-  width: 56px; height: 56px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  color: #fff; background: var(--ministerio-accent, var(--primary));
-  box-shadow: 0 8px 18px rgba(0,0,0,.18); font-size: 1.35rem;
+.ministerio-card__footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 76px;
+  padding: 16px 18px 16px 20px;
+  border-top: 1px solid rgba(255,255,255,.25);
+  background: linear-gradient(180deg, rgba(8,18,57,.18), rgba(7,15,43,.94));
+  backdrop-filter: blur(2px);
 }
-.ministerio-card.has-background .ministerio-card__fallback-icon { background: rgba(255,255,255,.18); backdrop-filter: blur(4px); }
-.ministerio-card__content { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; max-width: 28ch; }
-.ministerio-card__content strong { color: #fff; font-family: 'Playfair Display', serif; font-size: 1.22rem; line-height: 1.2; }
-.ministerio-card__content span { color: rgba(255,255,255,.82); font-size: .86rem; line-height: 1.55; }
-.ministerio-card__arrow { position: absolute; right: 22px; bottom: 24px; z-index: 1; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.38); border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: .8rem; transition: transform .28s ease, background .28s ease; }
+.ministerio-card__footer strong { color: #fff; font-family: 'Playfair Display', serif; font-size: 1.16rem; line-height: 1.2; }
+.ministerio-card__arrow { flex: 0 0 auto; width: 34px; height: 34px; margin-left: auto; border: 1px solid rgba(255,255,255,.48); border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: .8rem; transition: transform .28s ease, background .28s ease; }
 .ministerio-card:hover .ministerio-card__arrow { transform: translateX(4px); background: rgba(255,255,255,.16); }
 
 /* === PÁGINA INDIVIDUAL DE MINISTÉRIO === */

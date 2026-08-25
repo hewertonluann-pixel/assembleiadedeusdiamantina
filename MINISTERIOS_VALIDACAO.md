@@ -17,3 +17,11 @@ Após o push do commit `767c38b`, as URLs públicas `ministerio.html`, `admin-mi
 A causa foi identificada no CSS: `.ministerio-loading` definia `display: flex`, e o atributo HTML `hidden` sozinho não conseguia sobrescrever essa regra. Foi adicionada uma regra explícita para `.ministerio-loading[hidden]`, além dos estados de conteúdo e não encontrado, usando `display: none !important`.
 
 A prévia local de `ministerio.html?id=orquestra-filhos-de-asafe&fix=v29` foi validada em 25/08/2026. O conteúdo carregou com a foto do ministério e quatro fotos da galeria, enquanto o spinner não permaneceu visível. O console não apresentou erro JavaScript; apenas informou que uma nova versão do service worker será utilizada na próxima abertura.
+
+## Simplificação visual dos cards
+
+A prévia local da home foi posicionada na seção de Ministérios. Os cards com fotos, como Jovens (UMADEMID) e Orquestra Filhos de Asafe, exibiram a imagem com maior clareza e o nome separado em uma faixa inferior escura. Os cards sem foto mantiveram o gradiente institucional. O ícone Font Awesome não aparece mais nos cards nem no formulário dedicado.
+
+## Faixa de identificação e remoção do ícone
+
+O campo “Ícone Font Awesome” foi removido do `admin-ministerio.html`, e o campo legado `icone` é eliminado quando um ministério é salvo novamente. Os cards públicos passaram a usar somente a imagem de fundo e uma faixa inferior separada para nome e acesso. A prévia da home confirmou maior visibilidade das fotografias, enquanto os cards sem foto mantêm o gradiente institucional.

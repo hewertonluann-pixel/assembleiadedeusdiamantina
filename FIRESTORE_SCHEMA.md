@@ -110,7 +110,6 @@ O documento mantém uma lista de ministérios. O `slug` é o identificador está
       "nome": "Ministério Infantil",
       "slug": "ministerio-infantil",
       "desc": "Descrição do ministério...",
-      "icone": "fa-child",
       "fotoFundoUrl": "https://...",
       "fotoFundoPath": "img/ministerios/ministerio-infantil/fundo.png",
       "fotoFundoAlt": "Crianças do ministério infantil",
@@ -126,7 +125,7 @@ O documento mantém uma lista de ministérios. O `slug` é o identificador está
 }
 ```
 
-Os campos `fotoFundoUrl`, `fotoFundoPath`, `fotoFundoAlt`, `reunioes`, `ensaios`, `avisos` e `fotos` são opcionais. Sem foto de fundo, o card usa o gradiente institucional; sem avisos ou fotos, a página pública exibe um estado vazio e não inventa conteúdo.
+O campo legado `icone`, quando existir em registros antigos, não é mais exibido nem solicitado pelo painel e é removido na próxima gravação. Os campos `fotoFundoUrl`, `fotoFundoPath`, `fotoFundoAlt`, `reunioes`, `ensaios`, `avisos` e `fotos` são opcionais. Sem foto de fundo, o card usa o gradiente institucional; sem avisos ou fotos, a página pública exibe um estado vazio e não inventa conteúdo.
 
 ### `site/imagens`
 ```json
