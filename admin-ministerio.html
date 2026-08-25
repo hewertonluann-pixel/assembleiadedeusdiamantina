@@ -15,14 +15,16 @@
 <body>
   <div id="login-screen">
     <div class="login-card">
+      <form id="login-form" novalidate>
       <div class="login-brand"><i class="fas fa-users-gear" aria-hidden="true"></i><span>AD Diamantina</span></div>
       <p class="login-title">Área de gerenciamento de Ministérios</p>
       <div class="login-error" id="login-error" role="alert"></div>
       <div class="form-group"><label class="form-label" for="login-email">E-mail</label><input class="form-input" id="login-email" type="email" placeholder="admin@exemplo.com" autocomplete="email" /></div>
       <div class="form-group"><label class="form-label" for="login-password">Senha</label><input class="form-input" id="login-password" type="password" placeholder="••••••••" autocomplete="current-password" /></div>
-      <button class="admin-btn admin-btn--primary" id="login-btn" type="button"><i class="fas fa-right-to-bracket"></i> Entrar</button>
+      <button class="admin-btn admin-btn--primary" id="login-btn" type="submit"><i class="fas fa-right-to-bracket"></i> Entrar</button>
       <div style="display:flex;align-items:center;gap:.7rem;color:var(--admin-faint);font-size:.72rem;"><span style="height:1px;flex:1;background:var(--admin-border);"></span>ou<span style="height:1px;flex:1;background:var(--admin-border);"></span></div>
       <button class="admin-btn admin-btn--ghost" id="google-btn" type="button"><i class="fab fa-google"></i> Entrar com Google</button>
+      </form>
     </div>
   </div>
 
@@ -114,7 +116,7 @@
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+    import { getAuth, signInWithEmailAndPassword, signInWithRedirect, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
     import { getFirestore, doc, getDoc, setDoc, collection, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
     import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
 
@@ -402,9 +404,32 @@
     $('delete-ministry-btn').addEventListener('click', deleteCurrentMinistry);
     $('refresh-btn').addEventListener('click', loadMinistries);
     $('theme-toggle').addEventListener('click', () => { const html = document.documentElement; const light = html.dataset.theme !== 'light'; html.dataset.theme = light ? 'light' : 'dark'; $('theme-toggle').innerHTML = `<i class="fas fa-${light ? 'moon' : 'sun'}"></i>`; });
-    $('login-btn').addEventListener('click', async () => { const error = $('login-error'); error.classList.remove('show'); try { await signInWithEmailAndPassword(auth, $('login-email').value.trim(), $('login-password').value); } catch (e) { error.textContent = e.code === 'auth/invalid-credential' || e.code === 'auth/user-not-found' ? 'E-mail ou senha incorretos.' : `Erro: ${e.message}`; error.classList.add('show'); } });
-    $('google-btn').addEventListener('click', async () => { const error = $('login-error'); error.classList.remove('show'); try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (e) { if (e.code !== 'auth/popup-closed-by-user') { error.textContent = `Erro Google: ${e.message}`; error.classList.add('show'); } } });
-    $('login-password').addEventListener('keydown', event => { if (event.key === 'Enter') $('login-btn').click(); });
+    $('login-form').addEventListener('submit', async event => {
+      event.preventDefault();
+      const error = $('login-error'); error.classList.remove('show');
+      const email = $('login-email').value.trim();
+      const password = $('login-password').value;
+      if (!email || !password) { error.textContent = 'Informe o e-mail e a senha para entrar.'; error.classList.add('show'); return; }
+      try { await signInWithEmailAndPassword(auth, email, password); }
+      catch (e) { error.textContent = e.code === 'auth/invalid-credential' || e.code === 'auth/user-not-found' ? 'E-mail ou senha incorretos.' : `Erro: ${e.message}`; error.classList.add('show'); }
+    });
+    async function loginWithGoogle() {
+      const error = $('login-error'); error.classList.remove('show');
+      try {
+        await signInWithPopup(auth, new GoogleAuthProvider());
+      } catch (e) {
+        if (e.code === 'auth/popup-closed-by-user') return;
+        if (e.code === 'auth/popup-blocked') {
+          try { await signInWithRedirect(auth, new GoogleAuthProvider()); return; }
+          catch (redirectError) { e = redirectError; }
+        }
+        error.textContent = e.code === 'auth/unauthorized-domain'
+          ? 'Este domínio ainda não está autorizado no Firebase Authentication. Adicione-o em Authentication → Settings → Authorized domains.'
+          : `Erro Google: ${e.message}`;
+        error.classList.add('show');
+      }
+    }
+    $('google-btn').addEventListener('click', loginWithGoogle);
     $('logout-btn').addEventListener('click', () => signOut(auth));
 
     onAuthStateChanged(auth, async user => {

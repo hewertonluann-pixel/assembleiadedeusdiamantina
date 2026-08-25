@@ -137,6 +137,7 @@ img { display: block; max-width: 100%; }
 @keyframes admin-spin { to { transform: rotate(360deg); } }
 #login-screen { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem; background: var(--admin-bg); }
 .login-card { width: min(100%,380px); display: flex; flex-direction: column; gap: 1.15rem; padding: 2.2rem 2rem; background: var(--admin-surface); border: 1px solid var(--admin-border); border-radius: var(--admin-radius-lg); box-shadow: var(--admin-shadow); }
+#login-form { display: flex; flex-direction: column; gap: 1.15rem; }
 .login-brand { display: flex; align-items: center; justify-content: center; gap: .65rem; color: var(--admin-gold); font: 700 1.4rem 'Playfair Display',serif; }
 .login-title { color: var(--admin-muted); font-size: .85rem; text-align: center; }
 .login-error { display: none; padding: .65rem .75rem; color: #e47783; background: rgba(161,44,59,.15); border: 1px solid var(--admin-danger); border-radius: var(--admin-radius); font-size: .78rem; line-height: 1.4; }
