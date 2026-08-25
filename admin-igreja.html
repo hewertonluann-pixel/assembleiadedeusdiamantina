@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — A Igreja — AD Diamantina</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link id="site-favicon" rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <script src="js/favicon.js"></script>
+  <link rel="stylesheet" href="css/admin-ministerio.css?v=2" />
+  <link rel="stylesheet" href="css/admin-igreja.css?v=1" />
+</head>
+<body>
+  <div id="login-screen">
+    <div class="login-card">
+      <form id="login-form" novalidate>
+        <div class="login-brand"><i class="fas fa-church" aria-hidden="true"></i><span>AD Diamantina</span></div>
+        <p class="login-title">Área de personalização de A Igreja</p>
+        <div class="login-error" id="login-error" role="alert"></div>
+        <div class="form-group"><label class="form-label" for="login-email">E-mail</label><input class="form-input" id="login-email" type="email" placeholder="admin@exemplo.com" autocomplete="email" /></div>
+        <div class="form-group"><label class="form-label" for="login-password">Senha</label><input class="form-input" id="login-password" type="password" placeholder="••••••••" autocomplete="current-password" /></div>
+        <button class="admin-btn admin-btn--primary" id="login-btn" type="submit"><i class="fas fa-right-to-bracket"></i> Entrar</button>
+        <div class="login-divider"><span></span>ou<span></span></div>
+        <button class="admin-btn admin-btn--ghost" id="google-btn" type="button"><i class="fab fa-google"></i> Entrar com Google</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="admin-shell" id="app-shell" hidden>
+    <header class="admin-topbar">
+      <a class="admin-brand" href="admin.html" aria-label="Voltar ao painel administrativo"><i class="fas fa-church"></i><span>AD Diamantina <small>/ A Igreja</small></span></a>
+      <div class="admin-top-actions"><button class="admin-btn admin-btn--ghost" id="theme-toggle" type="button" aria-label="Alternar tema"><i class="fas fa-sun"></i></button><button class="admin-btn admin-btn--ghost" id="logout-btn" type="button"><i class="fas fa-right-from-bracket"></i> Sair</button></div>
+    </header>
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <span class="admin-nav-label">Navegação</span>
+        <a class="admin-nav-link" href="admin.html"><i class="fas fa-arrow-left"></i> Painel principal</a>
+        <a class="admin-nav-link active" href="admin-igreja.html"><i class="fas fa-church"></i> A Igreja</a>
+        <a class="admin-nav-link" href="igreja.html" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Ver página pública</a>
+      </aside>
+      <main class="admin-main">
+        <div class="admin-header"><div><h1>A Igreja</h1><p>Personalize os textos da página institucional da igreja.</p></div><div class="admin-actions"><button class="admin-btn admin-btn--ghost" id="reset-btn" type="button"><i class="fas fa-rotate-left"></i> Restaurar padrão</button><button class="admin-btn admin-btn--gold" id="save-top-btn" type="button"><i class="fas fa-save"></i> Salvar</button></div></div>
+        <div class="admin-alert"><i class="fas fa-circle-info" style="color:var(--admin-gold);margin-right:.35rem;"></i> As informações serão exibidas na página pública assim que forem salvas. Publique apenas textos confirmados pela liderança da igreja.</div>
+        <div class="igreja-admin-grid">
+          <section class="admin-panel" aria-labelledby="igreja-editor-title">
+            <div class="admin-panel__header"><h2 id="igreja-editor-title">Conteúdo institucional</h2><span id="save-status">Carregando…</span></div>
+            <div class="admin-panel__body">
+              <form id="igreja-form" class="form-stack" hidden>
+                <div class="form-section"><h3><i class="fas fa-heading"></i> Hero da página</h3><div class="form-grid">
+                  <div class="form-group"><label class="form-label" for="hero-badge">Etiqueta</label><input class="form-input" id="hero-badge" type="text" /></div>
+                  <div class="form-group"><label class="form-label" for="hero-title">Título</label><input class="form-input" id="hero-title" type="text" /></div>
+                  <div class="form-group form-group--full"><label class="form-label" for="hero-description">Descrição</label><textarea class="form-textarea" id="hero-description" rows="3"></textarea></div>
+                </div></div>
+                <div class="form-section"><h3><i class="fas fa-landmark"></i> Nossa identidade</h3><div class="form-grid">
+                  <div class="form-group"><label class="form-label" for="about-badge">Etiqueta</label><input class="form-input" id="about-badge" type="text" /></div>
+                  <div class="form-group"><label class="form-label" for="about-title">Título</label><input class="form-input" id="about-title" type="text" /></div>
+                  <div class="form-group form-group--full"><label class="form-label" for="about-paragraph1">Primeiro parágrafo</label><textarea class="form-textarea" id="about-paragraph1" rows="4"></textarea></div>
+                  <div class="form-group form-group--full"><label class="form-label" for="about-paragraph2">Segundo parágrafo</label><textarea class="form-textarea" id="about-paragraph2" rows="4"></textarea></div>
+                </div></div>
+                <div class="form-section"><h3><i class="fas fa-compass"></i> Missão, visão e valores</h3><div class="igreja-values-grid">
+                  <div class="igreja-value-editor"><label class="form-label" for="mission-title">Título da missão</label><input class="form-input" id="mission-title" type="text" /><label class="form-label" for="mission-text">Texto da missão</label><textarea class="form-textarea" id="mission-text" rows="3"></textarea></div>
+                  <div class="igreja-value-editor"><label class="form-label" for="vision-title">Título da visão</label><input class="form-input" id="vision-title" type="text" /><label class="form-label" for="vision-text">Texto da visão</label><textarea class="form-textarea" id="vision-text" rows="3"></textarea></div>
+                  <div class="igreja-value-editor"><label class="form-label" for="values-title">Título dos valores</label><input class="form-input" id="values-title" type="text" /><label class="form-label" for="values-text">Texto dos valores</label><textarea class="form-textarea" id="values-text" rows="3"></textarea></div>
+                </div></div>
+                <div class="form-section"><h3><i class="fas fa-hand-holding-heart"></i> Convite final</h3><div class="form-grid">
+                  <div class="form-group"><label class="form-label" for="invite-badge">Etiqueta</label><input class="form-input" id="invite-badge" type="text" /></div>
+                  <div class="form-group"><label class="form-label" for="invite-title">Título</label><input class="form-input" id="invite-title" type="text" /></div>
+                  <div class="form-group form-group--full"><label class="form-label" for="invite-text">Texto</label><textarea class="form-textarea" id="invite-text" rows="3"></textarea></div>
+                  <div class="form-group"><label class="form-label" for="cultos-button">Botão de cultos</label><input class="form-input" id="cultos-button" type="text" /></div>
+                  <div class="form-group"><label class="form-label" for="congregacoes-button">Botão de congregações</label><input class="form-input" id="congregacoes-button" type="text" /></div>
+                </div></div>
+                <div class="form-section igreja-image-note"><h3><i class="fas fa-image"></i> Foto da igreja</h3><p>A foto principal desta página continua sendo gerenciada em <strong>Imagens do Site</strong>, no painel principal.</p><a class="admin-btn admin-btn--ghost" href="admin.html"><i class="fas fa-images"></i> Abrir Imagens do Site</a></div>
+                <div class="form-actions"><button class="admin-btn admin-btn--gold" type="submit"><i class="fas fa-save"></i> Salvar alterações</button></div>
+              </form>
+              <div class="admin-spinner" id="form-loading"></div>
+            </div>
+          </section>
+          <aside class="admin-panel igreja-admin-preview" aria-labelledby="preview-title"><div class="admin-panel__header"><h2 id="preview-title">Resumo da página</h2></div><div class="admin-panel__body"><div class="igreja-preview-hero"><span id="preview-hero-badge"></span><strong id="preview-hero-title"></strong><p id="preview-hero-description"></p></div><div class="igreja-preview-block"><span>Identidade</span><strong id="preview-about-title"></strong><p id="preview-about-paragraph"></p></div><div class="igreja-preview-values"><div><i class="fas fa-cross"></i><strong id="preview-mission-title"></strong></div><div><i class="fas fa-eye"></i><strong id="preview-vision-title"></strong></div><div><i class="fas fa-heart"></i><strong id="preview-values-title"></strong></div></div><p class="form-help">A prévia é resumida. A página pública mantém a estrutura completa, a foto da igreja e os botões de navegação.</p></div></aside>
+        </div>
+      </main>
+    </div>
+  </div>
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getAuth, signInWithEmailAndPassword, signInWithRedirect, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+    const firebaseConfig = { apiKey: 'AIzaSyBtMB9qs34H8qMjaA_XavJdrUSpOASYBos', authDomain: 'ad-diamantina.firebaseapp.com', projectId: 'ad-diamantina', storageBucket: 'ad-diamantina.firebasestorage.app', messagingSenderId: '430449368435', appId: '1:430449368435:web:c2d94116f9761fd4c87906' };
+    const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app); const PRIMARY_ADMIN_EMAIL = 'hewertonluann@gmail.com';
+    const defaults = { heroBadge: 'Conheça nossa história', heroTitle: 'A Igreja', heroDescription: 'Conheça os fundamentos que orientam a Assembleia de Deus Ministério de Diamantina.', aboutBadge: 'Nossa identidade', aboutTitle: 'Uma comunidade de fé, amor e esperança', aboutParagraph1: 'A Assembleia de Deus Ministério de Diamantina foi fundada em 07 de julho de 2009, com o propósito de proclamar o evangelho de Jesus Cristo no coração de Diamantina e região.', aboutParagraph2: 'Sob a liderança do Pr. Airton Vitorino da Silva, nossa igreja cresce em fé, servindo à comunidade com amor, palavra e oração.', missionTitle: 'Missão', missionText: 'Pregar o Evangelho e fazer discípulos de Jesus Cristo.', visionTitle: 'Visão', visionText: 'Ser uma igreja que transforma vidas e impacta Diamantina.', valuesTitle: 'Valores', valuesText: 'Fé, família, comunhão e serviço ao próximo.', inviteBadge: 'Faça parte', inviteTitle: 'Caminhe conosco', inviteText: 'Encontre um horário de culto, conheça nossas congregações e acompanhe a programação do Ministério de Diamantina.', cultosButton: 'Ver cultos', congregacoesButton: 'Ver congregações' };
+    const fieldMap = { heroBadge: 'hero-badge', heroTitle: 'hero-title', heroDescription: 'hero-description', aboutBadge: 'about-badge', aboutTitle: 'about-title', aboutParagraph1: 'about-paragraph1', aboutParagraph2: 'about-paragraph2', missionTitle: 'mission-title', missionText: 'mission-text', visionTitle: 'vision-title', visionText: 'vision-text', valuesTitle: 'values-title', valuesText: 'values-text', inviteBadge: 'invite-badge', inviteTitle: 'invite-title', inviteText: 'invite-text', cultosButton: 'cultos-button', congregacoesButton: 'congregacoes-button' };
+    const $ = id => document.getElementById(id);
+    function toast(message, type = 'success') { const el = document.createElement('div'); el.className = `toast ${type}`; el.textContent = message; $('toast-container').appendChild(el); setTimeout(() => el.remove(), 4200); }
+    function showLoginError(message) { $('login-error').textContent = message; $('login-error').classList.add('show'); }
+    function applyData(data) { const values = { ...defaults, ...(data || {}) }; Object.entries(fieldMap).forEach(([key, id]) => { $(id).value = String(values[key] ?? ''); }); updatePreview(); }
+    function collectData() { return Object.fromEntries(Object.entries(fieldMap).map(([key, id]) => [key, $(id).value.trim()])); }
+    function updatePreview() { const data = collectData(); $('preview-hero-badge').textContent = data.heroBadge; $('preview-hero-title').textContent = data.heroTitle; $('preview-hero-description').textContent = data.heroDescription; $('preview-about-title').textContent = data.aboutTitle; $('preview-about-paragraph').textContent = data.aboutParagraph1; $('preview-mission-title').textContent = data.missionTitle; $('preview-vision-title').textContent = data.visionTitle; $('preview-values-title').textContent = data.valuesTitle; }
+    async function loadData() { $('form-loading').hidden = false; $('igreja-form').hidden = true; try { const snap = await getDoc(doc(db, 'site', 'igreja')); applyData(snap.exists() ? snap.data() : defaults); $('save-status').textContent = snap.exists() ? 'Conteúdo salvo' : 'Usando padrão'; $('igreja-form').hidden = false; } catch (error) { console.error(error); applyData(defaults); $('igreja-form').hidden = false; toast('Não foi possível carregar o conteúdo salvo.','error'); } finally { $('form-loading').hidden = true; } }
+    async function saveData(event) { event?.preventDefault(); const button = document.querySelector('#igreja-form button[type="submit"]'); button.disabled = true; try { await setDoc(doc(db, 'site', 'igreja'), { ...collectData(), atualizadoEm: serverTimestamp() }, { merge: true }); $('save-status').textContent = 'Salvo agora'; toast('Página A Igreja salva com sucesso.','success'); } catch (error) { console.error(error); toast(`Não foi possível salvar: ${error.message}`,'error'); } finally { button.disabled = false; } }
+    async function checkPanelAccess(user) { if (!user?.email || !user.emailVerified) return { allowed: false, message: 'Use uma conta com e-mail verificado.' }; const email = user.email.trim().toLowerCase(); if (email === PRIMARY_ADMIN_EMAIL) return { allowed: true }; try { const snap = await getDoc(doc(db, 'admins', email)); const data = snap.exists() ? snap.data() : null; return data?.ativo === true && String(data.email || email).trim().toLowerCase() === email ? { allowed: true } : { allowed: false, message: 'Esta conta não está autorizada para o painel.' }; } catch (_) { return { allowed: false, message: 'Não foi possível verificar a autorização. Confira as regras do Firestore.' }; } }
+    $('igreja-form').addEventListener('submit', saveData); $('save-top-btn').addEventListener('click', () => $('igreja-form').requestSubmit()); $('reset-btn').addEventListener('click', () => { if (window.confirm('Restaurar os textos padrão no formulário? Será necessário salvar para publicar.')) applyData(defaults); });
+    Object.values(fieldMap).forEach(id => $(id).addEventListener('input', updatePreview));
+    $('theme-toggle').addEventListener('click', () => { const html = document.documentElement; const light = html.dataset.theme !== 'light'; html.dataset.theme = light ? 'light' : 'dark'; $('theme-toggle').innerHTML = `<i class="fas fa-${light ? 'moon' : 'sun'}"></i>`; });
+    $('login-form').addEventListener('submit', async event => { event.preventDefault(); $('login-error').classList.remove('show'); const email = $('login-email').value.trim(); const password = $('login-password').value; if (!email || !password) { showLoginError('Informe o e-mail e a senha para entrar.'); return; } try { await signInWithEmailAndPassword(auth, email, password); } catch (error) { showLoginError(error.code === 'auth/invalid-credential' ? 'E-mail ou senha incorretos.' : `Erro: ${error.message}`); } });
+    $('google-btn').addEventListener('click', async () => { $('login-error').classList.remove('show'); try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (error) { if (error.code === 'auth/popup-closed-by-user') return; if (error.code === 'auth/popup-blocked') { try { await signInWithRedirect(auth, new GoogleAuthProvider()); return; } catch (redirectError) { error = redirectError; } } showLoginError(error.code === 'auth/unauthorized-domain' ? 'Este domínio ainda não está autorizado no Firebase Authentication.' : `Erro Google: ${error.message}`); } });
+    $('logout-btn').addEventListener('click', () => signOut(auth));
+    onAuthStateChanged(auth, async user => { if (!user) { $('app-shell').hidden = true; $('login-screen').hidden = false; return; } const access = await checkPanelAccess(user); if (!access.allowed) { await signOut(auth); $('login-screen').hidden = false; showLoginError(access.message); return; } $('login-screen').hidden = true; $('app-shell').hidden = false; await loadData(); });
+  </script>
+</body>
+</html>

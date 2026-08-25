@@ -60,9 +60,9 @@
           <i class="fas fa-chevron-right" aria-hidden="true"></i>
           <span>A Igreja</span>
         </nav>
-        <span class="section-tag">Conheça nossa história</span>
+        <span class="section-tag" id="igreja-hero-badge">Conheça nossa história</span>
         <h1 id="igreja-page-title">A Igreja</h1>
-        <p>Conheça os fundamentos que orientam a Assembleia de Deus Ministério de Diamantina.</p>
+        <p id="igreja-hero-description">Conheça os fundamentos que orientam a Assembleia de Deus Ministério de Diamantina.</p>
       </div>
     </section>
 
@@ -73,7 +73,7 @@
           <div class="sobre-img-placeholder" id="site-igreja-placeholder" hidden aria-hidden="true"><i class="fas fa-church"></i></div>
         </div>
         <div class="sobre-texto">
-          <span class="section-tag">Nossa identidade</span>
+          <span class="section-tag" id="igreja-about-badge">Nossa identidade</span>
           <h2 class="section-title" id="igreja-sobre-title">Uma comunidade de fé, amor e esperança</h2>
           <p id="sobre-p1">A Assembleia de Deus Ministério de Diamantina foi fundada em 07 de julho de 2009, com o propósito de proclamar o evangelho de Jesus Cristo no coração de Diamantina e região.</p>
           <p id="sobre-p2">Sob a liderança do Pr. Airton Vitorino da Silva, nossa igreja cresce em fé, servindo à comunidade com amor, palavra e oração.</p>
@@ -81,22 +81,22 @@
             <div class="valor">
               <i class="fas fa-cross" aria-hidden="true"></i>
               <div>
-                <strong>Missão</strong>
-                <p>Pregar o Evangelho e fazer discípulos de Jesus Cristo.</p>
+                <strong id="igreja-mission-title">Missão</strong>
+                <p id="igreja-mission-text">Pregar o Evangelho e fazer discípulos de Jesus Cristo.</p>
               </div>
             </div>
             <div class="valor">
               <i class="fas fa-eye" aria-hidden="true"></i>
               <div>
-                <strong>Visão</strong>
-                <p>Ser uma igreja que transforma vidas e impacta Diamantina.</p>
+                <strong id="igreja-vision-title">Visão</strong>
+                <p id="igreja-vision-text">Ser uma igreja que transforma vidas e impacta Diamantina.</p>
               </div>
             </div>
             <div class="valor">
               <i class="fas fa-heart" aria-hidden="true"></i>
               <div>
-                <strong>Valores</strong>
-                <p>Fé, família, comunhão e serviço ao próximo.</p>
+                <strong id="igreja-values-title">Valores</strong>
+                <p id="igreja-values-text">Fé, família, comunhão e serviço ao próximo.</p>
               </div>
             </div>
           </div>
@@ -108,13 +108,13 @@
     <section class="igreja-invite" aria-label="Próximos caminhos">
       <div class="container igreja-invite__inner">
         <div>
-          <span class="section-tag">Faça parte</span>
-          <h2 class="section-title">Caminhe conosco</h2>
-          <p>Encontre um horário de culto, conheça nossas congregações e acompanhe a programação do Ministério de Diamantina.</p>
+          <span class="section-tag" id="igreja-invite-badge">Faça parte</span>
+          <h2 class="section-title" id="igreja-invite-title">Caminhe conosco</h2>
+          <p id="igreja-invite-text">Encontre um horário de culto, conheça nossas congregações e acompanhe a programação do Ministério de Diamantina.</p>
         </div>
         <div class="igreja-invite__actions">
-          <a href="index.html#cultos" class="btn btn-primary"><i class="fas fa-church" aria-hidden="true"></i> Ver cultos</a>
-          <a href="congregacoes.html" class="btn btn-outline igreja-invite__outline"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Ver congregações</a>
+          <a href="index.html#cultos" class="btn btn-primary" id="igreja-cultos-button"><i class="fas fa-church" aria-hidden="true"></i> <span id="igreja-cultos-button-text">Ver cultos</span></a>
+          <a href="congregacoes.html" class="btn btn-outline igreja-invite__outline" id="igreja-congregacoes-button"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> <span id="igreja-congregacoes-button-text">Ver congregações</span></a>
         </div>
       </div>
     </section>
@@ -251,6 +251,29 @@
           if (footerCultos && Array.isArray(home.cultos) && home.cultos.length) {
             footerCultos.innerHTML = home.cultos.map((culto) => `<li>${culto.label || ''} — ${culto.hora || ''}</li>`).join('');
           }
+        }
+
+        const igrejaSnap = await getDoc(doc(db, 'site', 'igreja'));
+        if (igrejaSnap.exists()) {
+          const igreja = igrejaSnap.data() || {};
+          setText('igreja-hero-badge', igreja.heroBadge);
+          setText('igreja-page-title', igreja.heroTitle);
+          setText('igreja-hero-description', igreja.heroDescription);
+          setText('igreja-about-badge', igreja.aboutBadge);
+          setText('igreja-sobre-title', igreja.aboutTitle);
+          setText('sobre-p1', igreja.aboutParagraph1);
+          setText('sobre-p2', igreja.aboutParagraph2);
+          setText('igreja-mission-title', igreja.missionTitle);
+          setText('igreja-mission-text', igreja.missionText);
+          setText('igreja-vision-title', igreja.visionTitle);
+          setText('igreja-vision-text', igreja.visionText);
+          setText('igreja-values-title', igreja.valuesTitle);
+          setText('igreja-values-text', igreja.valuesText);
+          setText('igreja-invite-badge', igreja.inviteBadge);
+          setText('igreja-invite-title', igreja.inviteTitle);
+          setText('igreja-invite-text', igreja.inviteText);
+          setText('igreja-cultos-button-text', igreja.cultosButton);
+          setText('igreja-congregacoes-button-text', igreja.congregacoesButton);
         }
 
         const imagensSnap = await getDoc(doc(db, 'site', 'imagens'));

@@ -45,6 +45,36 @@ A conta principal `hewertonluann@gmail.com` mantém acesso por regra de seguran�
 
 Os campos `whatsappFloatEnabled` e `contributionFloatEnabled` controlam os botões flutuantes da home. O primeiro é ativado por padrão para manter o comportamento anterior, mas o botão só aparece se houver um número de WhatsApp em `site/redes`. O segundo vem desativado por padrão e só aparece quando for ativado no painel e houver chave Pix, nome e cidade do recebedor em `site/contribuicao`.
 
+### `site/igreja`
+
+Este documento é editado em `admin-igreja.html` e controla os textos da página pública `igreja.html`. Se o documento ainda não existir, a página usa os textos padrão já presentes no HTML até que o primeiro salvamento seja realizado.
+
+```json
+{
+  "heroBadge": "Conheça nossa história",
+  "heroTitle": "A Igreja",
+  "heroDescription": "Conheça os fundamentos que orientam a Assembleia de Deus Ministério de Diamantina.",
+  "aboutBadge": "Nossa identidade",
+  "aboutTitle": "Uma comunidade de fé, amor e esperança",
+  "aboutParagraph1": "Primeiro parágrafo institucional...",
+  "aboutParagraph2": "Segundo parágrafo institucional...",
+  "missionTitle": "Missão",
+  "missionText": "Pregar o Evangelho e fazer discípulos de Jesus Cristo.",
+  "visionTitle": "Visão",
+  "visionText": "Ser uma igreja que transforma vidas e impacta Diamantina.",
+  "valuesTitle": "Valores",
+  "valuesText": "Fé, família, comunhão e serviço ao próximo.",
+  "inviteBadge": "Faça parte",
+  "inviteTitle": "Caminhe conosco",
+  "inviteText": "Encontre um horário de culto, conheça nossas congregações e acompanhe a programação do Ministério de Diamantina.",
+  "cultosButton": "Ver cultos",
+  "congregacoesButton": "Ver congregações",
+  "atualizadoEm": "serverTimestamp()"
+}
+```
+
+A foto principal exibida nesta página continua sendo o campo `igreja` de `site/imagens`, gerenciado na aba **Imagens do Site** do painel principal. O documento `site/igreja` é público para leitura e protegido para gravação pelas regras de administrador.
+
 ### `site/lideranca`
 ```json
 {
