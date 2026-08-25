@@ -417,6 +417,7 @@ body.agenda-dialog-open { overflow: hidden; }
 /* === PÁGINA INDIVIDUAL DE MINISTÉRIO === */
 .ministerio-page { background: #fff; }
 .ministerio-loading { min-height: 65vh; padding: 120px 24px 60px; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--gray); }
+.ministerio-loading[hidden], .ministerio-not-found[hidden], #ministerio-content[hidden] { display: none !important; }
 .ministerio-loading i { color: var(--gold); }
 .ministerio-not-found { min-height: 70vh; padding: 150px 0 90px; text-align: center; color: var(--gray); }
 .ministerio-not-found i { display: block; margin-bottom: 18px; color: #c5cfe8; font-size: 3rem; }
