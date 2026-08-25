@@ -39,6 +39,13 @@ service firebase.storage {
       allow write: if isAdmin() && (request.resource == null || isImageUpload());
     }
 
+    // Fotos de fundo e galerias dos ministérios são públicas para leitura,
+    // mas só administradores autorizados podem alterar esses arquivos.
+    match /ministerios/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin() && (request.resource == null || isImageUpload());
+    }
+
     // Bloqueia caminhos não previstos até que possuam uma regra explícita.
     match /{allPaths=**} {
       allow read, write: if false;

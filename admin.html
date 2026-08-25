@@ -288,7 +288,7 @@ a{color:inherit;text-decoration:none;}
     <button class="nav-item active" data-page="dashboard"><i class="fas fa-th-large"></i> Dashboard</button>
     <button class="nav-item" data-page="congregacoes"><i class="fas fa-church"></i> Congregações</button>
     <button class="nav-item" data-page="agenda"><i class="fas fa-calendar-alt"></i> Agenda</button>
-    <button class="nav-item" data-page="ministerios"><i class="fas fa-users"></i> Ministérios</button>
+    <a class="nav-item" href="admin-ministerio.html"><i class="fas fa-users"></i> Ministérios</a>
     <span class="nav-section" style="margin-top:0.5rem;">Configurações</span>
     <button class="nav-item" data-page="home-config"><i class="fas fa-home"></i> Página Inicial</button>
     <button class="nav-item" data-page="imagens"><i class="fas fa-images"></i> Imagens do Site</button>
@@ -354,16 +354,7 @@ a{color:inherit;text-decoration:none;}
       </div>
     </section>
 
-    <!-- MINISTÉRIOS -->
-    <section class="page" id="page-ministerios">
-      <div class="section-header">
-        <div><h1 class="section-title">Ministérios</h1><p class="section-subtitle">Cartões exibidos na página inicial</p></div>
-        <button class="btn btn-gold" id="btn-novo-min"><i class="fas fa-plus"></i> Novo Ministério</button>
-      </div>
-      <div id="min-loading" class="spinner"></div>
-      <div id="min-list" class="admin-grid" style="display:none;"></div>
-      <div id="min-empty" class="empty-state" style="display:none;"><i class="fas fa-users"></i><h3>Nenhum ministério cadastrado</h3><p>Adicione ministérios para exibir na página inicial.</p></div>
-    </section>
+    <!-- MINISTÉRIOS: gerenciamento separado em admin-ministerio.html -->
 
     <!-- HOME CONFIG -->
     <section class="page" id="page-home-config">
@@ -748,23 +739,6 @@ a{color:inherit;text-decoration:none;}
   </div>
 </div>
 
-<!-- MODAL MINISTÉRIO -->
-<div class="modal-overlay" id="min-modal" role="dialog" aria-modal="true" aria-labelledby="min-modal-title">
-  <div class="modal">
-    <div class="modal-header"><h2 class="modal-title" id="min-modal-title">Novo Ministério</h2><button class="btn btn-ghost btn-icon" id="min-modal-close" aria-label="Fechar"><i class="fas fa-times"></i></button></div>
-    <div class="modal-body">
-      <input type="hidden" id="min-idx" value="-1" />
-      <div class="form-group"><label class="form-label">Nome do Ministério *</label><input type="text" id="min-nome" class="form-input" required /></div>
-      <div class="form-group"><label class="form-label">Descrição</label><textarea id="min-desc" class="form-textarea" placeholder="Breve descrição..."></textarea></div>
-      <div class="form-group"><label class="form-label">Ícone (Font Awesome, ex: fa-child)</label><input type="text" id="min-icone" class="form-input" placeholder="fa-child" /></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" id="min-modal-cancel">Cancelar</button>
-      <button class="btn btn-gold" id="min-modal-save"><i class="fas fa-save"></i> Salvar</button>
-    </div>
-  </div>
-</div>
-
 <div id="toast-container" aria-live="polite"></div>
 
 <script type="module">
@@ -822,7 +796,6 @@ document.querySelectorAll('[data-page]').forEach(btn=>{
     document.getElementById('page-'+btn.dataset.page)?.classList.add('active');
     if(btn.dataset.page==='congregacoes') loadCongs();
     if(btn.dataset.page==='agenda'){ loadCongs(); loadAgenda(); }
-    if(btn.dataset.page==='ministerios') loadMins();
     if(btn.dataset.page==='home-config') loadHomeConfig();
     if(btn.dataset.page==='imagens') loadImagens();
     if(btn.dataset.page==='redes-config') loadRedesConfig();
@@ -1528,50 +1501,6 @@ async function saveAgenda(){
   catch(e){toast('Erro: '+e.message,'error');return false;}
 }
 document.getElementById('btn-save-agenda').addEventListener('click',saveAgenda);
-
-// ═══════════════════════════════════════
-// MINISTÉRIOS
-// ═══════════════════════════════════════
-let minsData=[];
-async function loadMins(){
-  showEl('min-loading',true);showEl('min-list',false);showEl('min-empty',false);
-  try{const snap=await getDoc(doc(db,'site','ministerios'));minsData=snap.data()?.lista||[];renderMins();}
-  catch(e){toast('Erro: '+e.message,'error');}finally{showEl('min-loading',false);}
-}
-function renderMins(){
-  const list=document.getElementById('min-list');
-  if(!minsData.length){showEl('min-empty',true);showEl('min-list',false,'grid');return;}
-  showEl('min-list',true,'grid');showEl('min-empty',false);
-  list.innerHTML=minsData.map((m,i)=>`<div class="admin-card"><div class="admin-card-body" style="border-bottom:1px solid var(--border);"><div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;">${m.icone?`<i class="fas ${m.icone}" style="color:var(--gold);font-size:1.3rem;"></i>`:''}<h3 class="admin-card-title" style="margin:0;">${m.nome||'—'}</h3></div><p class="admin-card-sub">${m.desc||'Sem descrição.'}</p></div><div class="admin-card-actions"><button class="btn btn-ghost" style="font-size:0.8rem;" onclick="editMin(${i})"><i class="fas fa-edit"></i> Editar</button><button class="btn btn-danger" style="font-size:0.8rem;margin-left:auto;" onclick="deleteMin(${i})"><i class="fas fa-trash"></i></button></div></div>`).join('');
-}
-function openMinModal(m=null,idx=-1){
-  document.getElementById('min-modal-title').textContent=m?'Editar Ministério':'Novo Ministério';
-  document.getElementById('min-idx').value=idx;
-  document.getElementById('min-nome').value=m?.nome||'';
-  document.getElementById('min-desc').value=m?.desc||'';
-  document.getElementById('min-icone').value=m?.icone||'';
-  document.getElementById('min-modal').classList.add('open');
-  document.getElementById('min-nome').focus();
-}
-function closeMinModal(){document.getElementById('min-modal').classList.remove('open');}
-window.editMin=i=>openMinModal(minsData[i],i);
-window.deleteMin=i=>{const nome=minsData[i]?.nome||'este ministério';if(!confirm(`Excluir "${nome}"?`))return;minsData.splice(i,1);renderMins();saveMins();};
-document.getElementById('btn-novo-min').addEventListener('click',()=>openMinModal());
-document.getElementById('min-modal-close').addEventListener('click',closeMinModal);
-document.getElementById('min-modal-cancel').addEventListener('click',closeMinModal);
-document.getElementById('min-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeMinModal();});
-document.getElementById('min-modal-save').addEventListener('click',()=>{
-  const nome=document.getElementById('min-nome').value.trim();
-  if(!nome){toast('Nome obrigatório.','error');return;}
-  const m={nome,desc:document.getElementById('min-desc').value.trim(),icone:document.getElementById('min-icone').value.trim()};
-  const idx=parseInt(document.getElementById('min-idx').value);
-  if(idx>=0)minsData[idx]=m;else minsData.push(m);
-  closeMinModal();renderMins();saveMins();
-});
-async function saveMins(){
-  try{await setDoc(doc(db,'site','ministerios'),{lista:minsData});toast('Ministérios salvos!');loadDashboard();}
-  catch(e){toast('Erro: '+e.message,'error');}
-}
 
 // ═══════════════════════════════════════
 // HOME CONFIG

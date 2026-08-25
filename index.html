@@ -144,36 +144,30 @@
       <h2 class="section-title center">Nossos Ministérios</h2>
       <div class="ministerios-grid" id="ministerios-grid">
         <!-- populado pelo Firestore; fallback abaixo caso vazio -->
-        <div class="ministerio-card">
-          <div class="ministerio-icon" style="background:#1A3A8F"><i class="fas fa-male"></i></div>
-          <h3>Homens (UHOMAD)</h3>
-          <p>Formando homens de caráter, fé e compromisso com Deus e a família.</p>
-        </div>
-        <div class="ministerio-card">
-          <div class="ministerio-icon" style="background:#8B1A6B"><i class="fas fa-female"></i></div>
-          <h3>Mulheres (UMAD)</h3>
-          <p>Mulheres fortalecidas pela Palavra, servindo com excelência e amor.</p>
-        </div>
-        <div class="ministerio-card">
-          <div class="ministerio-icon" style="background:#D4A017"><i class="fas fa-fire"></i></div>
-          <h3>Jovens (UMADEPA)</h3>
-          <p>Uma geração apaixonada por Deus, transformando Diamantina.</p>
-        </div>
-        <div class="ministerio-card">
-          <div class="ministerio-icon" style="background:#2E8B57"><i class="fas fa-child"></i></div>
-          <h3>Infantil</h3>
-          <p>Ensinando as crianças a conhecer e amar a Jesus desde pequenas.</p>
-        </div>
-        <div class="ministerio-card">
-          <div class="ministerio-icon" style="background:#C0392B"><i class="fas fa-music"></i></div>
-          <h3>Louvor e Adoração</h3>
-          <p>Conduzindo a igreja à presença de Deus através da música.</p>
-        </div>
-        <div class="ministerio-card">
-          <div class="ministerio-icon" style="background:#1A7A8F"><i class="fas fa-hands-helping"></i></div>
-          <h3>Social e Missões</h3>
-          <p>Levando amor e assistência à comunidade de Diamantina e além.</p>
-        </div>
+        <a class="ministerio-card" href="ministerio.html?id=homens-uhomad">
+          <div class="ministerio-card__fallback-icon" style="--ministerio-accent:#1A3A8F"><i class="fas fa-male"></i></div>
+          <div class="ministerio-card__content"><h3>Homens (UHOMAD)</h3><p>Formando homens de caráter, fé e compromisso com Deus e a família.</p></div><span class="ministerio-card__arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a class="ministerio-card" href="ministerio.html?id=mulheres-umad">
+          <div class="ministerio-card__fallback-icon" style="--ministerio-accent:#8B1A6B"><i class="fas fa-female"></i></div>
+          <div class="ministerio-card__content"><h3>Mulheres (UMAD)</h3><p>Mulheres fortalecidas pela Palavra, servindo com excelência e amor.</p></div><span class="ministerio-card__arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a class="ministerio-card" href="ministerio.html?id=jovens-umadepa">
+          <div class="ministerio-card__fallback-icon" style="--ministerio-accent:#D4A017"><i class="fas fa-fire"></i></div>
+          <div class="ministerio-card__content"><h3>Jovens (UMADEPA)</h3><p>Uma geração apaixonada por Deus, transformando Diamantina.</p></div><span class="ministerio-card__arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a class="ministerio-card" href="ministerio.html?id=infantil">
+          <div class="ministerio-card__fallback-icon" style="--ministerio-accent:#2E8B57"><i class="fas fa-child"></i></div>
+          <div class="ministerio-card__content"><h3>Infantil</h3><p>Ensinando as crianças a conhecer e amar a Jesus desde pequenas.</p></div><span class="ministerio-card__arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a class="ministerio-card" href="ministerio.html?id=louvor-e-adoracao">
+          <div class="ministerio-card__fallback-icon" style="--ministerio-accent:#C0392B"><i class="fas fa-music"></i></div>
+          <div class="ministerio-card__content"><h3>Louvor e Adoração</h3><p>Conduzindo a igreja à presença de Deus através da música.</p></div><span class="ministerio-card__arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a class="ministerio-card" href="ministerio.html?id=social-e-missoes">
+          <div class="ministerio-card__fallback-icon" style="--ministerio-accent:#1A7A8F"><i class="fas fa-hands-helping"></i></div>
+          <div class="ministerio-card__content"><h3>Social e Missões</h3><p>Levando amor e assistência à comunidade de Diamantina e além.</p></div><span class="ministerio-card__arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
       </div>
     </div>
   </section>
@@ -746,22 +740,43 @@
 
     // ── 3. MINISTÉRIOS ───────────────────────────────────────────────────────
     const MIN_CORES = ['#1A3A8F','#8B1A6B','#D4A017','#2E8B57','#C0392B','#1A7A8F','#7B3FA0','#B5500B'];
+    function ministrySlug(value) {
+      return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    }
+    function safeMinisterioImage(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return '';
+      try {
+        const url = new URL(raw, window.location.href);
+        return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+      } catch (_) { return ''; }
+    }
+    function ministerioIconClass(value) {
+      const raw = String(value || '').trim();
+      const icon = raw ? (raw.startsWith('fa-') ? raw : `fa-${raw}`) : 'fa-church';
+      return /^[a-z0-9-]+$/.test(icon) ? icon : 'fa-church';
+    }
 
     async function loadMins() {
       try {
         const snap = await getDoc(doc(db, 'site', 'ministerios'));
         const lista = snap.data()?.lista;
-        if (!lista || !lista.length) return;
+        if (!Array.isArray(lista) || !lista.length) return;
 
         const grid = document.getElementById('ministerios-grid');
-        grid.innerHTML = lista.map((m, i) => `
-          <div class="ministerio-card">
-            <div class="ministerio-icon" style="background:${MIN_CORES[i % MIN_CORES.length]}">
-              <i class="fas ${m.icone ? (m.icone.startsWith('fa-') ? m.icone : 'fa-'+m.icone) : 'fa-church'}"></i>
-            </div>
-            <h3>${m.nome || ''}</h3>
-            <p>${m.desc || ''}</p>
-          </div>`).join('');
+        grid.innerHTML = lista.map((m, i) => {
+          const name = String(m?.nome || 'Ministério').trim();
+          const slug = ministrySlug(m?.slug || name) || `ministerio-${i + 1}`;
+          const description = String(m?.desc || m?.descricao || '').trim();
+          const image = safeMinisterioImage(m?.fotoFundoUrl || m?.fotoFundo || m?.backgroundUrl);
+          const background = image ? `style="--ministerio-bg:url('${escapeHtml(image)}');"` : '';
+          return `<a class="ministerio-card${image ? ' has-background' : ''}" href="ministerio.html?id=${encodeURIComponent(slug)}" ${background} aria-label="Conheça o ministério ${escapeHtml(name)}">
+            <span class="ministerio-card__wash" aria-hidden="true"></span>
+            <span class="ministerio-card__fallback-icon" style="--ministerio-accent:${MIN_CORES[i % MIN_CORES.length]}"><i class="fas ${ministerioIconClass(m?.icone)}" aria-hidden="true"></i></span>
+            <span class="ministerio-card__content"><strong>${escapeHtml(name)}</strong>${description ? `<span>${escapeHtml(description)}</span>` : ''}</span>
+            <span class="ministerio-card__arrow" aria-hidden="true"><i class="fas fa-arrow-right"></i></span>
+          </a>`;
+        }).join('');
       } catch (e) { console.warn('loadMins:', e); }
     }
 

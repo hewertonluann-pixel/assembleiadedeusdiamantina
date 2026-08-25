@@ -100,14 +100,33 @@ O documento mantém `eventos` como uma lista. Eventos novos usam datas ISO (`YYY
 `congregacaoId` é a referência estável ao documento em `congregacoes/{id}` e é o único campo usado para filtrar eventos na página da congregação. `congregacaoNome` permanece como o nome institucional fixo `Assembleia de Deus`; `congregacaoBadge` identifica a unidade, como `Sede` ou `Pedra Grande`. O painel também consegue recuperar o badge diretamente do documento da congregação, mantendo compatibilidade com eventos antigos. `cartazUrl` e `cartazPath` são preenchidos pelo upload do painel. O arquivo é armazenado em `img/agenda/`, respeitando as regras de imagem do Firebase Storage. Registros antigos que tenham apenas `data`, `titulo` e `local` continuam sendo exibidos; ao editá-los, o painel preserva a data legada até que datas inicial e final sejam informadas.
 
 ### `site/ministerios`
+
+O documento mantém uma lista de ministérios. O `slug` é o identificador estável usado na URL de `ministerio.html`; quando não informado no cadastro, ele é gerado a partir do nome. `fotos` aceita no máximo cinco objetos e as imagens enviadas pelo painel ficam no Storage em `ministerios/{slug}/`.
+
 ```json
 {
   "lista": [
-    { "nome": "Ministério Infantil", "desc": "Descrição do ministério..." },
-    { "nome": "Ministério de Jovens", "desc": "Descrição do ministério..." }
-  ]
+    {
+      "nome": "Ministério Infantil",
+      "slug": "ministerio-infantil",
+      "desc": "Descrição do ministério...",
+      "icone": "fa-child",
+      "fotoFundoUrl": "https://...",
+      "fotoFundoPath": "ministerios/ministerio-infantil/fundo.png",
+      "fotoFundoAlt": "Crianças do ministério infantil",
+      "reunioes": "Domingos, às 9h.",
+      "ensaios": "Sábados, às 15h.",
+      "avisos": ["Aviso confirmado pela liderança."],
+      "fotos": [
+        { "url": "https://...", "path": "ministerios/ministerio-infantil/foto-0.jpg", "alt": "Encontro do ministério" }
+      ]
+    }
+  ],
+  "atualizadoEm": "serverTimestamp()"
 }
 ```
+
+Os campos `fotoFundoUrl`, `fotoFundoPath`, `fotoFundoAlt`, `reunioes`, `ensaios`, `avisos` e `fotos` são opcionais. Sem foto de fundo, o card usa o gradiente institucional; sem avisos ou fotos, a página pública exibe um estado vazio e não inventa conteúdo.
 
 ### `site/imagens`
 ```json

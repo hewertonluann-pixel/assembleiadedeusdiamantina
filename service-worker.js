@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'ad-diamantina-pwa-v27';
+const CACHE_VERSION = 'ad-diamantina-pwa-v28';
 const FIRESTORE_IMAGES_URL = 'https://firestore.googleapis.com/v1/projects/ad-diamantina/databases/(default)/documents/site/imagens';
 const DYNAMIC_ICON_ROUTES = {
   '/pwa-icon-192.png': { field: 'favicon192', dataField: 'faviconData192', fallbackField: 'favicon', fallback: '/icons/icon-192.png' },
@@ -10,6 +10,7 @@ const APP_SHELL = [
   '/congregacoes.html',
   '/congregacao.html',
   '/igreja.html',
+  '/ministerio.html',
   '/favicon.svg',
   '/manifest.webmanifest',
   '/pwa-icon-192.png',
@@ -136,7 +137,7 @@ self.addEventListener('fetch', event => {
   }
 
   if (request.mode === 'navigate') {
-    const publicPages = new Set(['/', '/index.html', '/congregacoes.html', '/congregacao.html', '/igreja.html']);
+    const publicPages = new Set(['/', '/index.html', '/congregacoes.html', '/congregacao.html', '/igreja.html', '/ministerio.html']);
     if (!publicPages.has(url.pathname)) return;
 
     event.respondWith(

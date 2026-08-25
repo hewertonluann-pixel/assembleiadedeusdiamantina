@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1A3A8F" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="AD Diamantina" />
+  <link rel="manifest" href="manifest.webmanifest?v=8" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <title>Ministério — AD Diamantina</title>
+  <meta name="description" content="Conheça este ministério da Assembleia de Deus Ministério de Diamantina." />
+  <link rel="stylesheet" href="css/style.css?v=21" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link id="site-favicon" rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <script src="js/favicon.js"></script>
+  <script src="js/pwa.js"></script>
+</head>
+<body class="ministerio-page">
+  <header class="header" id="header">
+    <div class="container nav-container">
+      <a href="index.html#home" class="logo" aria-label="Voltar para a página inicial">
+        <img id="site-logo" src="img/logo.png" alt="Logo AD Diamantina" onerror="this.style.display='none'" />
+        <div class="logo-text">
+          <span class="logo-title">Assembleia de Deus</span>
+          <span class="logo-sub">Ministério de Diamantina</span>
+        </div>
+      </a>
+      <nav class="nav" id="nav" aria-label="Navegação principal">
+        <ul class="nav-list">
+          <li><a href="index.html#home" class="nav-link">Início</a></li>
+          <li><a href="igreja.html" class="nav-link">A Igreja</a></li>
+          <li><a href="index.html#cultos" class="nav-link">Cultos</a></li>
+          <li><a href="index.html#ministerios" class="nav-link active">Ministérios</a></li>
+          <li><a href="index.html#midia" class="nav-link">Mídia</a></li>
+          <li><a href="congregacoes.html" class="nav-link">Congregações</a></li>
+          <li><a href="index.html#contato" class="nav-link">Contato</a></li>
+        </ul>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="ministerio-loading" id="ministerio-loading" role="status" aria-live="polite">
+      <i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i><span>Carregando ministério…</span>
+    </div>
+
+    <section class="ministerio-not-found" id="ministerio-not-found" hidden>
+      <div class="container">
+        <i class="fas fa-users-slash" aria-hidden="true"></i>
+        <h1>Ministério não encontrado</h1>
+        <p>Não foi possível localizar este ministério. Confira o link ou volte para a página inicial.</p>
+        <a href="index.html#ministerios" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Ver ministérios</a>
+      </div>
+    </section>
+
+    <div id="ministerio-content" hidden>
+      <section class="ministerio-hero" aria-labelledby="ministerio-title">
+        <div class="ministerio-hero__bg" id="ministerio-hero-bg" aria-hidden="true"></div>
+        <div class="ministerio-hero__overlay" aria-hidden="true"></div>
+        <div class="container ministerio-hero__content">
+          <nav class="breadcrumb" aria-label="Trilha de navegação">
+            <a href="index.html#home">Início</a><i class="fas fa-chevron-right" aria-hidden="true"></i><a href="index.html#ministerios">Ministérios</a><i class="fas fa-chevron-right" aria-hidden="true"></i><span id="ministerio-breadcrumb">Ministério</span>
+          </nav>
+          <span class="ministerio-hero__badge"><i class="fas fa-users" aria-hidden="true"></i> Ministério</span>
+          <h1 class="ministerio-hero__title" id="ministerio-title">Ministério</h1>
+          <p class="ministerio-hero__description" id="ministerio-description"></p>
+        </div>
+      </section>
+
+      <section class="ministerio-overview" aria-labelledby="ministerio-overview-title">
+        <div class="container">
+          <div class="ministerio-section-heading">
+            <span class="section-tag">Nossa programação</span>
+            <h2 class="section-title" id="ministerio-overview-title">Participe com a gente</h2>
+            <p>Confira os dias de reunião, ensaios e os avisos publicados para este ministério.</p>
+          </div>
+          <div class="ministerio-info-grid">
+            <article class="ministerio-info-card" id="ministerio-reunioes-card">
+              <span class="ministerio-info-card__icon"><i class="fas fa-calendar-days" aria-hidden="true"></i></span>
+              <h3>Dias de reunião</h3>
+              <p id="ministerio-reunioes"></p>
+            </article>
+            <article class="ministerio-info-card" id="ministerio-ensaios-card">
+              <span class="ministerio-info-card__icon ministerio-info-card__icon--gold"><i class="fas fa-music" aria-hidden="true"></i></span>
+              <h3>Ensaios</h3>
+              <p id="ministerio-ensaios"></p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="ministerio-avisos-section" id="ministerio-avisos-section" aria-labelledby="ministerio-avisos-title" hidden>
+        <div class="container">
+          <div class="ministerio-section-heading">
+            <span class="section-tag">Informações do ministério</span>
+            <h2 class="section-title" id="ministerio-avisos-title">Quadro de avisos</h2>
+          </div>
+          <div class="ministerio-avisos" id="ministerio-avisos"></div>
+        </div>
+      </section>
+
+      <section class="ministerio-galeria-section" aria-labelledby="ministerio-galeria-title">
+        <div class="container">
+          <div class="ministerio-section-heading">
+            <span class="section-tag">Vivências e encontros</span>
+            <h2 class="section-title" id="ministerio-galeria-title">Fotos</h2>
+          </div>
+          <div class="ministerio-gallery" id="ministerio-gallery" aria-live="polite"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer ministerio-footer">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <div class="logo-text"><span class="logo-title" style="color:#fff">Assembleia de Deus</span><span class="logo-sub" style="color:#D4A017">Ministério de Diamantina</span></div>
+        <p>Pregando o Evangelho e servindo a comunidade desde 2009.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Links Rápidos</h4>
+        <ul>
+          <li><a href="index.html#home">Início</a></li>
+          <li><a href="index.html#ministerios">Ministérios</a></li>
+          <li><a href="index.html#agenda">Agenda</a></li>
+          <li><a href="index.html#contato">Contato</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Área da equipe</h4>
+        <p><a href="admin.html"><i class="fas fa-user-shield" aria-hidden="true"></i> Painel administrativo</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2026 Assembleia de Deus Ministério de Diamantina. Todos os direitos reservados.</p></div>
+  </footer>
+
+  <div class="ministerio-lightbox" id="ministerio-lightbox" hidden role="dialog" aria-modal="true" aria-labelledby="ministerio-lightbox-label">
+    <div class="ministerio-lightbox__backdrop" data-ministerio-lightbox-close></div>
+    <div class="ministerio-lightbox__panel">
+      <button type="button" class="ministerio-lightbox__close" id="ministerio-lightbox-close" aria-label="Fechar foto"><i class="fas fa-times"></i></button>
+      <img id="ministerio-lightbox-image" src="" alt="" />
+      <p id="ministerio-lightbox-label"></p>
+      <div class="ministerio-lightbox__controls">
+        <button type="button" id="ministerio-lightbox-prev" aria-label="Foto anterior"><i class="fas fa-chevron-left"></i></button>
+        <span id="ministerio-lightbox-counter"></span>
+        <button type="button" id="ministerio-lightbox-next" aria-label="Próxima foto"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: 'AIzaSyBtMB9qs34H8qMjaA_XavJdrUSpOASYBos',
+      authDomain: 'ad-diamantina.firebaseapp.com',
+      projectId: 'ad-diamantina',
+      storageBucket: 'ad-diamantina.firebasestorage.app',
+      messagingSenderId: '430449368435',
+      appId: '1:430449368435:web:c2d94116f9761fd4c87906'
+    };
+    const db = getFirestore(initializeApp(firebaseConfig));
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
+    }
+    function slugify(value) {
+      return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    }
+    function safeUrl(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return '';
+      try {
+        const url = new URL(raw, window.location.href);
+        return ['https:', 'http:'].includes(url.protocol) ? url.href : '';
+      } catch (_) { return ''; }
+    }
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value || '';
+    }
+    function normalizePhoto(item, index) {
+      const url = safeUrl(typeof item === 'string' ? item : item?.url);
+      return url ? { url, alt: String(typeof item === 'string' ? `Foto ${index + 1}` : item?.alt || `Foto ${index + 1}`).trim() } : null;
+    }
+    function normalizeNotice(item) {
+      if (typeof item === 'string') return { texto: item.trim(), data: '' };
+      return { texto: String(item?.texto || item?.text || item?.titulo || '').trim(), data: String(item?.data || '').trim() };
+    }
+
+    let galleryPhotos = [];
+    let galleryIndex = 0;
+
+    function renderNotices(notices) {
+      const section = document.getElementById('ministerio-avisos-section');
+      const container = document.getElementById('ministerio-avisos');
+      const items = (Array.isArray(notices) ? notices : []).map(normalizeNotice).filter(item => item.texto).slice(0, 20);
+      if (!items.length) { section.hidden = true; return; }
+      section.hidden = false;
+      container.innerHTML = items.map(item => `<article class="ministerio-notice"><i class="fas fa-bullhorn" aria-hidden="true"></i><div><p>${escapeHtml(item.texto)}</p>${item.data ? `<time>${escapeHtml(item.data)}</time>` : ''}</div></article>`).join('');
+    }
+
+    function renderGallery(photos) {
+      const grid = document.getElementById('ministerio-gallery');
+      galleryPhotos = photos.slice(0, 5);
+      if (!galleryPhotos.length) {
+        grid.innerHTML = '<div class="ministerio-gallery-empty"><i class="fas fa-images" aria-hidden="true"></i><p>Nenhuma foto foi publicada para este ministério ainda.</p></div>';
+        return;
+      }
+      grid.innerHTML = galleryPhotos.map((photo, index) => `<button type="button" class="ministerio-gallery__item" data-photo-index="${index}" aria-label="Abrir ${escapeHtml(photo.alt)}"><img src="${escapeHtml(photo.url)}" alt="${escapeHtml(photo.alt)}" loading="lazy" /><span><i class="fas fa-expand" aria-hidden="true"></i></span></button>`).join('');
+      grid.querySelectorAll('[data-photo-index]').forEach(button => button.addEventListener('click', () => openLightbox(Number(button.dataset.photoIndex))));
+    }
+
+    function updateLightbox() {
+      const photo = galleryPhotos[galleryIndex];
+      if (!photo) return;
+      document.getElementById('ministerio-lightbox-image').src = photo.url;
+      document.getElementById('ministerio-lightbox-image').alt = photo.alt;
+      document.getElementById('ministerio-lightbox-label').textContent = photo.alt;
+      document.getElementById('ministerio-lightbox-counter').textContent = `${galleryIndex + 1} / ${galleryPhotos.length}`;
+    }
+    function openLightbox(index) {
+      if (!galleryPhotos.length) return;
+      galleryIndex = (index + galleryPhotos.length) % galleryPhotos.length;
+      updateLightbox();
+      document.getElementById('ministerio-lightbox').hidden = false;
+      document.body.classList.add('ministerio-lightbox-open');
+      document.getElementById('ministerio-lightbox-close').focus();
+    }
+    function closeLightbox() {
+      document.getElementById('ministerio-lightbox').hidden = true;
+      document.body.classList.remove('ministerio-lightbox-open');
+    }
+    document.getElementById('ministerio-lightbox-close').addEventListener('click', closeLightbox);
+    document.querySelector('[data-ministerio-lightbox-close]').addEventListener('click', closeLightbox);
+    document.getElementById('ministerio-lightbox-prev').addEventListener('click', () => openLightbox(galleryIndex - 1));
+    document.getElementById('ministerio-lightbox-next').addEventListener('click', () => openLightbox(galleryIndex + 1));
+    document.addEventListener('keydown', event => {
+      if (document.getElementById('ministerio-lightbox').hidden) return;
+      if (event.key === 'Escape') closeLightbox();
+      if (event.key === 'ArrowLeft') openLightbox(galleryIndex - 1);
+      if (event.key === 'ArrowRight') openLightbox(galleryIndex + 1);
+    });
+
+    async function loadMinisterio() {
+      const loading = document.getElementById('ministerio-loading');
+      const content = document.getElementById('ministerio-content');
+      const notFound = document.getElementById('ministerio-not-found');
+      const requestedSlug = slugify(new URLSearchParams(window.location.search).get('id') || '');
+      if (!requestedSlug) { loading.hidden = true; notFound.hidden = false; return; }
+      try {
+        const snap = await getDoc(doc(db, 'site', 'ministerios'));
+        const lista = Array.isArray(snap.data()?.lista) ? snap.data().lista : [];
+        const ministry = lista.find(item => slugify(item?.slug || item?.nome) === requestedSlug);
+        if (!ministry) { loading.hidden = true; notFound.hidden = false; return; }
+
+        const name = String(ministry.nome || 'Ministério').trim();
+        const description = String(ministry.desc || ministry.descricao || '').trim();
+        const background = safeUrl(ministry.fotoFundoUrl || ministry.fotoFundo || ministry.backgroundUrl);
+        document.title = `${name} — AD Diamantina`;
+        setText('ministerio-breadcrumb', name);
+        setText('ministerio-title', name);
+        setText('ministerio-description', description);
+        if (!description) document.getElementById('ministerio-description').hidden = true;
+        if (background) document.getElementById('ministerio-hero-bg').style.backgroundImage = `url("${escapeHtml(background)}")`;
+
+        const reunioes = String(ministry.reunioes || ministry.diasReuniao || ministry.dias || '').trim();
+        const ensaios = String(ministry.ensaios || ministry.ensaio || '').trim();
+        setText('ministerio-reunioes', reunioes || 'Informação ainda não cadastrada.');
+        setText('ministerio-ensaios', ensaios || 'Informação ainda não cadastrada.');
+        renderNotices(ministry.avisos);
+        renderGallery((Array.isArray(ministry.fotos) ? ministry.fotos : []).map(normalizePhoto).filter(Boolean));
+
+        loading.hidden = true;
+        content.hidden = false;
+      } catch (error) {
+        console.warn('loadMinisterio:', error);
+        loading.hidden = true;
+        notFound.hidden = false;
+      }
+    }
+    loadMinisterio();
+  </script>
+</body>
+</html>
