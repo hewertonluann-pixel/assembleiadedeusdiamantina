@@ -6,8 +6,7 @@ service cloud.firestore {
     // autorização exclusiva para gerenciar a coleção de administradores.
     function isPrimaryAdmin() {
       return request.auth != null
-        && request.auth.token.email != null
-        && request.auth.token.email.lower() == 'hewertonluann@gmail.com'
+        && request.auth.token.email == 'hewertonluann@gmail.com'
         && request.auth.token.email_verified == true;
     }
 
@@ -17,8 +16,8 @@ service cloud.firestore {
       return request.auth != null
         && request.auth.token.email != null
         && request.auth.token.email_verified == true
-        && exists(/databases/$(database)/documents/admins/$(request.auth.token.email.lower()))
-        && get(/databases/$(database)/documents/admins/$(request.auth.token.email.lower())).data.ativo == true;
+        && exists(/databases/$(database)/documents/admins/$(request.auth.token.email))
+        && get(/databases/$(database)/documents/admins/$(request.auth.token.email)).data.ativo == true;
     }
 
     function isAdmin() {
@@ -42,11 +41,12 @@ service cloud.firestore {
     // principal pode criar, alterar, ativar, desativar ou remover registros.
     // Cada usuário autorizado pode ler apenas o registro do próprio e-mail.
     match /admins/{email} {
-      allow read: if isPrimaryAdmin()
+      allow get: if isPrimaryAdmin()
         || (request.auth != null
             && request.auth.token.email != null
             && request.auth.token.email_verified == true
-            && email == request.auth.token.email.lower());
+            && email == request.auth.token.email);
+      allow list: if isPrimaryAdmin();
       allow write: if isPrimaryAdmin();
     }
   }

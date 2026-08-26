@@ -4,8 +4,7 @@ service firebase.storage {
   match /b/{bucket}/o {
     function isPrimaryAdmin() {
       return request.auth != null
-        && request.auth.token.email != null
-        && request.auth.token.email.lower() == 'hewertonluann@gmail.com'
+        && request.auth.token.email == 'hewertonluann@gmail.com'
         && request.auth.token.email_verified == true;
     }
 
@@ -13,8 +12,8 @@ service firebase.storage {
       return request.auth != null
         && request.auth.token.email != null
         && request.auth.token.email_verified == true
-        && firestore.exists(/databases/(default)/documents/admins/$(request.auth.token.email.lower()))
-        && firestore.get(/databases/(default)/documents/admins/$(request.auth.token.email.lower())).data.ativo == true;
+        && firestore.exists(/databases/(default)/documents/admins/$(request.auth.token.email))
+        && firestore.get(/databases/(default)/documents/admins/$(request.auth.token.email)).data.ativo == true;
     }
 
     function isAdmin() {
