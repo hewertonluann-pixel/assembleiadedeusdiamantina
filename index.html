@@ -599,9 +599,23 @@
       if (start.year === finalDate.year && start.month === finalDate.month) return `${start.dayLabel}–${String(finalDate.day).padStart(2, '0')} ${start.monthLabel}`;
       return `${start.dayLabel} ${start.monthLabel} – ${String(finalDate.day).padStart(2, '0')} ${finalDate.monthLabel}`;
     }
+    function agendaDateValue(parsed) {
+      return parsed ? Date.UTC(parsed.year, parsed.month - 1, parsed.day) : null;
+    }
+    function agendaTodayValue() {
+      const now = new Date();
+      return Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+    function agendaEndDate(ev) {
+      return parseAgendaDate(ev?.dataFim) || parseAgendaDate(ev?.dataInicio || ev?.data);
+    }
+    function agendaIsPast(ev) {
+      const endValue = agendaDateValue(agendaEndDate(ev));
+      return endValue !== null && endValue < agendaTodayValue();
+    }
     function agendaSortValue(ev) {
       const parsed = parseAgendaDate(ev?.dataInicio || ev?.data);
-      return parsed ? Date.UTC(parsed.year, parsed.month - 1, parsed.day) : Number.MAX_SAFE_INTEGER;
+      return agendaDateValue(parsed) ?? Number.MAX_SAFE_INTEGER;
     }
     function agendaPosterUrl(value) {
       const raw = String(value || '').trim();
@@ -688,7 +702,8 @@
         const eventos = snap.data()?.eventos;
         const lista = document.getElementById('agenda-lista');
         if (!lista) return;
-        const ativos = Array.isArray(eventos) ? eventos.filter(ev => ev?.ativo !== false).sort((a, b) => agendaSortValue(a) - agendaSortValue(b)) : [];
+        // Eventos encerrados deixam de aparecer na agenda pública, mas não são excluídos do Firestore.
+        const ativos = Array.isArray(eventos) ? eventos.filter(ev => ev?.ativo !== false && !agendaIsPast(ev)).sort((a, b) => agendaSortValue(a) - agendaSortValue(b)) : [];
         agendaExpanded = false;
         agendaRenderedCards = [];
         const moreButton = document.getElementById('agenda-show-more');
