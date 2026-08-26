@@ -405,7 +405,9 @@
     <div class="agenda-poster-dialog__panel" role="document">
       <button class="agenda-poster-dialog__close" id="agenda-poster-close" type="button" aria-label="Fechar cartaz">&times;</button>
       <div class="agenda-poster-dialog__image-wrap">
+        <button class="agenda-poster-dialog__nav agenda-poster-dialog__nav--prev" id="agenda-poster-prev" type="button" aria-label="Cartaz anterior" hidden><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
         <img id="agenda-poster-image" alt="" />
+        <button class="agenda-poster-dialog__nav agenda-poster-dialog__nav--next" id="agenda-poster-next" type="button" aria-label="Próximo cartaz" hidden><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
         <p class="agenda-poster-dialog__hold-hint">Clique e segure para compartilhar</p>
       </div>
       <div class="agenda-poster-dialog__caption">
@@ -626,6 +628,8 @@
       } catch (_) { return ''; }
     }
     let agendaPosterLastFocus = null;
+    let agendaPosterTargets = [];
+    let agendaPosterIndex = -1;
     const AGENDA_INITIAL_LIMIT = 4;
     let agendaExpanded = false;
     let agendaRenderedCards = [];
@@ -646,16 +650,21 @@
       const href = `congregacao.html?id=${encodeURIComponent(id)}#eventos`;
       return `<a class="agenda-card__congregation" href="${escapeHtml(href)}" aria-label="Ver página da congregação ${escapeHtml(label)}"><i class="fas fa-church" aria-hidden="true"></i>Congregação: ${escapeHtml(label)}</a>`;
     }
-    function openAgendaPoster(target) {
-      const url = agendaPosterUrl(target.dataset.agendaPosterUrl);
-      const dialog = document.getElementById('agenda-poster-dialog');
+    function updateAgendaPosterNavigation() {
+      const previousButton = document.getElementById('agenda-poster-prev');
+      const nextButton = document.getElementById('agenda-poster-next');
+      const hasNavigation = agendaPosterTargets.length > 1;
+      if (previousButton) previousButton.hidden = !hasNavigation;
+      if (nextButton) nextButton.hidden = !hasNavigation;
+    }
+    function renderAgendaPoster(target) {
+      const url = agendaPosterUrl(target?.dataset?.agendaPosterUrl);
       const image = document.getElementById('agenda-poster-image');
       const title = document.getElementById('agenda-poster-title');
       const date = document.getElementById('agenda-poster-date');
       const congregation = document.getElementById('agenda-poster-congregation');
       const address = document.getElementById('agenda-poster-address');
-      if (!url || !dialog || !image || !title || !date || !congregation || !address) return;
-      agendaPosterLastFocus = document.activeElement;
+      if (!url || !image || !title || !date || !congregation || !address) return false;
       const posterTitle = target.dataset.agendaPosterTitle || 'Evento da igreja';
       image.src = url;
       image.alt = `Cartaz do evento: ${posterTitle}`;
@@ -671,9 +680,27 @@
         ? `<i class="fas fa-location-dot" aria-hidden="true"></i> Endereço: ${escapeHtml(addressLabel)}`
         : '';
       address.hidden = !addressLabel;
+      updateAgendaPosterNavigation();
+      return true;
+    }
+    function openAgendaPoster(target) {
+      const dialog = document.getElementById('agenda-poster-dialog');
+      if (!dialog || !target) return;
+      agendaPosterLastFocus = document.activeElement;
+      agendaPosterTargets = [...document.querySelectorAll('#agenda-lista [data-agenda-poster-url]')];
+      if (!agendaPosterTargets.length) agendaPosterTargets = [target];
+      agendaPosterIndex = Math.max(0, agendaPosterTargets.indexOf(target));
+      if (!renderAgendaPoster(agendaPosterTargets[agendaPosterIndex])) return;
       dialog.hidden = false;
       document.body.classList.add('agenda-dialog-open');
       document.getElementById('agenda-poster-close')?.focus();
+    }
+    function navigateAgendaPoster(direction) {
+      if (agendaPosterTargets.length < 2) return;
+      agendaPosterIndex = (agendaPosterIndex + direction + agendaPosterTargets.length) % agendaPosterTargets.length;
+      const target = agendaPosterTargets[agendaPosterIndex];
+      if (!renderAgendaPoster(target)) return;
+      document.getElementById(direction < 0 ? 'agenda-poster-prev' : 'agenda-poster-next')?.focus();
     }
     function closeAgendaPoster() {
       const dialog = document.getElementById('agenda-poster-dialog');
@@ -682,8 +709,12 @@
       dialog.hidden = true;
       document.body.classList.remove('agenda-dialog-open');
       if (image) image.removeAttribute('src');
+      document.getElementById('agenda-poster-prev')?.setAttribute('hidden', '');
+      document.getElementById('agenda-poster-next')?.setAttribute('hidden', '');
       agendaPosterLastFocus?.focus?.();
       agendaPosterLastFocus = null;
+      agendaPosterTargets = [];
+      agendaPosterIndex = -1;
     }
     function handleAgendaPosterActivation(event) {
       const target = event.target.closest('[data-agenda-poster-url]');
@@ -1087,10 +1118,21 @@
     agendaLista?.addEventListener('click', handleAgendaPosterActivation);
     agendaLista?.addEventListener('keydown', handleAgendaPosterActivation);
     document.getElementById('agenda-poster-close')?.addEventListener('click', closeAgendaPoster);
+    document.getElementById('agenda-poster-prev')?.addEventListener('click', () => navigateAgendaPoster(-1));
+    document.getElementById('agenda-poster-next')?.addEventListener('click', () => navigateAgendaPoster(1));
     document.querySelector('[data-agenda-dialog-close]')?.addEventListener('click', closeAgendaPoster);
     document.addEventListener('keydown', event => {
       const dialog = document.getElementById('agenda-poster-dialog');
-      if (event.key === 'Escape' && dialog && !dialog.hidden) closeAgendaPoster();
+      if (!dialog || dialog.hidden) return;
+      if (event.key === 'Escape') {
+        closeAgendaPoster();
+      } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        navigateAgendaPoster(-1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        navigateAgendaPoster(1);
+      }
     });
 
     // ── Disparar tudo em paralelo ─────────────────────────────────────────────
