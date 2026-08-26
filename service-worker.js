@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'ad-diamantina-pwa-v30';
+const CACHE_VERSION = 'ad-diamantina-pwa-v31';
 const FIRESTORE_IMAGES_URL = 'https://firestore.googleapis.com/v1/projects/ad-diamantina/databases/(default)/documents/site/imagens';
 const DYNAMIC_ICON_ROUTES = {
   '/pwa-icon-192.png': { field: 'favicon192', dataField: 'faviconData192', fallbackField: 'favicon', fallback: '/icons/icon-192.png' },
@@ -18,14 +18,18 @@ const APP_SHELL = [
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   '/css/style.css',
+  '/css/corpo-obreiros.css?v=1',
   '/css/floating-actions.css?v=1',
   '/css/igreja.css',
   '/css/radio-player.css',
   '/js/favicon.js',
+  '/js/firebase-client.js',
+  '/js/corpo-obreiros.js',
   '/js/main.js',
   '/js/pwa.js',
   '/js/radio-player.js',
-  '/js/floating-actions.js'
+  '/js/floating-actions.js',
+  '/components/corpo-obreiros.html'
 ];
 
 function responseFromDataUrl(dataUrl) {
@@ -155,7 +159,8 @@ self.addEventListener('fetch', event => {
   }
 
   const isStaticAsset = /\.(?:css|js|svg|png|webmanifest)$/i.test(url.pathname);
-  if (!isStaticAsset) return;
+  const isCachedComponent = url.pathname === '/components/corpo-obreiros.html';
+  if (!isStaticAsset && !isCachedComponent) return;
 
   event.respondWith(
     caches.match(request).then(cached => {

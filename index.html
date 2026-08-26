@@ -13,6 +13,7 @@
   <title>Assembleia de Deus - Ministério de Diamantina</title>
   <meta name="description" content="Site oficial da Igreja Assembleia de Deus Ministério de Diamantina, MG. Cultos, agenda, ministérios e transmissões ao vivo." />
   <link rel="stylesheet" href="css/style.css?v=20" />
+  <link rel="stylesheet" href="css/corpo-obreiros.css?v=1" />
   <link rel="stylesheet" href="css/radio-player.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -83,18 +84,7 @@
 
   <!-- LIDERANÇA -->
   <section class="lideranca" id="lideranca" aria-labelledby="lideranca-title" hidden>
-    <div class="container">
-      <div class="lideranca-team" id="lideranca-team" hidden>
-        <div class="section-heading-row">
-          <div>
-            <span class="section-tag">Servindo com dedicação</span>
-            <h2 class="section-title">Corpo de Obreiros</h2>
-          </div>
-          <div class="lideranca-scroll-hint"><i class="fas fa-arrows-left-right"></i><span>Deslize para ver a equipe</span></div>
-        </div>
-        <div class="lideranca-list" id="lideranca-list" tabindex="0" aria-label="Lista de pastores e obreiros"></div>
-      </div>
-    </div>
+    <div class="container" id="lideranca-mount"></div>
   </section>
 
   <!-- PRÓXIMOS CULTOS RÁPIDOS -->
@@ -446,24 +436,13 @@
 
   <script src="js/main.js"></script>
   <script src="js/radio-player.js"></script>
+  <script type="module" src="js/corpo-obreiros.js"></script>
 
   <!-- ══ FIREBASE DYNAMIC CONTENT ══ -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, collection, getDocs, orderBy, query }
-      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBtMB9qs34H8qMjaA_XavJdrUSpOASYBos",
-      authDomain: "ad-diamantina.firebaseapp.com",
-      projectId: "ad-diamantina",
-      storageBucket: "ad-diamantina.firebasestorage.app",
-      messagingSenderId: "430449368435",
-      appId: "1:430449368435:web:c2d94116f9761fd4c87906"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db  = getFirestore(app);
+    import { db } from './js/firebase-client.js';
+    import { doc, getDoc, collection, getDocs, orderBy, query }
+      from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
     // ── Helpers ──────────────────────────────────────────────────────────────
     function setText(id, val) {
@@ -916,45 +895,7 @@
     }
 
     // ── 6. LIDERANÇA ──────────────────────────────────────────────────────────
-    async function loadLideranca() {
-      const section = document.getElementById('lideranca');
-      const heroPresident = document.getElementById('hero-president');
-      const team = document.getElementById('lideranca-team');
-      const list = document.getElementById('lideranca-list');
-      if (!section || !heroPresident || !team || !list) return;
-      try {
-        const snap = await getDoc(doc(db, 'site', 'lideranca'));
-        const d = snap.data() || {};
-        const p = d.presidente || {};
-        const obreiros = Array.isArray(d.obreiros) ? d.obreiros.filter(item => item && (item.nome || item.funcao || item.fotoUrl)) : [];
-        const hasPresident = Boolean(p.nome || p.funcao || p.bio || p.fotoUrl);
-        if (!hasPresident && !obreiros.length) { section.hidden = true; heroPresident.hidden = true; return; }
-        section.hidden = !obreiros.length;
-        heroPresident.hidden = !hasPresident;
-        team.hidden = !obreiros.length;
-        if (hasPresident) {
-          const name = document.getElementById('hero-president-name');
-          const role = document.getElementById('hero-president-role');
-          const photo = document.getElementById('hero-president-photo');
-          if (name) name.textContent = p.nome || '';
-          if (role) role.textContent = p.funcao || '';
-          if (photo) {
-            const alt = p.alt || p.nome || 'Foto do pastor presidente';
-            photo.innerHTML = p.fotoUrl ? `<img src="${escapeHtml(p.fotoUrl)}" alt="${escapeHtml(alt)}" />` : '<i class="fas fa-user-tie"></i><span>Foto do pastor presidente</span>';
-          }
-        }
-        if (obreiros.length) {
-          list.innerHTML = obreiros.map(o => {
-            const alt = o.alt || o.nome || 'Foto do pastor';
-            const details = [o.funcao, o.local].filter(Boolean).join(' · ');
-            return `<article class="lideranca-card" tabindex="0" aria-label="${escapeHtml([o.nome, details].filter(Boolean).join(' — '))}">
-              <div class="lideranca-card-photo">${o.fotoUrl ? `<img src="${escapeHtml(o.fotoUrl)}" alt="${escapeHtml(alt)}" loading="lazy" />` : '<i class="fas fa-user"></i><span>Foto em breve</span>'}</div>
-              <div class="lideranca-card-info"><strong>${escapeHtml(o.nome || 'Pastor')}</strong><span>${escapeHtml(details || 'Corpo de obreiros')}</span></div>
-            </article>`;
-          }).join('');
-        }
-      } catch (e) { section.hidden = true; console.warn('loadLideranca:', e); }
-    }
+    // A seção é carregada pelo módulo js/corpo-obreiros.js para manter a index enxuta.
 
     // ── 7. CONTATO & MAPA ──────────────────────────────────────────────────────
     async function loadContato() {
@@ -1138,7 +1079,7 @@
     });
 
     // ── Disparar tudo em paralelo ─────────────────────────────────────────────
-    Promise.all([loadHome(), loadAgenda(), loadMins(), loadRedes(), loadImagens(), loadLideranca(), loadContato(), loadContribuicao()]);
+    Promise.all([loadHome(), loadAgenda(), loadMins(), loadRedes(), loadImagens(), loadContato(), loadContribuicao()]);
   </script>
 
 </body>

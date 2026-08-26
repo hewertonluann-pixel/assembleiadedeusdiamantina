@@ -1,0 +1,213 @@
+/* === COMPONENTE CORPO DE OBREIROS === */
+.lideranca { padding: 92px 0; background: #fbfaf6; }
+
+.lideranca-president {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 56px;
+  align-items: center;
+  max-width: 980px;
+  margin: 0 auto 76px;
+  padding: 40px;
+  border-left: 5px solid var(--gold);
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.lideranca-president-copy { min-width: 0; }
+.lideranca-president-copy .section-title { margin-bottom: 14px; }
+.lideranca-president-bio { max-width: 580px; margin: 0 0 18px; color: var(--gray); line-height: 1.7; }
+.lideranca-president-name { color: var(--primary); font-size: 1.35rem; font-weight: 700; }
+.lideranca-president-role { margin-top: 5px; color: #9b7512; font-size: .95rem; font-weight: 700; }
+
+.lideranca-president-photo {
+  display: flex;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  overflow: hidden;
+  padding: 18px;
+  border: 1px dashed rgba(26,58,143,.28);
+  border-radius: 20px;
+  color: var(--primary);
+  background: linear-gradient(145deg, #eef1fa, #f8f5e9);
+  text-align: center;
+}
+
+.lideranca-president-photo i { font-size: 4rem; opacity: .7; }
+.lideranca-president-photo span { color: var(--gray); font-size: .82rem; font-weight: 600; }
+.lideranca-president-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+.corpo-obreiros__heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.corpo-obreiros__scroll-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gray);
+  font-size: .82rem;
+  white-space: nowrap;
+}
+
+.corpo-obreiros__scroll-hint i { color: #9b7512; }
+
+.corpo-obreiros__rail {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 22px 10px 34px;
+  scrollbar-color: var(--gold) rgba(26,58,143,.1);
+  scroll-snap-type: x proximity;
+}
+
+.corpo-obreiros__card {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 clamp(148px, 18vw, 190px);
+  height: clamp(248px, 30vw, 320px);
+  margin-right: -5px;
+  overflow: hidden;
+  border: 5px solid #fff;
+  border-radius: 4px;
+  outline: none;
+  background: #e9edf5;
+  box-shadow: 0 8px 18px rgba(16,43,104,.14);
+  cursor: pointer;
+  scroll-snap-align: start;
+  transform: rotate(2.8deg);
+  transition: transform .28s cubic-bezier(.23,1,.32,1), box-shadow .28s ease, z-index 0s linear .28s;
+}
+
+.corpo-obreiros__card:first-child { margin-left: 2px; }
+.corpo-obreiros__card:last-child { margin-right: 2px; }
+
+.corpo-obreiros__card:hover,
+.corpo-obreiros__card:focus-visible,
+.corpo-obreiros__card.is-active {
+  z-index: 5;
+  transform: translateY(-16px) rotate(0deg) scale(1.035);
+  box-shadow: 0 20px 32px rgba(16,43,104,.25);
+  transition-delay: 0s;
+}
+
+.corpo-obreiros__card::after {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border: 1px solid rgba(255,255,255,.34);
+  content: '';
+  pointer-events: none;
+}
+
+.corpo-obreiros__photo,
+.corpo-obreiros__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.corpo-obreiros__photo {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(145deg, rgba(26,58,143,.16), rgba(212,160,23,.20)),
+    repeating-linear-gradient(135deg, rgba(255,255,255,.28) 0 1px, transparent 1px 14px),
+    #e9edf5;
+}
+
+.corpo-obreiros__photo img {
+  object-fit: cover;
+  transition: transform .28s ease, filter .28s ease;
+}
+
+.corpo-obreiros__card:hover .corpo-obreiros__photo img,
+.corpo-obreiros__card:focus-visible .corpo-obreiros__photo img,
+.corpo-obreiros__card.is-active .corpo-obreiros__photo img {
+  filter: saturate(1.05);
+  transform: scale(1.06);
+}
+
+.corpo-obreiros__placeholder {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  padding: 22px;
+  color: rgba(16,43,104,.60);
+  text-align: center;
+}
+
+.corpo-obreiros__placeholder span {
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  font-size: .74rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.corpo-obreiros__placeholder span::before {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 1px dashed rgba(16,43,104,.36);
+  border-radius: 50%;
+  content: '+';
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+.corpo-obreiros__info {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  padding: 42px 14px 16px;
+  color: #fff;
+  background: linear-gradient(to top, rgba(7,18,45,.94), rgba(7,18,45,0));
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .22s ease, transform .28s cubic-bezier(.23,1,.32,1);
+}
+
+.corpo-obreiros__card:hover .corpo-obreiros__info,
+.corpo-obreiros__card:focus-visible .corpo-obreiros__info,
+.corpo-obreiros__card.is-active .corpo-obreiros__info {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.corpo-obreiros__info strong,
+.corpo-obreiros__info span { display: block; }
+.corpo-obreiros__info strong { font-size: .86rem; line-height: 1.2; }
+.corpo-obreiros__info span { margin-top: 5px; color: #e6eaf4; font-size: .68rem; line-height: 1.35; }
+
+@media (max-width: 700px) {
+  .lideranca { padding: 68px 0; }
+  .lideranca-president { grid-template-columns: 1fr; gap: 26px; padding: 26px; margin-bottom: 54px; }
+  .lideranca-president-photo { max-width: 230px; margin: 0 auto; order: -1; }
+  .corpo-obreiros__heading { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .corpo-obreiros__scroll-hint { white-space: normal; }
+  .corpo-obreiros__rail { padding-right: 8px; padding-left: 8px; }
+  .corpo-obreiros__card { flex-basis: 142px; height: 244px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .corpo-obreiros__card,
+  .corpo-obreiros__photo img,
+  .corpo-obreiros__info { transition-duration: .01ms !important; }
+}
