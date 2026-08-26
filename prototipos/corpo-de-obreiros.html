@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protótipo — Corpo de Obreiros</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #102b68;
+      --blue: #1a3a8f;
+      --gold: #d4a017;
+      --gold-soft: #f6edc8;
+      --cream: #fbfaf6;
+      --ink: #17233d;
+      --muted: #68738b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-width: 320px;
+      margin: 0;
+      color: var(--ink);
+      background: var(--cream);
+      font-family: 'DM Sans', Arial, sans-serif;
+    }
+
+    .prototype-page {
+      min-height: 100vh;
+      padding: clamp(42px, 8vw, 92px) 20px;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(212, 160, 23, .10), transparent 27%),
+        linear-gradient(180deg, #fffdf9 0%, var(--cream) 100%);
+    }
+
+    .prototype-shell {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+    }
+
+    .prototype-heading {
+      max-width: 680px;
+      margin-bottom: 30px;
+    }
+
+    .prototype-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: var(--blue);
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .prototype-kicker::before {
+      width: 28px;
+      height: 2px;
+      content: '';
+      background: var(--gold);
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      color: var(--navy);
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2rem, 4vw, 3.25rem);
+      line-height: 1.05;
+    }
+
+    .prototype-heading p {
+      max-width: 600px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
+    .prototype-board {
+      overflow: hidden;
+      padding: clamp(22px, 4vw, 38px) 0 clamp(24px, 4vw, 40px);
+      border-top: 1px solid rgba(26, 58, 143, .12);
+      border-bottom: 1px solid rgba(26, 58, 143, .12);
+    }
+
+    .obreiros-rail {
+      display: flex;
+      align-items: flex-end;
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: visible;
+      padding: 22px 22px 34px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--gold) rgba(16, 43, 104, .08);
+      scroll-snap-type: x proximity;
+    }
+
+    .obreiro-card {
+      position: relative;
+      z-index: 1;
+      flex: 0 0 clamp(148px, 18vw, 190px);
+      height: clamp(248px, 30vw, 320px);
+      margin-right: -4px;
+      overflow: hidden;
+      border: 5px solid #fff;
+      border-radius: 4px;
+      outline: none;
+      background: #e9edf5;
+      box-shadow: 0 8px 18px rgba(16, 43, 104, .14);
+      cursor: pointer;
+      scroll-snap-align: start;
+      transform: rotate(2.8deg);
+      transition: transform .42s cubic-bezier(.25, 1, .5, 1), box-shadow .42s ease, z-index 0s linear .42s;
+    }
+
+    .obreiro-card:nth-child(even) { transform: rotate(2.8deg); }
+    .obreiro-card:first-child { margin-left: 2px; }
+    .obreiro-card:last-child { margin-right: 2px; }
+
+    .obreiro-card:hover,
+    .obreiro-card:focus-visible,
+    .obreiro-card.is-active {
+      z-index: 5;
+      transform: translateY(-16px) rotate(0deg) scale(1.035);
+      box-shadow: 0 20px 32px rgba(16, 43, 104, .25);
+      transition-delay: 0s;
+    }
+
+    .obreiro-card:nth-child(even):hover,
+    .obreiro-card:nth-child(even):focus-visible,
+    .obreiro-card:nth-child(even).is-active {
+      transform: translateY(-16px) rotate(0deg) scale(1.035);
+    }
+
+    .obreiro-card::after {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      border: 1px solid rgba(255, 255, 255, .34);
+      content: '';
+      pointer-events: none;
+    }
+
+    .obreiro-photo,
+    .obreiro-photo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .obreiro-photo {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(145deg, rgba(26, 58, 143, .16), rgba(212, 160, 23, .20)),
+        repeating-linear-gradient(135deg, rgba(255, 255, 255, .28) 0 1px, transparent 1px 14px),
+        #e9edf5;
+    }
+
+    .obreiro-photo img {
+      object-fit: cover;
+      transition: transform .42s ease, filter .42s ease;
+    }
+
+    .obreiro-card:hover .obreiro-photo img,
+    .obreiro-card:focus-visible .obreiro-photo img,
+    .obreiro-card.is-active .obreiro-photo img {
+      filter: saturate(1.05);
+      transform: scale(1.06);
+    }
+
+    .obreiro-placeholder {
+      display: grid;
+      width: 100%;
+      height: 100%;
+      place-items: center;
+      padding: 22px;
+      color: rgba(16, 43, 104, .60);
+      text-align: center;
+    }
+
+    .obreiro-placeholder span {
+      display: grid;
+      place-items: center;
+      gap: 12px;
+      font-size: .74rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .obreiro-placeholder span::before {
+      width: 48px;
+      height: 48px;
+      border: 1px dashed rgba(16, 43, 104, .36);
+      border-radius: 50%;
+      content: '＋';
+      font-size: 1.5rem;
+      font-weight: 400;
+      line-height: 45px;
+    }
+
+    .obreiro-info {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 2;
+      padding: 42px 14px 16px;
+      color: #fff;
+      background: linear-gradient(to top, rgba(7, 18, 45, .94), rgba(7, 18, 45, 0));
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .30s ease, transform .42s cubic-bezier(.25, 1, .5, 1);
+    }
+
+    .obreiro-card:hover .obreiro-info,
+    .obreiro-card:focus-visible .obreiro-info,
+    .obreiro-card.is-active .obreiro-info {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .obreiro-info strong,
+    .obreiro-info span { display: block; }
+    .obreiro-info strong { font-size: .86rem; line-height: 1.2; }
+    .obreiro-info span { margin-top: 5px; color: #e6eaf4; font-size: .68rem; line-height: 1.35; }
+
+    .prototype-note {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.5;
+    }
+
+    .prototype-note strong { color: var(--blue); }
+
+    .prototype-legend {
+      display: inline-flex;
+      align-items: center;
+      flex: 0 0 auto;
+      gap: 8px;
+      color: var(--blue);
+      font-size: .78rem;
+      font-weight: 700;
+    }
+
+    .prototype-legend::before {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      content: '';
+      background: var(--gold);
+      box-shadow: 0 0 0 4px var(--gold-soft);
+    }
+
+    @media (max-width: 680px) {
+      .prototype-page { padding: 42px 14px; }
+      .prototype-board { margin: 0 -14px; padding-left: 0; padding-right: 0; }
+      .obreiros-rail { padding-right: 18px; padding-left: 18px; }
+      .obreiro-card { flex-basis: 142px; height: 244px; }
+      .prototype-note { align-items: flex-start; flex-direction: column; gap: 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="prototype-page">
+    <div class="prototype-shell">
+      <header class="prototype-heading">
+        <span class="prototype-kicker">Servindo com dedicação</span>
+        <h1>Corpo de Obreiros</h1>
+        <p>Protótipo da nova barra de fotos: os quadros ficam juntos, inclinados para a direita, e revelam o nome e a função com uma elevação suave ao passar o mouse, tocar ou navegar pelo teclado.</p>
+      </header>
+
+      <section class="prototype-board" aria-label="Protótipo da galeria do corpo de obreiros">
+        <div class="obreiros-rail" id="obreiros-rail" tabindex="0" aria-label="Fotos do corpo de obreiros">
+          <article class="obreiro-card" tabindex="0" aria-label="Pr. Decio Gomes, primeiro vice-presidente, Sede">
+            <div class="obreiro-photo">
+              <img src="https://firebasestorage.googleapis.com/v0/b/ad-diamantina.firebasestorage.app/o/img%2Flideranca%2Fobreiro-1787162607719-0.jpg?alt=media&token=c7709c64-65e8-4e4d-88c4-33addfc71905" alt="Foto do Pr. Decio Gomes" />
+              <div class="obreiro-info"><strong>Pr. Decio Gomes</strong><span>1º Vice-Presidente · Sede</span></div>
+            </div>
+          </article>
+
+          <article class="obreiro-card" tabindex="0" aria-label="Pr. Geraldo, segundo vice-presidente, Sede">
+            <div class="obreiro-photo">
+              <img src="https://firebasestorage.googleapis.com/v0/b/ad-diamantina.firebasestorage.app/o/img%2Flideranca%2Fobreiro-1787170607170-1.jpg?alt=media&token=974813a1-dbc9-409c-ab16-bc567396f469" alt="Foto do Pr. Geraldo" />
+              <div class="obreiro-info"><strong>Pr. Geraldo</strong><span>2º Vice-Presidente · Sede</span></div>
+            </div>
+          </article>
+
+          <article class="obreiro-card" tabindex="0" aria-label="Espaço reservado para novo obreiro">
+            <div class="obreiro-photo"><div class="obreiro-placeholder"><span>Foto a definir</span></div><div class="obreiro-info"><strong>Nome a definir</strong><span>Função a definir</span></div></div>
+          </article>
+          <article class="obreiro-card" tabindex="0" aria-label="Espaço reservado para novo obreiro">
+            <div class="obreiro-photo"><div class="obreiro-placeholder"><span>Foto a definir</span></div><div class="obreiro-info"><strong>Nome a definir</strong><span>Função a definir</span></div></div>
+          </article>
+          <article class="obreiro-card" tabindex="0" aria-label="Espaço reservado para novo obreiro">
+            <div class="obreiro-photo"><div class="obreiro-placeholder"><span>Foto a definir</span></div><div class="obreiro-info"><strong>Nome a definir</strong><span>Função a definir</span></div></div>
+          </article>
+          <article class="obreiro-card" tabindex="0" aria-label="Espaço reservado para novo obreiro">
+            <div class="obreiro-photo"><div class="obreiro-placeholder"><span>Foto a definir</span></div><div class="obreiro-info"><strong>Nome a definir</strong><span>Função a definir</span></div></div>
+          </article>
+        </div>
+      </section>
+
+      <div class="prototype-note">
+        <span><strong>Interação:</strong> passe o mouse, toque em um quadro ou use Tab para revelar as informações.</span>
+        <span class="prototype-legend">Protótipo, ainda não integrado à página inicial</span>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const cards = [...document.querySelectorAll('.obreiro-card')];
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        cards.forEach(item => item.classList.remove('is-active'));
+        card.classList.add('is-active');
+      });
+      card.addEventListener('keydown', event => {
+        if (event.key === 'Escape') card.classList.remove('is-active');
+      });
+    });
+    document.addEventListener('click', event => {
+      if (!event.target.closest('.obreiro-card')) cards.forEach(card => card.classList.remove('is-active'));
+    });
+  </script>
+</body>
+</html>
