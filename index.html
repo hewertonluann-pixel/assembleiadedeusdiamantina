@@ -133,6 +133,11 @@
         <div class="agenda-grid" id="agenda-lista" aria-live="polite">
           <div class="agenda-empty" id="agenda-empty">Nenhum evento programado no momento.</div>
         </div>
+        <div class="agenda-more-wrap">
+          <button class="agenda-more-button" type="button" id="agenda-show-more" hidden aria-expanded="false">
+            <span>Mostrar mais</span><i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
+        </div>
       </div>
     </div>
   </section>
@@ -607,6 +612,9 @@
       } catch (_) { return ''; }
     }
     let agendaPosterLastFocus = null;
+    const AGENDA_INITIAL_LIMIT = 5;
+    let agendaExpanded = false;
+    let agendaRenderedCards = [];
     const IGREJA_NOME = 'Assembleia de Deus';
     let agendaCongregacoes = new Map();
     function agendaCongregacaoLabel(ev) {
@@ -681,12 +689,16 @@
         const lista = document.getElementById('agenda-lista');
         if (!lista) return;
         const ativos = Array.isArray(eventos) ? eventos.filter(ev => ev?.ativo !== false).sort((a, b) => agendaSortValue(a) - agendaSortValue(b)) : [];
+        agendaExpanded = false;
+        agendaRenderedCards = [];
+        const moreButton = document.getElementById('agenda-show-more');
+        if (moreButton) moreButton.hidden = true;
         if (!ativos.length) {
           lista.innerHTML = '<div class="agenda-empty">Nenhum evento programado no momento.</div>';
           return;
         }
 
-        lista.innerHTML = ativos.map(ev => {
+        agendaRenderedCards = ativos.map(ev => {
           const dateLabel = escapeHtml(agendaDateLabel(ev));
           const tituloTexto = String(ev?.titulo || 'Evento sem título').trim();
           const titulo = escapeHtml(tituloTexto);
@@ -716,7 +728,18 @@
               </div>
             </div>
           </article>`;
-        }).join('');
+        });
+        lista.innerHTML = agendaRenderedCards.slice(0, AGENDA_INITIAL_LIMIT).join('');
+        if (moreButton) {
+          const hasMore = agendaRenderedCards.length > AGENDA_INITIAL_LIMIT;
+          moreButton.hidden = !hasMore;
+          moreButton.setAttribute('aria-expanded', String(agendaExpanded));
+          const label = moreButton.querySelector('span');
+          if (label) label.textContent = agendaExpanded ? 'Mostrar menos' : 'Mostrar mais';
+          const icon = moreButton.querySelector('i');
+          icon?.classList.toggle('fa-chevron-up', agendaExpanded);
+          icon?.classList.toggle('fa-chevron-down', !agendaExpanded);
+        }
       } catch (e) { console.warn('loadAgenda:', e); }
     }
 
@@ -1020,6 +1043,7 @@
     });
 
     const agendaLista = document.getElementById('agenda-lista');
+    const agendaMoreButton = document.getElementById('agenda-show-more');
     const agendaViewButtons = [...document.querySelectorAll('[data-agenda-view]')];
     function setAgendaView(view) {
       const isList = view === 'list';
@@ -1034,6 +1058,17 @@
       button.addEventListener('click', () => setAgendaView(button.dataset.agendaView || 'grid'));
     });
     setAgendaView('grid');
+    agendaMoreButton?.addEventListener('click', () => {
+      if (agendaRenderedCards.length <= AGENDA_INITIAL_LIMIT || !agendaLista) return;
+      agendaExpanded = !agendaExpanded;
+      agendaLista.innerHTML = (agendaExpanded ? agendaRenderedCards : agendaRenderedCards.slice(0, AGENDA_INITIAL_LIMIT)).join('');
+      agendaMoreButton.setAttribute('aria-expanded', String(agendaExpanded));
+      const label = agendaMoreButton.querySelector('span');
+      if (label) label.textContent = agendaExpanded ? 'Mostrar menos' : 'Mostrar mais';
+      const icon = agendaMoreButton.querySelector('i');
+      icon?.classList.toggle('fa-chevron-up', agendaExpanded);
+      icon?.classList.toggle('fa-chevron-down', !agendaExpanded);
+    });
     agendaLista?.addEventListener('click', handleAgendaPosterActivation);
     agendaLista?.addEventListener('keydown', handleAgendaPosterActivation);
     document.getElementById('agenda-poster-close')?.addEventListener('click', closeAgendaPoster);
