@@ -950,7 +950,8 @@ async function loadAdmins(){
     renderAdmins();
   }catch(error){
     console.error('Erro ao carregar administradores:',error);
-    toast('Erro ao carregar administradores: '+error.message,'error');
+    const permissionHint=error?.code==='permission-denied'?' Publique no Firebase Console a versão atual de firestore.rules, incluindo a regra match /admins/{email}.':'';
+    toast('Erro ao carregar administradores: '+error.message+'.'+permissionHint,'error');
   }finally{
     showEl('admins-loading',false);
   }
