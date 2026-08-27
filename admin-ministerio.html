@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link id="site-favicon" rel="icon" type="image/svg+xml" href="favicon.svg" />
   <script src="js/favicon.js"></script>
-  <link rel="stylesheet" href="css/admin-ministerio.css?v=1" />
+  <link rel="stylesheet" href="css/admin-ministerio.css?v=2" />
 </head>
 <body>
   <div id="login-screen">
@@ -50,11 +50,14 @@
           <div><h1>Ministérios</h1><p>Personalize os cards e a página de cada ministério.</p></div>
           <div class="admin-actions"><button class="admin-btn admin-btn--ghost" id="refresh-btn" type="button"><i class="fas fa-sync-alt"></i> Atualizar</button><button class="admin-btn admin-btn--gold" id="new-ministry-btn" type="button"><i class="fas fa-plus"></i> Novo Ministério</button></div>
         </div>
-        <div class="admin-alert"><i class="fas fa-circle-info" style="color:var(--admin-gold);margin-right:.35rem;"></i> O card da home leva para uma página própria. Imagens devem ser relevantes para a igreja; a galeria pública aceita no máximo <strong style="color:var(--admin-text);">cinco fotos</strong> por ministério.</div>
+        <div class="admin-alert"><i class="fas fa-circle-info" style="color:var(--admin-gold);margin-right:.35rem;"></i> A ordem dos cards abaixo é a mesma ordem exibida na seção pública da home. Use as setas ou arraste pela alça para reorganizar; depois clique em <strong style="color:var(--admin-text);">Salvar ordem</strong>. A galeria pública aceita no máximo <strong style="color:var(--admin-text);">cinco fotos</strong> por ministério.</div>
 
         <div class="admin-content-grid">
           <section class="admin-panel admin-panel--list" aria-labelledby="min-list-title">
-            <div class="admin-panel__header"><h2 id="min-list-title">Ministérios cadastrados</h2><span id="min-count">0</span></div>
+            <div class="admin-panel__header admin-panel__header--stack">
+              <div><h2 id="min-list-title">Ministérios cadastrados</h2><span id="min-count">0</span></div>
+              <div class="min-order-toolbar"><span id="min-order-status" role="status">Ordem sincronizada</span><button class="admin-btn admin-btn--gold admin-btn--compact" id="save-order-btn" type="button" disabled><i class="fas fa-floppy-disk"></i> Salvar ordem</button></div>
+            </div>
             <div class="admin-panel__body"><div class="min-list" id="min-list"></div><div class="min-list-empty" id="min-list-empty" hidden><i class="fas fa-users-slash"></i><p>Nenhum ministério cadastrado. Crie o primeiro para ele aparecer na home.</p></div></div>
           </section>
 
@@ -142,6 +145,8 @@
     let pendingBackgroundFile = null;
     let galleryItems = [];
     let isPrimaryUser = false;
+    let orderDirty = false;
+    let dragIndex = -1;
 
     const $ = id => document.getElementById(id);
     function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char])); }
@@ -175,6 +180,76 @@
     function setLoading(loading) { $('editor-loading').hidden = !loading; }
     function showEditor(show) { $('ministry-form').hidden = !show; $('editor-empty').hidden = show; }
     function revokePendingUrls() { galleryItems.forEach(item => { if (item.pendingFile && item.url.startsWith('blob:')) URL.revokeObjectURL(item.url); }); }
+    function setOrderStatus(message, state = '') {
+      const status = $('min-order-status');
+      if (!status) return;
+      status.textContent = message;
+      status.classList.toggle('is-dirty', state === 'dirty');
+      status.classList.toggle('is-error', state === 'error');
+    }
+    function setOrderDirty(dirty) {
+      orderDirty = dirty;
+      const button = $('save-order-btn');
+      if (button) button.disabled = !dirty;
+      setOrderStatus(dirty ? 'Alterações não salvas' : 'Ordem sincronizada', dirty ? 'dirty' : '');
+    }
+    function clearDragState() {
+      dragIndex = -1;
+      document.querySelectorAll('.min-list-item.is-dragging, .min-list-item.is-drop-target').forEach(item => item.classList.remove('is-dragging', 'is-drop-target'));
+    }
+    function moveMinistry(fromIndex, toIndex) {
+      if (fromIndex < 0 || toIndex < 0 || fromIndex >= ministries.length || toIndex >= ministries.length || fromIndex === toIndex) return false;
+      const [item] = ministries.splice(fromIndex, 1);
+      ministries.splice(toIndex, 0, item);
+      if (editingIndex === fromIndex) editingIndex = toIndex;
+      else if (fromIndex < editingIndex && editingIndex <= toIndex) editingIndex -= 1;
+      else if (toIndex <= editingIndex && editingIndex < fromIndex) editingIndex += 1;
+      setOrderDirty(true);
+      renderList();
+      return true;
+    }
+    function focusOrderControl(index, direction = '') {
+      const selector = direction === 'up' ? '[data-ministry-up]' : direction === 'down' ? '[data-ministry-down]' : '[data-ministry-handle]';
+      document.querySelector(`#min-list [data-ministry-index="${index}"] ${selector}`)?.focus();
+    }
+    function bindOrderControls(list) {
+      list.querySelectorAll('.min-list-item').forEach(item => {
+        item.addEventListener('dragstart', event => {
+          if (!event.target.closest('[data-ministry-handle]')) {
+            event.preventDefault();
+            return;
+          }
+          dragIndex = Number(item.dataset.ministryIndex);
+          item.classList.add('is-dragging');
+          event.dataTransfer.effectAllowed = 'move';
+          event.dataTransfer.setData('text/plain', String(dragIndex));
+        });
+        item.addEventListener('dragend', clearDragState);
+        item.addEventListener('dragover', event => {
+          event.preventDefault();
+          if (Number(item.dataset.ministryIndex) !== dragIndex) item.classList.add('is-drop-target');
+          event.dataTransfer.dropEffect = 'move';
+        });
+        item.addEventListener('dragleave', () => item.classList.remove('is-drop-target'));
+        item.addEventListener('drop', event => {
+          event.preventDefault();
+          const fromIndex = dragIndex >= 0 ? dragIndex : Number(event.dataTransfer.getData('text/plain'));
+          const toIndex = Number(item.dataset.ministryIndex);
+          clearDragState();
+          moveMinistry(fromIndex, toIndex);
+        });
+      });
+      list.querySelectorAll('[data-ministry-up]').forEach(button => button.addEventListener('click', event => {
+        event.stopPropagation();
+        const index = Number(button.dataset.ministryUp);
+        if (moveMinistry(index, index - 1)) focusOrderControl(index - 1, 'up');
+      }));
+      list.querySelectorAll('[data-ministry-down]').forEach(button => button.addEventListener('click', event => {
+        event.stopPropagation();
+        const index = Number(button.dataset.ministryDown);
+        if (moveMinistry(index, index + 1)) focusOrderControl(index + 1, 'down');
+      }));
+    }
 
     function renderList() {
       const list = $('min-list');
@@ -184,9 +259,17 @@
       list.innerHTML = ministries.map((item, index) => {
         const name = escapeHtml(item.nome || 'Ministério sem nome');
         const image = safeUrl(item.fotoFundoUrl || item.fotoFundo || item.backgroundUrl);
-        return `<button class="min-list-item${index === editingIndex ? ' active' : ''}" type="button" data-ministry-index="${index}"><span class="min-list-thumb">${image ? `<img src="${escapeHtml(image)}" alt="" loading="lazy" />` : '<i class="fas fa-image" aria-hidden="true"></i>'}</span><span class="min-list-copy"><strong>${name}</strong><span>${Array.isArray(item.fotos) ? Math.min(item.fotos.length, MAX_PHOTOS) : 0}/5 fotos</span></span><i class="fas fa-chevron-right" style="margin-left:auto;font-size:.7rem;color:var(--admin-faint);" aria-hidden="true"></i></button>`;
+        const isFirst = index === 0;
+        const isLast = index === ministries.length - 1;
+        return `<div class="min-list-item${index === editingIndex ? ' active' : ''}" draggable="true" data-ministry-index="${index}">
+          <span class="min-list-item__position" aria-hidden="true">${index + 1}</span>
+          <button class="min-list-item__handle" type="button" data-ministry-handle aria-label="Arrastar ${name} para reordenar" title="Arrastar para reordenar"><i class="fas fa-grip-vertical" aria-hidden="true"></i></button>
+          <button class="min-list-item__edit" type="button" data-ministry-edit><span class="min-list-thumb">${image ? `<img src="${escapeHtml(image)}" alt="" loading="lazy" />` : '<i class="fas fa-image" aria-hidden="true"></i>'}</span><span class="min-list-copy"><strong>${name}</strong><span>${Array.isArray(item.fotos) ? Math.min(item.fotos.length, MAX_PHOTOS) : 0}/5 fotos</span></span></button>
+          <span class="min-list-item__order-actions" aria-label="Mover ${name}"><button class="min-list-item__order-button" type="button" data-ministry-up="${index}" aria-label="Mover ${name} para cima" title="Mover para cima" ${isFirst ? 'disabled' : ''}><i class="fas fa-chevron-up" aria-hidden="true"></i></button><button class="min-list-item__order-button" type="button" data-ministry-down="${index}" aria-label="Mover ${name} para baixo" title="Mover para baixo" ${isLast ? 'disabled' : ''}><i class="fas fa-chevron-down" aria-hidden="true"></i></button></span>
+        </div>`;
       }).join('');
-      list.querySelectorAll('[data-ministry-index]').forEach(button => button.addEventListener('click', () => openEditor(Number(button.dataset.ministryIndex))));
+      list.querySelectorAll('[data-ministry-edit]').forEach(button => button.addEventListener('click', () => openEditor(Number(button.closest('[data-ministry-index]')?.dataset.ministryIndex))));
+      bindOrderControls(list);
     }
 
     function updatePreview() {
@@ -279,6 +362,23 @@
 
     function resetProgressBars() { document.querySelectorAll('.admin-progress').forEach(item => { item.hidden = true; const bar = item.querySelector('span'); if (bar) bar.style.width = '0%'; }); }
 
+    async function saveMinistryOrder() {
+      if (!auth.currentUser || !orderDirty) return;
+      const button = $('save-order-btn');
+      if (button) button.disabled = true;
+      setOrderStatus('Salvando ordem…');
+      try {
+        await setDoc(doc(db, 'site', 'ministerios'), { lista: ministries, atualizadoEm: serverTimestamp() }, { merge: true });
+        setOrderDirty(false);
+        toast('Ordem dos ministérios salva com sucesso.', 'success');
+      } catch (error) {
+        console.error('saveMinistryOrder:', error);
+        setOrderDirty(true);
+        setOrderStatus('Falha ao salvar a ordem', 'error');
+        toast(`Não foi possível salvar a ordem: ${error.message}`, 'error');
+      }
+    }
+
     async function saveMinistry(event) {
       event.preventDefault();
       if (!auth.currentUser) return;
@@ -328,6 +428,7 @@
         delete savedItem.icone;
         if (editingIndex >= 0) ministries[editingIndex] = savedItem; else { ministries.push(savedItem); editingIndex = ministries.length - 1; }
         await setDoc(doc(db, 'site', 'ministerios'), { lista: ministries, atualizadoEm: serverTimestamp() }, { merge: true });
+        setOrderDirty(false);
         const keepPaths = [savedBackgroundPath, ...savedPhotos.map(item => item.path)].filter(Boolean);
         await Promise.all(oldPaths.filter(path => !keepPaths.includes(path)).map(deletePath));
         toast('Ministério salvo com sucesso.','success');
@@ -348,6 +449,7 @@
       try {
         ministries.splice(editingIndex, 1);
         await setDoc(doc(db, 'site', 'ministerios'), { lista: ministries, atualizadoEm: serverTimestamp() }, { merge: true });
+        setOrderDirty(false);
         await Promise.all(paths.map(deletePath));
         toast('Ministério excluído.','success');
         if (ministries.length) openEditor(Math.min(editingIndex, ministries.length - 1)); else clearEditorState();
@@ -359,6 +461,7 @@
       try {
         const snap = await getDoc(doc(db, 'site', 'ministerios'));
         ministries = Array.isArray(snap.data()?.lista) ? snap.data().lista : [];
+        setOrderDirty(false);
         renderList();
         if (ministries.length) openEditor(Math.min(Math.max(editingIndex, 0), ministries.length - 1)); else clearEditorState();
       } catch (error) { console.error('loadMinistries:', error); toast(`Erro ao carregar ministérios: ${error.message}`,'error'); clearEditorState(); }
@@ -395,6 +498,7 @@
     $('clear-editor-btn').addEventListener('click', () => editingIndex >= 0 ? openEditor(editingIndex) : clearEditorState());
     $('delete-ministry-btn').addEventListener('click', deleteCurrentMinistry);
     $('refresh-btn').addEventListener('click', loadMinistries);
+    $('save-order-btn').addEventListener('click', saveMinistryOrder);
     $('theme-toggle').addEventListener('click', () => { const html = document.documentElement; const light = html.dataset.theme !== 'light'; html.dataset.theme = light ? 'light' : 'dark'; $('theme-toggle').innerHTML = `<i class="fas fa-${light ? 'moon' : 'sun'}"></i>`; });
     $('login-form').addEventListener('submit', async event => {
       event.preventDefault();
