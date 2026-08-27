@@ -39,10 +39,72 @@ function toggleCard(list, card) {
   if (!wasActive) card.classList.add('is-active');
 }
 
+const photoDialogState = { trigger: null };
+
+function cardHasPhoto(card) {
+  return Boolean(card?.querySelector('.corpo-obreiros__photo img'));
+}
+
+function closePhotoDialog(restoreFocus = true) {
+  const dialog = document.getElementById('obreiro-photo-dialog');
+  if (!dialog) return;
+  const image = document.getElementById('obreiro-photo-dialog-image');
+  if (image) {
+    image.removeAttribute('src');
+    image.alt = '';
+  }
+  dialog.hidden = true;
+  document.body.classList.remove('corpo-obreiros-dialog-open');
+  const trigger = photoDialogState.trigger;
+  photoDialogState.trigger = null;
+  if (restoreFocus && trigger?.isConnected) trigger.focus();
+}
+
+function openPhotoDialog(card) {
+  const source = card?.querySelector('.corpo-obreiros__photo img');
+  const dialog = document.getElementById('obreiro-photo-dialog');
+  const image = document.getElementById('obreiro-photo-dialog-image');
+  const title = document.getElementById('obreiro-photo-dialog-title');
+  const role = document.getElementById('obreiro-photo-dialog-role');
+  const close = dialog?.querySelector('[data-obreiro-dialog-close]');
+  if (!source || !dialog || !image || !title || !role) return;
+
+  const name = card.querySelector('.corpo-obreiros__info strong')?.textContent.trim() || 'Pastor';
+  const details = card.querySelector('.corpo-obreiros__info span')?.textContent.trim() || 'Corpo de obreiros';
+  image.src = source.currentSrc || source.src;
+  image.alt = source.alt || `Foto de ${name}`;
+  title.textContent = name;
+  role.textContent = details;
+  photoDialogState.trigger = card;
+  dialog.hidden = false;
+  document.body.classList.add('corpo-obreiros-dialog-open');
+  close?.focus();
+}
+
+function initPhotoDialog() {
+  const dialog = document.getElementById('obreiro-photo-dialog');
+  const close = dialog?.querySelector('[data-obreiro-dialog-close]');
+  if (!dialog || !close) return;
+  close.addEventListener('click', () => closePhotoDialog());
+  dialog.addEventListener('click', event => {
+    if (event.target === dialog) closePhotoDialog();
+  });
+  document.addEventListener('keydown', event => {
+    if (dialog.hidden) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closePhotoDialog();
+    }
+  });
+}
+
 function initInteractions(list) {
+  initPhotoDialog();
   list.addEventListener('click', event => {
     const card = event.target.closest('.corpo-obreiros__card');
-    if (card) toggleCard(list, card);
+    if (!card) return;
+    if (card.classList.contains('is-active') && cardHasPhoto(card)) openPhotoDialog(card);
+    else toggleCard(list, card);
   });
 
   list.addEventListener('keydown', event => {
@@ -50,7 +112,8 @@ function initInteractions(list) {
     if (!card) return;
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      toggleCard(list, card);
+      if (card.classList.contains('is-active') && cardHasPhoto(card)) openPhotoDialog(card);
+      else toggleCard(list, card);
     } else if (event.key === 'Escape') {
       clearActiveCards(list);
     }
