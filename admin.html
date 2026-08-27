@@ -155,11 +155,22 @@ a{color:inherit;text-decoration:none;}
 .leadership-admin-empty p{font-size:.82rem;}
 .obreiro-admin-row{display:grid;grid-template-columns:180px minmax(0,1fr);gap:1.25rem;padding:1.25rem 0;border-top:1px solid var(--border);}
 .obreiro-admin-row:first-child{border-top:0;padding-top:0;}
+.obreiro-admin-row.is-dragging{opacity:.5;}
+.obreiro-admin-row.is-drop-target{border-top:2px solid var(--gold);}
+.obreiro-order-toolbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.4rem .55rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2,#f4f6fb);}
+.obreiro-order-label{display:flex;align-items:center;gap:.55rem;min-width:0;color:var(--muted);font-size:.78rem;}
+.obreiro-order-position{display:inline-grid;width:1.7rem;height:1.7rem;place-items:center;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;}
+.obreiro-order-handle{display:inline-flex;align-items:center;gap:.4rem;color:var(--muted);cursor:grab;user-select:none;}
+.obreiro-order-handle:hover,.obreiro-order-handle:focus-visible{color:var(--primary);}
+.obreiro-order-handle:active{cursor:grabbing;}
+.obreiro-order-actions{display:flex;align-items:center;gap:.35rem;}
+.obreiro-order-btn{min-width:2rem;min-height:2rem;padding:.35rem;}
+.obreiro-order-btn:disabled{cursor:not-allowed;opacity:.35;}
 .obreiro-admin-photo{display:flex;flex-direction:column;gap:.55rem;}
 .obreiro-admin-photo .btn{justify-content:center;}
 .btn-small{padding:.45rem .75rem;font-size:.78rem;}
 [data-theme="light"] .leadership-photo-preview{background:#f0ede8;}
-@media(max-width:700px){.leadership-admin-president{grid-template-columns:1fr;}.leadership-admin-upload{max-width:280px;}.leadership-admin-list-header{align-items:flex-start;flex-direction:column;}.obreiro-admin-row{grid-template-columns:1fr;}.obreiro-admin-photo{max-width:220px;}.leadership-photo-preview.compact{min-height:0;}}
+@media(max-width:700px){.leadership-admin-president{grid-template-columns:1fr;}.leadership-admin-upload{max-width:280px;}.leadership-admin-list-header{align-items:flex-start;flex-direction:column;}.obreiro-admin-row{grid-template-columns:1fr;}.obreiro-admin-photo{max-width:220px;}.leadership-photo-preview.compact{min-height:0;}.obreiro-order-toolbar{align-items:flex-start;flex-direction:column;}.obreiro-order-actions{align-self:flex-end;}}
 
 /* ADMINISTRADORES */
 .admins-layout{display:grid;grid-template-columns:minmax(260px,.82fr) minmax(0,1.18fr);gap:1.25rem;align-items:start;}
@@ -421,7 +432,7 @@ a{color:inherit;text-decoration:none;}
               </div>
             </div>
             <hr class="leadership-admin-divider" />
-            <div class="leadership-admin-list-header"><div><h3 class="admin-subtitle"><i class="fas fa-users" style="color:var(--primary);margin-right:.35rem;"></i>Corpo de obreiros</h3><small class="form-hint">A ordem da lista será a ordem exibida na página inicial.</small></div><button type="button" class="btn btn-ghost" id="btn-add-obreiro"><i class="fas fa-plus"></i> Adicionar pastor</button></div>
+            <div class="leadership-admin-list-header"><div><h3 class="admin-subtitle"><i class="fas fa-users" style="color:var(--primary);margin-right:.35rem;"></i>Corpo de obreiros</h3><small class="form-hint">A ordem da lista será a ordem exibida na página inicial. Arraste pelo ícone ou use as setas para reorganizar.</small></div><button type="button" class="btn btn-ghost" id="btn-add-obreiro"><i class="fas fa-plus"></i> Adicionar pastor</button></div>
             <div id="obreiros-admin-container"></div>
             <button type="button" class="btn btn-primary" id="btn-save-leadership" style="margin-top:1rem;"><i class="fas fa-save"></i> Salvar liderança</button>
           </div>
@@ -1559,6 +1570,58 @@ function setLeadershipPreview(id,url,alt,emptyIcon='fa-user-tie'){
   const el=document.getElementById(id);if(!el)return;
   el.innerHTML=url?`<img src="${escapeHtml(url)}" alt="${escapeHtml(alt||'Foto da liderança')}" />`:`<i class="fas ${emptyIcon}"></i><span>Espaço para a foto</span>`;
 }
+function syncLeadershipFieldsFromDom(){
+  document.querySelectorAll('#obreiros-admin-container [data-lead-field]').forEach(input=>{
+    const index=Number(input.dataset.i);const field=input.dataset.leadField;
+    if(leadershipData.obreiros[index])leadershipData.obreiros[index][field]=input.value.trim();
+  });
+}
+function restorePendingObreiroPreviews(){
+  leadershipSelectedFiles.forEach((file,index)=>{
+    const row=document.querySelector(`[data-obreiro-row="${index}"]`);
+    const preview=row?.querySelector(`#lf-obreiro-preview-${index}`);
+    const upload=row?.querySelector(`[data-obreiro-upload="${index}"]`);
+    if(preview)preview.innerHTML=`<img src="${URL.createObjectURL(file)}" alt="Prévia da foto" />`;
+    if(upload)upload.removeAttribute('disabled');
+  });
+}
+function moveObreiro(from,to){
+  if(!Number.isInteger(from)||!Number.isInteger(to)||from<0||to<0||from>=leadershipData.obreiros.length||to>=leadershipData.obreiros.length||from===to)return;
+  syncLeadershipFieldsFromDom();
+  const [item]=leadershipData.obreiros.splice(from,1);leadershipData.obreiros.splice(to,0,item);
+  const pending=new Map();
+  leadershipSelectedFiles.forEach((file,index)=>{
+    let nextIndex=index;
+    if(index===from)nextIndex=to;
+    else if(from<to&&index>from&&index<=to)nextIndex=index-1;
+    else if(from>to&&index>=to&&index<from)nextIndex=index+1;
+    pending.set(nextIndex,file);
+  });
+  leadershipSelectedFiles.clear();pending.forEach((file,index)=>leadershipSelectedFiles.set(index,file));
+  renderLeadershipAdmin();
+  toast('Ordem atualizada. Clique em “Salvar liderança” para publicar.');
+}
+function bindLeadershipOrdering(cont){
+  cont.querySelectorAll('[data-obreiro-up]').forEach(button=>button.addEventListener('click',()=>moveObreiro(Number(button.dataset.obreiroUp),Number(button.dataset.obreiroUp)-1)));
+  cont.querySelectorAll('[data-obreiro-down]').forEach(button=>button.addEventListener('click',()=>moveObreiro(Number(button.dataset.obreiroDown),Number(button.dataset.obreiroDown)+1)));
+  cont.querySelectorAll('[data-obreiro-handle]').forEach(handle=>{
+    handle.addEventListener('dragstart',event=>{
+      const row=handle.closest('.obreiro-admin-row');
+      if(!row||!event.dataTransfer)return;
+      row.classList.add('is-dragging');event.dataTransfer.effectAllowed='move';event.dataTransfer.setData('text/plain',row.dataset.obreiroRow);
+    });
+    handle.addEventListener('dragend',()=>cont.querySelectorAll('.obreiro-admin-row').forEach(row=>row.classList.remove('is-dragging','is-drop-target')));
+  });
+  cont.querySelectorAll('.obreiro-admin-row').forEach(row=>{
+    row.addEventListener('dragover',event=>{event.preventDefault();const from=Number(event.dataTransfer?.getData('text/plain'));if(from!==Number(row.dataset.obreiroRow))row.classList.add('is-drop-target');});
+    row.addEventListener('dragleave',()=>row.classList.remove('is-drop-target'));
+    row.addEventListener('drop',event=>{
+      event.preventDefault();row.classList.remove('is-drop-target');
+      const from=Number(event.dataTransfer?.getData('text/plain'));const to=Number(row.dataset.obreiroRow);
+      if(Number.isInteger(from)&&Number.isInteger(to))moveObreiro(from,to);
+    });
+  });
+}
 function renderLeadershipAdmin(){
   const p=leadershipData.presidente||defaultLeadership().presidente;
   document.getElementById('lf-president-name').value=p.nome||'';
@@ -1573,6 +1636,10 @@ function renderLeadershipAdmin(){
   }
   cont.innerHTML=leadershipData.obreiros.map((o,i)=>`
     <article class="obreiro-admin-row" data-obreiro-row="${i}">
+      <div class="obreiro-order-toolbar">
+        <div class="obreiro-order-label"><span class="obreiro-order-position" aria-label="Posição ${i+1}">${i+1}</span><button type="button" class="obreiro-order-handle" data-obreiro-handle draggable="true" aria-label="Arrastar ${escapeHtml(o.nome||'pastor')} para reordenar" title="Arraste para reordenar"><i class="fas fa-grip-vertical" aria-hidden="true"></i><span>Arrastar para reordenar</span></button></div>
+        <div class="obreiro-order-actions" aria-label="Mover ${escapeHtml(o.nome||'pastor')} na lista"><button type="button" class="btn btn-ghost btn-icon btn-small obreiro-order-btn" data-obreiro-up="${i}" aria-label="Mover ${escapeHtml(o.nome||'pastor')} para cima" title="Mover para cima" ${i===0?'disabled':''}><i class="fas fa-arrow-up" aria-hidden="true"></i></button><button type="button" class="btn btn-ghost btn-icon btn-small obreiro-order-btn" data-obreiro-down="${i}" aria-label="Mover ${escapeHtml(o.nome||'pastor')} para baixo" title="Mover para baixo" ${i===leadershipData.obreiros.length-1?'disabled':''}><i class="fas fa-arrow-down" aria-hidden="true"></i></button></div>
+      </div>
       <div class="obreiro-admin-photo">
         <div class="leadership-photo-preview compact" id="lf-obreiro-preview-${i}">${o.fotoUrl?`<img src="${escapeHtml(o.fotoUrl)}" alt="${escapeHtml(o.alt||o.nome||'Foto do pastor')}" />`:'<i class="fas fa-user"></i><span>Sem foto</span>'}</div>
         <label class="btn btn-ghost btn-small"><i class="fas fa-image"></i> Escolher foto<input type="file" data-obreiro-file="${i}" accept="image/jpeg,image/webp,image/png" hidden /></label>
@@ -1598,6 +1665,8 @@ function renderLeadershipAdmin(){
     row?.querySelector(`[data-obreiro-upload="${index}"]`)?.removeAttribute('disabled');
   }));
   cont.querySelectorAll('[data-obreiro-upload]').forEach(btn=>btn.addEventListener('click',()=>uploadObreiroPhoto(Number(btn.dataset.obreiroUpload))));
+  bindLeadershipOrdering(cont);
+  restorePendingObreiroPreviews();
 }
 window.addObreiro=()=>{leadershipData.obreiros.push({nome:'',funcao:'',local:'',fotoUrl:'',alt:''});renderLeadershipAdmin();};
 window.removeObreiro=index=>{if(!confirm('Remover este pastor da lista?'))return;leadershipData.obreiros.splice(index,1);leadershipSelectedFiles.delete(index);renderLeadershipAdmin();};
