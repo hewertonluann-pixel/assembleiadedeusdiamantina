@@ -13,6 +13,7 @@
   <title>Assembleia de Deus - Ministério de Diamantina</title>
   <meta name="description" content="Site oficial da Igreja Assembleia de Deus Ministério de Diamantina, MG. Cultos, agenda, ministérios e transmissões ao vivo." />
   <link rel="stylesheet" href="css/style.css?v=20" />
+  <link rel="stylesheet" href="css/banner-carousel.css?v=1" />
   <link rel="stylesheet" href="css/corpo-obreiros.css?v=1" />
   <link rel="stylesheet" href="css/radio-player.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -52,6 +53,64 @@
       </button>
     </div>
   </header>
+
+  <!-- BANNER DE DESTAQUES -->
+  <section class="banner-carousel" data-banner-carousel aria-label="Destaques da Assembleia de Deus">
+    <div class="banner-carousel__viewport">
+      <article class="banner-carousel__slide is-active" data-banner-slide data-banner-label="Culto e comunhão" aria-hidden="false">
+        <img class="banner-carousel__image" src="img/banner-culto.jpg" alt="Pessoas participando de um momento de louvor" fetchpriority="high" decoding="async" />
+        <div class="banner-carousel__content">
+          <div class="banner-carousel__copy">
+            <span class="banner-carousel__eyebrow"><i class="fas fa-hands-praying" aria-hidden="true"></i> Culto e comunhão</span>
+            <h2 class="banner-carousel__title">Um lugar para renovar a fé</h2>
+            <p class="banner-carousel__description">Celebre conosco momentos de louvor, palavra e comunhão em Diamantina.</p>
+            <a class="banner-carousel__cta" href="#cultos">Ver horários de culto <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </div>
+      </article>
+
+      <article class="banner-carousel__slide" data-banner-slide data-banner-label="Nossa igreja" aria-hidden="true">
+        <img class="banner-carousel__image" data-src="img/banner-igreja.jpg" alt="Igreja iluminada vista de frente" loading="lazy" decoding="async" />
+        <div class="banner-carousel__content">
+          <div class="banner-carousel__copy">
+            <span class="banner-carousel__eyebrow"><i class="fas fa-church" aria-hidden="true"></i> Nossa igreja</span>
+            <h2 class="banner-carousel__title">Uma comunidade que acolhe</h2>
+            <p class="banner-carousel__description">Conheça nossa história, nossos valores e a missão que compartilhamos.</p>
+            <a class="banner-carousel__cta" href="igreja.html">Conheça a igreja <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </div>
+      </article>
+
+      <article class="banner-carousel__slide" data-banner-slide data-banner-label="Vida em comunidade" aria-hidden="true">
+        <img class="banner-carousel__image" data-src="img/banner-comunidade.jpg" alt="Interior de uma igreja com vitrais coloridos" loading="lazy" decoding="async" />
+        <div class="banner-carousel__content">
+          <div class="banner-carousel__copy">
+            <span class="banner-carousel__eyebrow"><i class="fas fa-heart" aria-hidden="true"></i> Vida em comunidade</span>
+            <h2 class="banner-carousel__title">Encontre seu lugar para servir</h2>
+            <p class="banner-carousel__description">Participe dos ministérios e descubra novas formas de caminhar com a gente.</p>
+            <a class="banner-carousel__cta" href="#ministerios">Conheça os ministérios <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </div>
+      </article>
+
+      <button class="banner-carousel__control banner-carousel__control--prev" type="button" data-banner-prev aria-label="Destaque anterior">
+        <i class="fas fa-chevron-left" aria-hidden="true"></i>
+      </button>
+      <button class="banner-carousel__control banner-carousel__control--next" type="button" data-banner-next aria-label="Próximo destaque">
+        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+      </button>
+
+      <div class="banner-carousel__footer">
+        <span class="banner-carousel__counter" data-banner-counter aria-hidden="true">01 / 03</span>
+        <div class="banner-carousel__dots" role="group" aria-label="Selecionar destaque">
+          <button class="banner-carousel__dot" type="button" data-banner-dot aria-label="Ir para destaque 1" aria-current="true"></button>
+          <button class="banner-carousel__dot" type="button" data-banner-dot aria-label="Ir para destaque 2" aria-current="false" tabindex="-1"></button>
+          <button class="banner-carousel__dot" type="button" data-banner-dot aria-label="Ir para destaque 3" aria-current="false" tabindex="-1"></button>
+        </div>
+      </div>
+      <span class="banner-carousel__live" data-banner-live aria-live="polite">Culto e comunhão</span>
+    </div>
+  </section>
 
   <!-- HERO -->
   <section class="hero" id="home">
@@ -434,6 +493,7 @@
     </div>
   </aside>
 
+  <script src="js/banner-carousel.js"></script>
   <script src="js/main.js"></script>
   <script src="js/radio-player.js"></script>
   <script type="module" src="js/corpo-obreiros.js"></script>
