@@ -97,10 +97,12 @@ async function shareNews(title) {
 async function loadNews() {
   const requestedId = new URLSearchParams(window.location.search).get('id') || '';
   if (!requestedId.trim()) { showNotFound(); return; }
+
+  let current;
   try {
     const requestedSnapshot = await getDoc(doc(db, 'noticias', requestedId));
     if (!requestedSnapshot.exists()) { showNotFound(); return; }
-    const current = normalizeNews(requestedSnapshot);
+    current = normalizeNews(requestedSnapshot);
     if (!current.publicado || !current.titulo || !current.resumo || !current.conteudo) { showNotFound(); return; }
 
     $('news-category').textContent = current.categoria || 'Notícias';
@@ -126,13 +128,23 @@ async function loadNews() {
     document.querySelector('meta[name="description"]')?.setAttribute('content', description);
     $('news-share').addEventListener('click', () => shareNews(current.titulo));
 
-    const allSnapshot = await getDocs(query(collection(db, 'noticias'), where('publicado', '==', true)));
-    renderNavigation(allSnapshot.docs.map(normalizeNews), current);
+    // A matéria já está pronta para ser exibida. A navegação lateral é
+    // complementar e não pode transformar uma notícia válida em 404 se a
+    // consulta da lista falhar temporariamente ou estiver indisponível.
     $('news-loading').hidden = true;
     $('news-content').hidden = false;
   } catch (error) {
     console.warn('loadNews:', error);
     showNotFound();
+    return;
+  }
+
+  try {
+    const allSnapshot = await getDocs(query(collection(db, 'noticias'), where('publicado', '==', true)));
+    renderNavigation(allSnapshot.docs.map(normalizeNews), current);
+  } catch (error) {
+    console.warn('loadNews navigation:', error);
+    renderNavigation([], current);
   }
 }
 
