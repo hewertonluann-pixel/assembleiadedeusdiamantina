@@ -74,9 +74,8 @@
       isPointerDown = true;
       pointerStartX = event.clientX;
       pointerStartY = event.clientY;
-      // O pointer capture em eventos de mouse rouba o clique do link ativo.
-      // Ele é necessário apenas para manter o swipe touch dentro do carrossel.
-      if (event.pointerType !== 'mouse') container.setPointerCapture?.(event.pointerId);
+      // Não capturamos o ponteiro no container: o clique precisa continuar
+      // chegando ao link do slide ativo em navegadores desktop.
       stopAutoplay();
     };
 
