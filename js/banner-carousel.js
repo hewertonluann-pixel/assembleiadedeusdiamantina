@@ -74,7 +74,9 @@
       isPointerDown = true;
       pointerStartX = event.clientX;
       pointerStartY = event.clientY;
-      container.setPointerCapture?.(event.pointerId);
+      // O pointer capture em eventos de mouse rouba o clique do link ativo.
+      // Ele é necessário apenas para manter o swipe touch dentro do carrossel.
+      if (event.pointerType !== 'mouse') container.setPointerCapture?.(event.pointerId);
       stopAutoplay();
     };
 

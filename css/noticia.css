@@ -178,6 +178,12 @@
   transform: translateY(-1px);
 }
 
+.news-detail-status[hidden],
+.news-detail-not-found[hidden],
+#news-content[hidden] {
+  display: none !important;
+}
+
 .news-detail-status,
 .news-detail-not-found {
   display: flex;
