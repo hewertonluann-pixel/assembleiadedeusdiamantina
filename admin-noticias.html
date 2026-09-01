@@ -348,10 +348,12 @@
       const button = $('save-news-btn');
       button.disabled = true;
       let uploadedPath = '';
+      let saveStep = 'preparação';
       try {
         let imageUrl = $('news-image-url').value.trim();
         let imagePath = $('news-image-path').value.trim();
         if (pendingImageFile) {
+          saveStep = 'upload da imagem';
           const uploaded = await uploadImage(id, pendingImageFile);
           imageUrl = uploaded.url;
           imagePath = uploaded.path;
@@ -377,6 +379,7 @@
           atualizadoEm: serverTimestamp()
         };
         if (!current) payload.criadoEm = serverTimestamp();
+        saveStep = 'gravação da notícia no Firestore';
         await setDoc(doc(db, 'noticias', id), payload, { merge: true });
         if (oldPath && oldPath !== imagePath) await deleteImage(oldPath);
         toast('Notícia salva com sucesso.');
@@ -385,7 +388,11 @@
         openEditor(saved);
       } catch (error) {
         if (uploadedPath) await deleteImage(uploadedPath);
-        toast(`Erro ao salvar notícia: ${error.message}`, 'error');
+        const permissionDenied = error?.code === 'permission-denied' || /missing or insufficient permissions/i.test(String(error?.message || ''));
+        const message = permissionDenied
+          ? `Permissão recusada durante ${saveStep}. Publique firestore.rules e storage.rules no Firebase Console e confirme que sua conta está autorizada.`
+          : `Erro durante ${saveStep}: ${error.message}`;
+        toast(message, 'error');
       } finally {
         $('news-progress-wrap').hidden = true;
         $('news-progress').style.width = '0%';

@@ -66,3 +66,9 @@ Acesse **Notícias** no menu lateral do painel principal ou diretamente em `admi
 Para publicar a página completa, marque **Publicar no site**. Para exibir a notícia na seção de destaques da home, marque também **Exibir no carrossel da página inicial**. O campo **Ordem no carrossel** aceita números inteiros: quanto menor o número, mais cedo a notícia aparece; em caso de empate, a notícia mais recente aparece primeiro. O visitante acessa o detalhe em `noticia.html?id=...` ao clicar no slide.
 
 O conteúdo do texto é tratado como texto seguro. Separe parágrafos com uma linha em branco; tags HTML digitadas no formulário não são interpretadas. Ao substituir ou excluir uma capa, o painel tenta remover o arquivo anterior do Storage para evitar sobras.
+
+### Se aparecer “Permissão recusada” ao salvar
+
+Esse aviso normalmente indica que as regras do Firebase Console ainda são anteriores à coleção de notícias ou que a conta usada no painel não está autorizada. Publique **os arquivos `firestore.rules` e `storage.rules` deste repositório** no projeto `ad-diamantina`, em **Build → Firestore Database → Rules** e **Build → Storage → Rules**. Depois, saia e entre novamente no painel para renovar a sessão.
+
+A conta principal `hewertonluann@gmail.com` precisa estar com o e-mail verificado. Para qualquer outra conta, ela deve existir em **Authentication → Users**, estar verificada e possuir um documento `admins/{email}` com `ativo: true`, criado pelo administrador principal. A mensagem do painel agora identifica se a recusa ocorreu durante o upload da imagem ou durante a gravação da notícia no Firestore.
