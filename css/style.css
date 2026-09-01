@@ -64,6 +64,18 @@ ul { list-style: none; }
   line-height: 1.2;
 }
 .section-title.center { text-align: center; }
+.section-title-context {
+  display: inline-block;
+  margin-left: 6px;
+  color: var(--gold);
+  font-family: 'Inter', sans-serif;
+  font-size: .42em;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  vertical-align: middle;
+  white-space: nowrap;
+}
 
 /* === HEADER === */
 .header {
@@ -189,6 +201,26 @@ ul { list-style: none; }
 .cultos-rapidos {
   background: var(--primary);
   padding: 28px 0;
+}
+.cultos-context {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-bottom: 13px;
+  color: rgba(255,255,255,.72);
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+.cultos-context i {
+  color: var(--gold);
+  font-size: .78rem;
+}
+.cultos-context strong {
+  color: #fff;
+  font-weight: 700;
 }
 .cultos-grid {
   display: grid;

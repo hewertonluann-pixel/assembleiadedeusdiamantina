@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <title>Assembleia de Deus - Ministério de Diamantina</title>
   <meta name="description" content="Site oficial da Igreja Assembleia de Deus Ministério de Diamantina, MG. Cultos, agenda, ministérios e transmissões ao vivo." />
-  <link rel="stylesheet" href="css/style.css?v=20" />
+  <link rel="stylesheet" href="css/style.css?v=21" />
   <link rel="stylesheet" href="css/banner-carousel.css?v=1" />
   <link rel="stylesheet" href="css/corpo-obreiros.css?v=1" />
   <link rel="stylesheet" href="css/radio-player.css" />
@@ -107,6 +107,10 @@
   <!-- PRÓXIMOS CULTOS RÁPIDOS -->
   <section class="cultos-rapidos" id="cultos" aria-label="Horários de cultos">
     <div class="container">
+      <div class="cultos-context" aria-label="Horários de culto na Sede">
+        <i class="fas fa-location-dot" aria-hidden="true"></i>
+        <span>Horários da <strong>Sede</strong></span>
+      </div>
       <div class="cultos-grid" id="cultos-rapidos-grid">
         <!-- fallback enquanto carrega -->
         <div class="culto-card"><i class="fas fa-sun"></i><div><strong>Domingo Manhã</strong><span>08h30</span></div></div>
@@ -153,7 +157,7 @@
   <section class="ministerios" id="ministerios">
     <div class="container">
       <span class="section-tag center">Encontre seu lugar</span>
-      <h2 class="section-title center">Nossos Ministérios</h2>
+      <h2 class="section-title center">Nossos Ministérios <span class="section-title-context" aria-label="referentes à Sede">· Sede</span></h2>
       <div class="ministerios-grid" id="ministerios-grid">
         <!-- populado pelo Firestore; fallback abaixo caso vazio -->
         <a class="ministerio-card" href="ministerio.html?id=homens-uhomad"><span class="ministerio-card__footer"><strong>Homens (UHOMAD)</strong><span class="ministerio-card__arrow"><i class="fas fa-arrow-right"></i></span></span></a>
