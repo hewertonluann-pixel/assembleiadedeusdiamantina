@@ -37,6 +37,13 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Notícias publicadas são públicas; rascunhos só ficam disponíveis para admins.
+    // A home e a navegação pública usam where('publicado', '==', true).
+    match /noticias/{document} {
+      allow read: if isAdmin() || resource.data.publicado == true;
+      allow write: if isAdmin();
+    }
+
     // A lista de administradores nunca fica pública. Somente o administrador
     // principal pode criar, alterar, ativar, desativar ou remover registros.
     // Cada usuário autorizado pode ler apenas o registro do próprio e-mail.

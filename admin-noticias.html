@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Notícias — AD Diamantina</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link id="site-favicon" rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <script src="js/favicon.js"></script>
+  <link rel="stylesheet" href="css/admin-ministerio.css?v=2" />
+  <link rel="stylesheet" href="css/admin-noticias.css?v=1" />
+</head>
+<body>
+  <div id="login-screen">
+    <div class="login-card">
+      <form id="login-form" novalidate>
+        <div class="login-brand"><i class="fas fa-newspaper" aria-hidden="true"></i><span>AD Diamantina</span></div>
+        <p class="login-title">Área de gerenciamento de Notícias</p>
+        <div class="login-error" id="login-error" role="alert"></div>
+        <div class="form-group"><label class="form-label" for="login-email">E-mail</label><input class="form-input" id="login-email" type="email" placeholder="admin@exemplo.com" autocomplete="email" /></div>
+        <div class="form-group"><label class="form-label" for="login-password">Senha</label><input class="form-input" id="login-password" type="password" placeholder="••••••••" autocomplete="current-password" /></div>
+        <button class="admin-btn admin-btn--primary" id="login-btn" type="submit"><i class="fas fa-right-to-bracket"></i> Entrar</button>
+        <div style="display:flex;align-items:center;gap:.7rem;color:var(--admin-faint);font-size:.72rem;"><span style="height:1px;flex:1;background:var(--admin-border);"></span>ou<span style="height:1px;flex:1;background:var(--admin-border);"></span></div>
+        <button class="admin-btn admin-btn--ghost" id="google-btn" type="button"><i class="fab fa-google"></i> Entrar com Google</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="admin-shell" id="app-shell" hidden>
+    <header class="admin-topbar">
+      <a class="admin-brand" href="admin.html" aria-label="Voltar ao painel administrativo"><i class="fas fa-church"></i><span>AD Diamantina <small style="font-family:Inter,sans-serif;font-size:.65rem;color:var(--admin-muted);">/ Notícias</small></span></a>
+      <div class="admin-top-actions">
+        <a class="admin-btn admin-btn--ghost" href="index.html#noticias" target="_blank" rel="noopener noreferrer" aria-label="Ver notícias no site"><i class="fas fa-external-link-alt"></i></a>
+        <button class="admin-btn admin-btn--ghost" id="theme-toggle" type="button" aria-label="Alternar tema"><i class="fas fa-sun"></i></button>
+        <button class="admin-btn admin-btn--ghost" id="logout-btn" type="button"><i class="fas fa-right-from-bracket"></i> Sair</button>
+      </div>
+    </header>
+
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <span class="admin-nav-label">Navegação</span>
+        <a class="admin-nav-link" href="admin.html"><i class="fas fa-arrow-left"></i> Painel principal</a>
+        <a class="admin-nav-link active" href="admin-noticias.html"><i class="fas fa-newspaper"></i> Notícias</a>
+        <a class="admin-nav-link" href="index.html#noticias" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Ver seção pública</a>
+      </aside>
+
+      <main class="admin-main">
+        <div class="admin-header">
+          <div><h1>Notícias</h1><p>Publique notícias e escolha quais aparecem no carrossel da página inicial.</p></div>
+          <div class="admin-actions"><button class="admin-btn admin-btn--ghost" id="refresh-btn" type="button"><i class="fas fa-sync-alt"></i> Atualizar</button><button class="admin-btn admin-btn--gold" id="new-news-btn" type="button"><i class="fas fa-plus"></i> Nova notícia</button></div>
+        </div>
+        <div class="news-admin-alert"><i class="fas fa-circle-info" style="color:var(--admin-gold);margin-right:.35rem;"></i> Uma notícia só aparece publicamente quando <strong style="color:var(--admin-text);">Publicar no site</strong> está marcado. Para entrar no carrossel, ela também precisa ter imagem e <strong style="color:var(--admin-text);">Exibir no carrossel</strong> habilitado. O clique no slide abre a página completa da notícia.</div>
+
+        <div class="news-admin-layout">
+          <section class="admin-panel news-admin-panel" aria-labelledby="news-list-title">
+            <div class="news-admin-panel__header"><h2 id="news-list-title">Notícias cadastradas</h2><span id="news-count">0</span></div>
+            <div class="news-admin-panel__body">
+              <div class="admin-spinner" id="news-loading"></div>
+              <div class="news-admin-list" id="news-list"></div>
+              <div class="news-admin-empty" id="news-empty" hidden><i class="fas fa-newspaper" aria-hidden="true"></i><p>Nenhuma notícia cadastrada. Crie a primeira para abastecer a seção pública.</p><button class="admin-btn admin-btn--gold" id="empty-new-news-btn" type="button"><i class="fas fa-plus"></i> Criar notícia</button></div>
+            </div>
+          </section>
+
+          <section class="admin-panel news-admin-panel" aria-labelledby="editor-title">
+            <div class="news-admin-panel__header"><h2 id="editor-title">Editor da notícia</h2><span id="editor-status">Novo cadastro</span></div>
+            <div class="news-admin-panel__body">
+              <div class="news-admin-empty" id="editor-empty"><i class="fas fa-pen-to-square" aria-hidden="true"></i><p>Selecione uma notícia ou clique em “Nova notícia” para começar.</p></div>
+              <form class="news-admin-form" id="news-form" hidden>
+                <input type="hidden" id="news-id" value="" />
+                <input type="hidden" id="news-image-url" value="" />
+                <input type="hidden" id="news-image-path" value="" />
+                <input type="hidden" id="news-original-path" value="" />
+
+                <div class="news-admin-section">
+                  <h3><i class="fas fa-heading" aria-hidden="true"></i> Identidade</h3>
+                  <div class="news-admin-grid">
+                    <div class="form-group news-admin-grid__full"><label class="form-label" for="news-title">Título *</label><input class="form-input" id="news-title" type="text" placeholder="Ex.: Culto de celebração reúne famílias em Diamantina" required /></div>
+                    <div class="form-group"><label class="form-label" for="news-category">Categoria</label><input class="form-input" id="news-category" type="text" placeholder="Comunidade" /></div>
+                    <div class="form-group"><label class="form-label" for="news-author">Autor ou departamento</label><input class="form-input" id="news-author" type="text" placeholder="Comunicação AD Diamantina" /></div>
+                    <div class="form-group"><label class="form-label" for="news-date">Data de publicação</label><input class="form-input" id="news-date" type="date" /></div>
+                    <div class="form-group"><label class="form-label" for="news-order">Ordem no carrossel</label><input class="form-input" id="news-order" type="number" min="0" step="1" value="0" /><span class="form-help">Menor número aparece primeiro. Em empate, a notícia mais recente vem antes.</span></div>
+                    <div class="form-group news-admin-grid__full"><label class="form-label" for="news-slug">Identificador do link (opcional)</label><input class="form-input" id="news-slug" type="text" placeholder="Gerado automaticamente a partir do título" /><span class="form-help">Aceita letras minúsculas, números e hífens. O link público usa o ID do documento e mantém este slug para identificação.</span></div>
+                  </div>
+                </div>
+
+                <div class="news-admin-section">
+                  <h3><i class="fas fa-image" aria-hidden="true"></i> Imagem de capa</h3>
+                  <div class="news-admin-image-preview" id="news-image-preview"><i class="fas fa-image" aria-hidden="true"></i></div>
+                  <div class="news-admin-grid">
+                    <div class="form-group news-admin-grid__full"><label class="form-label" for="news-image-alt">Texto alternativo da imagem *</label><input class="form-input" id="news-image-alt" type="text" placeholder="Descrição objetiva da imagem" /></div>
+                    <div class="form-group news-admin-grid__full news-admin-upload"><label class="form-label" for="news-image-file">Enviar nova imagem</label><input id="news-image-file" type="file" accept="image/jpeg,image/png,image/webp" /><small>JPG, PNG ou WEBP • máximo de 10 MB • proporção horizontal recomendada.</small><span class="news-admin-file-name" id="news-file-name"></span></div>
+                  </div>
+                  <div class="news-admin-progress" id="news-progress-wrap" hidden><span id="news-progress"></span></div>
+                </div>
+
+                <div class="news-admin-section">
+                  <h3><i class="fas fa-align-left" aria-hidden="true"></i> Conteúdo</h3>
+                  <div class="form-group"><label class="form-label" for="news-summary">Resumo ou linha fina *</label><textarea class="form-textarea" id="news-summary" rows="3" placeholder="Uma frase que contextualiza a notícia no carrossel e no início da página."></textarea></div>
+                  <div class="form-group"><label class="form-label" for="news-content">Texto completo *</label><textarea class="form-textarea" id="news-content" rows="12" placeholder="Escreva o conteúdo da notícia. Separe os parágrafos com uma linha em branco."></textarea><span class="form-help">O conteúdo é publicado como texto seguro. Linhas em branco separam os parágrafos e HTML não é interpretado.</span></div>
+                </div>
+
+                <div class="news-admin-section">
+                  <h3><i class="fas fa-toggle-on" aria-hidden="true"></i> Publicação</h3>
+                  <div class="news-admin-checks">
+                    <label class="news-admin-check"><input id="news-published" type="checkbox" checked /><span><strong>Publicar no site</strong><br /><small class="news-admin-help">Permite que qualquer visitante abra a página desta notícia.</small></span></label>
+                    <label class="news-admin-check"><input id="news-carousel" type="checkbox" checked /><span><strong>Exibir no carrossel da página inicial</strong><br /><small class="news-admin-help">A notícia precisa estar publicada e ter uma imagem de capa.</small></span></label>
+                  </div>
+                </div>
+
+                <div class="news-admin-actions">
+                  <button class="admin-btn admin-btn--danger" id="delete-news-btn" type="button" hidden><i class="fas fa-trash"></i> Excluir</button>
+                  <div class="news-admin-actions__right"><button class="admin-btn admin-btn--ghost" id="clear-news-btn" type="button">Limpar</button><button class="admin-btn admin-btn--gold" id="save-news-btn" type="submit"><i class="fas fa-save"></i> Salvar notícia</button></div>
+                </div>
+              </form>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getAuth, signInWithEmailAndPassword, signInWithRedirect, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc, getDocs, collection, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+    import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
+
+    const firebaseConfig = {
+      apiKey: 'AIzaSyBtMB9qs34H8qMjaA_XavJdrUSpOASYBos',
+      authDomain: 'ad-diamantina.firebaseapp.com',
+      projectId: 'ad-diamantina',
+      storageBucket: 'ad-diamantina.firebasestorage.app',
+      messagingSenderId: '430449368435',
+      appId: '1:430449368435:web:c2d94116f9761fd4c87906'
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+    const PRIMARY_ADMIN_EMAIL = 'hewertonluann@gmail.com';
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    let newsItems = [];
+    let editingId = '';
+    let pendingImageFile = null;
+    let pendingPreviewUrl = '';
+    let isPrimaryUser = false;
+
+    const $ = id => document.getElementById(id);
+    const show = (id, visible) => { const el = $(id); if (el) el.hidden = !visible; };
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
+    }
+    function safeUrl(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return '';
+      try {
+        const url = new URL(raw, window.location.href);
+        return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+      } catch (_) { return ''; }
+    }
+    function slugify(value) {
+      return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    }
+    function isImageFile(file) { return Boolean(file && /^image\/(jpeg|png|webp)$/.test(file.type) && file.size <= MAX_FILE_SIZE); }
+    function extensionFor(file) { return (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg'; }
+    function formatDate(value) {
+      if (!value) return 'Sem data';
+      const date = new Date(`${value}T12:00:00`);
+      return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+    function dateValue(value) {
+      const date = new Date(`${value || ''}T12:00:00`);
+      return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+    }
+    function todayInputValue() { return new Date().toISOString().slice(0, 10); }
+    function toast(message, type = 'success') {
+      const item = document.createElement('div');
+      item.className = `toast ${type}`;
+      item.textContent = message;
+      $('toast-container').appendChild(item);
+      setTimeout(() => item.remove(), 4200);
+    }
+    function normalizeNews(item, id) {
+      const title = String(item?.titulo || item?.title || '').trim();
+      const imageUrl = safeUrl(item?.imagemUrl || item?.imagem || item?.imageUrl || item?.capaUrl);
+      const order = Number(item?.ordemCarrossel);
+      return {
+        id,
+        titulo: title,
+        slug: String(item?.slug || slugify(title)).trim(),
+        categoria: String(item?.categoria || item?.category || 'Notícias').trim(),
+        autor: String(item?.autor || item?.author || '').trim(),
+        dataPublicacao: String(item?.dataPublicacao || item?.data || '').trim(),
+        resumo: String(item?.resumo || item?.excerpt || item?.linhaFina || '').trim(),
+        conteudo: String(item?.conteudo || item?.content || item?.texto || '').trim(),
+        imagemUrl: imageUrl,
+        imagemPath: String(item?.imagemPath || item?.imagePath || item?.capaPath || '').trim(),
+        imagemAlt: String(item?.imagemAlt || item?.imageAlt || item?.capaAlt || title || 'Imagem da notícia').trim(),
+        ordemCarrossel: Number.isFinite(order) && order >= 0 ? order : 0,
+        publicado: item?.publicado === true,
+        exibirNoCarrossel: item?.exibirNoCarrossel !== false,
+        criadoEm: item?.criadoEm,
+        atualizadoEm: item?.atualizadoEm
+      };
+    }
+    function sortNews(items) {
+      return [...items].sort((a, b) => Number(a.ordemCarrossel) - Number(b.ordemCarrossel) || dateValue(b.dataPublicacao) - dateValue(a.dataPublicacao) || a.titulo.localeCompare(b.titulo, 'pt-BR'));
+    }
+    function setPreview(url, alt) {
+      const preview = $('news-image-preview');
+      if (!preview) return;
+      preview.innerHTML = url ? `<img src="${escapeHtml(url)}" alt="${escapeHtml(alt || 'Pré-visualização da capa')}" />` : '<i class="fas fa-image" aria-hidden="true"></i>';
+    }
+    function revokePendingPreview() {
+      if (pendingPreviewUrl) URL.revokeObjectURL(pendingPreviewUrl);
+      pendingPreviewUrl = '';
+    }
+    function clearEditor() {
+      revokePendingPreview();
+      pendingImageFile = null;
+      editingId = '';
+      $('news-form').reset();
+      $('news-id').value = '';
+      $('news-image-url').value = '';
+      $('news-image-path').value = '';
+      $('news-original-path').value = '';
+      $('news-date').value = todayInputValue();
+      $('news-order').value = '0';
+      $('news-published').checked = true;
+      $('news-carousel').checked = true;
+      $('news-file-name').textContent = '';
+      $('editor-status').textContent = 'Novo cadastro';
+      $('delete-news-btn').hidden = true;
+      setPreview('', '');
+      show('editor-empty', false);
+      show('news-form', true);
+      $('news-title').focus();
+      renderList();
+    }
+    function openEditor(item) {
+      if (!item) { clearEditor(); return; }
+      revokePendingPreview();
+      pendingImageFile = null;
+      editingId = item.id;
+      $('news-id').value = item.id;
+      $('news-title').value = item.titulo;
+      $('news-slug').value = item.slug || slugify(item.titulo);
+      $('news-category').value = item.categoria;
+      $('news-author').value = item.autor;
+      $('news-date').value = item.dataPublicacao;
+      $('news-order').value = String(item.ordemCarrossel);
+      $('news-image-url').value = item.imagemUrl;
+      $('news-image-path').value = item.imagemPath;
+      $('news-original-path').value = item.imagemPath;
+      $('news-image-alt').value = item.imagemAlt;
+      $('news-summary').value = item.resumo;
+      $('news-content').value = item.conteudo;
+      $('news-published').checked = item.publicado;
+      $('news-carousel').checked = item.exibirNoCarrossel;
+      $('news-image-file').value = '';
+      $('news-file-name').textContent = item.imagemUrl ? 'Imagem atual carregada. Selecione outra para substituir.' : 'Nenhuma imagem enviada.';
+      $('editor-status').textContent = 'Editando';
+      $('delete-news-btn').hidden = false;
+      setPreview(item.imagemUrl, item.imagemAlt);
+      show('editor-empty', false);
+      show('news-form', true);
+      renderList();
+    }
+    function renderList() {
+      const list = $('news-list');
+      const sorted = sortNews(newsItems);
+      $('news-count').textContent = `${sorted.length} ${sorted.length === 1 ? 'notícia' : 'notícias'}`;
+      if (!sorted.length) {
+        list.innerHTML = '';
+        show('news-empty', true);
+        return;
+      }
+      show('news-empty', false);
+      list.innerHTML = sorted.map(item => {
+        const title = escapeHtml(item.titulo || 'Notícia sem título');
+        const image = item.imagemUrl ? `<img src="${escapeHtml(item.imagemUrl)}" alt="" loading="lazy" />` : '<i class="fas fa-image" aria-hidden="true"></i>';
+        const status = item.publicado ? '<span class="news-admin-status news-admin-status--published"><i class="fas fa-check-circle"></i> Publicada</span>' : '<span class="news-admin-status news-admin-status--draft"><i class="fas fa-pen"></i> Rascunho</span>';
+        const featured = item.publicado && item.exibirNoCarrossel && item.imagemUrl ? '<span class="news-admin-status news-admin-status--featured"><i class="fas fa-images"></i> Carrossel</span>' : '';
+        return `<article class="news-admin-item${item.id === editingId ? ' is-editing' : ''}"><div class="news-admin-thumb">${image}</div><div class="news-admin-item__copy"><strong>${title}</strong><span>${escapeHtml(item.categoria || 'Notícias')} · ${escapeHtml(formatDate(item.dataPublicacao))}</span><div class="news-admin-item__meta">${status}${featured}</div></div><div class="news-admin-item__actions"><button class="admin-btn admin-btn--ghost" type="button" data-edit-news="${escapeHtml(item.id)}" aria-label="Editar ${title}"><i class="fas fa-pen"></i> Editar</button><a class="admin-btn admin-btn--ghost" href="noticia.html?id=${encodeURIComponent(item.id)}" target="_blank" rel="noopener noreferrer" aria-label="Abrir ${title}"><i class="fas fa-external-link-alt"></i></a></div></article>`;
+      }).join('');
+      list.querySelectorAll('[data-edit-news]').forEach(button => button.addEventListener('click', () => openEditor(newsItems.find(item => item.id === button.dataset.editNews))));
+    }
+    async function loadNews() {
+      show('news-loading', true);
+      try {
+        const snapshot = await getDocs(collection(db, 'noticias'));
+        newsItems = sortNews(snapshot.docs.map(item => normalizeNews(item.data(), item.id)));
+        renderList();
+      } catch (error) {
+        toast(`Não foi possível carregar as notícias: ${error.message}`, 'error');
+      } finally { show('news-loading', false); }
+    }
+    function selectImage(file) {
+      if (!file) return;
+      if (!isImageFile(file)) {
+        toast('Imagem inválida. Use JPG, PNG ou WEBP de até 10 MB.', 'error');
+        $('news-image-file').value = '';
+        return;
+      }
+      revokePendingPreview();
+      pendingImageFile = file;
+      pendingPreviewUrl = URL.createObjectURL(file);
+      $('news-image-url').value = '';
+      $('news-image-path').value = '';
+      $('news-file-name').textContent = `Arquivo selecionado: ${file.name}`;
+      setPreview(pendingPreviewUrl, file.name);
+    }
+    function uploadImage(id, file) {
+      return new Promise((resolve, reject) => {
+        const path = `img/noticias/${id}-${Date.now()}.${extensionFor(file)}`;
+        const task = uploadBytesResumable(storageRef(storage, path), file, { contentType: file.type, cacheControl: 'public,max-age=31536000' });
+        const wrap = $('news-progress-wrap');
+        const fill = $('news-progress');
+        wrap.hidden = false;
+        fill.style.width = '0%';
+        task.on('state_changed', snapshot => { fill.style.width = `${Math.round(snapshot.bytesTransferred / snapshot.totalBytes * 100)}%`; }, reject, async () => {
+          try { resolve({ path, url: await getDownloadURL(task.snapshot.ref) }); } catch (error) { reject(error); }
+        });
+      });
+    }
+    async function deleteImage(path) {
+      if (!path || !String(path).startsWith('img/noticias/')) return;
+      try { await deleteObject(storageRef(storage, path)); } catch (error) { console.warn('Não foi possível remover a capa antiga:', error); }
+    }
+    async function saveNews(event) {
+      event.preventDefault();
+      const title = $('news-title').value.trim();
+      const summary = $('news-summary').value.trim();
+      const content = $('news-content').value.trim();
+      const current = newsItems.find(item => item.id === editingId) || null;
+      if (!title) { toast('Informe o título da notícia.', 'error'); $('news-title').focus(); return; }
+      if (!summary) { toast('Informe o resumo da notícia.', 'error'); $('news-summary').focus(); return; }
+      if (!content) { toast('Informe o texto completo da notícia.', 'error'); $('news-content').focus(); return; }
+      if (!pendingImageFile && !$('news-image-url').value.trim()) { toast('Envie uma imagem de capa antes de salvar.', 'error'); $('news-image-file').focus(); return; }
+      const id = editingId || `noticia-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      const oldPath = current?.imagemPath || $('news-original-path').value.trim();
+      const button = $('save-news-btn');
+      button.disabled = true;
+      let uploadedPath = '';
+      try {
+        let imageUrl = $('news-image-url').value.trim();
+        let imagePath = $('news-image-path').value.trim();
+        if (pendingImageFile) {
+          const uploaded = await uploadImage(id, pendingImageFile);
+          imageUrl = uploaded.url;
+          imagePath = uploaded.path;
+          uploadedPath = imagePath;
+        }
+        const published = $('news-published').checked;
+        const carousel = $('news-carousel').checked && Boolean(imageUrl);
+        const order = Math.max(0, Number.parseInt($('news-order').value, 10) || 0);
+        const payload = {
+          titulo: title,
+          slug: slugify($('news-slug').value.trim() || title),
+          categoria: $('news-category').value.trim() || 'Notícias',
+          autor: $('news-author').value.trim(),
+          dataPublicacao: $('news-date').value || todayInputValue(),
+          resumo: summary,
+          conteudo: content,
+          imagemUrl: imageUrl,
+          imagemPath: imagePath,
+          imagemAlt: $('news-image-alt').value.trim() || `Imagem da notícia: ${title}`,
+          ordemCarrossel: order,
+          publicado: published,
+          exibirNoCarrossel: carousel,
+          atualizadoEm: serverTimestamp()
+        };
+        if (!current) payload.criadoEm = serverTimestamp();
+        await setDoc(doc(db, 'noticias', id), payload, { merge: true });
+        if (oldPath && oldPath !== imagePath) await deleteImage(oldPath);
+        toast('Notícia salva com sucesso.');
+        await loadNews();
+        const saved = newsItems.find(item => item.id === id);
+        openEditor(saved);
+      } catch (error) {
+        if (uploadedPath) await deleteImage(uploadedPath);
+        toast(`Erro ao salvar notícia: ${error.message}`, 'error');
+      } finally {
+        $('news-progress-wrap').hidden = true;
+        $('news-progress').style.width = '0%';
+        button.disabled = false;
+      }
+    }
+    async function removeNews() {
+      const item = newsItems.find(entry => entry.id === editingId);
+      if (!item) return;
+      if (!window.confirm(`Excluir a notícia “${item.titulo || 'sem título'}”? Esta ação não pode ser desfeita.`)) return;
+      const button = $('delete-news-btn');
+      button.disabled = true;
+      try {
+        await deleteDoc(doc(db, 'noticias', item.id));
+        await deleteImage(item.imagemPath);
+        toast('Notícia excluída.', 'info');
+        clearEditor();
+        await loadNews();
+      } catch (error) { toast(`Erro ao excluir notícia: ${error.message}`, 'error'); }
+      finally { button.disabled = false; }
+    }
+
+    async function checkPanelAccess(user) {
+      if (!user || !user.email || !user.emailVerified) return { allowed: false, message: 'Use uma conta com e-mail verificado para acessar o painel.' };
+      const email = user.email.trim().toLowerCase();
+      if (email === PRIMARY_ADMIN_EMAIL) return { allowed: true, primary: true };
+      try {
+        const snapshot = await getDoc(doc(db, 'admins', email));
+        const data = snapshot.exists() ? snapshot.data() : null;
+        if (data?.ativo === true && (!data.email || String(data.email).trim().toLowerCase() === email)) return { allowed: true, primary: false };
+        return { allowed: false, message: 'Esta conta ainda não foi autorizada pelo administrador principal.' };
+      } catch (error) {
+        console.error('Falha ao verificar autorização:', error);
+        return { allowed: false, message: 'Não foi possível verificar sua autorização no painel.' };
+      }
+    }
+    function showLoginError(message) { $('login-error').textContent = message; $('login-error').classList.add('show'); }
+
+    $('theme-toggle').addEventListener('click', () => {
+      const html = document.documentElement;
+      const next = html.dataset.theme === 'light' ? 'dark' : 'light';
+      html.dataset.theme = next;
+      $('theme-toggle').innerHTML = next === 'light' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+    });
+    $('login-form').addEventListener('submit', async event => {
+      event.preventDefault();
+      $('login-error').classList.remove('show');
+      const email = $('login-email').value.trim();
+      const password = $('login-password').value;
+      if (!email || !password) { showLoginError('Informe e-mail e senha.'); return; }
+      try { await signInWithEmailAndPassword(auth, email, password); }
+      catch (error) { showLoginError(error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' ? 'E-mail ou senha incorretos.' : `Erro: ${error.message}`); }
+    });
+    const googleProvider = new GoogleAuthProvider();
+    $('google-btn').addEventListener('click', async () => {
+      $('login-error').classList.remove('show');
+      try { await signInWithPopup(auth, googleProvider); }
+      catch (error) {
+        if (error.code === 'auth/popup-closed-by-user') return;
+        if (error.code === 'auth/popup-blocked') { try { await signInWithRedirect(auth, googleProvider); return; } catch (redirectError) { error = redirectError; } }
+        showLoginError(error.code === 'auth/unauthorized-domain' ? 'Este domínio ainda não está autorizado no Firebase Authentication.' : `Erro Google: ${error.message}`);
+      }
+    });
+    $('logout-btn').addEventListener('click', () => signOut(auth));
+    $('refresh-btn').addEventListener('click', loadNews);
+    $('new-news-btn').addEventListener('click', clearEditor);
+    $('empty-new-news-btn').addEventListener('click', clearEditor);
+    $('clear-news-btn').addEventListener('click', clearEditor);
+    $('delete-news-btn').addEventListener('click', removeNews);
+    $('news-form').addEventListener('submit', saveNews);
+    $('news-image-file').addEventListener('change', event => selectImage(event.target.files[0]));
+    $('news-image-file').addEventListener('dragover', event => event.preventDefault());
+    $('news-image-file').addEventListener('drop', event => { event.preventDefault(); selectImage(event.dataTransfer.files[0]); });
+    window.addEventListener('beforeunload', revokePendingPreview);
+
+    onAuthStateChanged(auth, async user => {
+      if (!user) { isPrimaryUser = false; $('app-shell').hidden = true; $('login-screen').style.display = 'flex'; return; }
+      const access = await checkPanelAccess(user);
+      if (!access.allowed) { await signOut(auth); $('app-shell').hidden = true; $('login-screen').style.display = 'flex'; showLoginError(access.message); return; }
+      isPrimaryUser = access.primary === true;
+      $('login-screen').style.display = 'none';
+      $('app-shell').hidden = false;
+      clearEditor();
+      await loadNews();
+    });
+  </script>
+</body>
+</html>

@@ -235,3 +235,30 @@ Cada documento representa uma unidade da Assembleia de Deus. O campo `nome` é m
 ```
 
 A seção pública de contribuição só é exibida quando `pixKey`, `receiverName`, `receiverCity` e `qrCode` estiverem preenchidos. Enquanto os dados oficiais não forem informados, o painel pode salvar a estrutura incompleta sem publicar uma chave ou QR Code incorretos.
+
+
+### `noticias/{id}`
+
+Cada notícia é um documento individual. A coleção pode ser lida publicamente, mas só administradores autorizados podem criar, editar ou remover documentos. O painel grava as imagens no Firebase Storage em `img/noticias/` e guarda a URL pública e o caminho para permitir a substituição ou remoção do arquivo antigo.
+
+```json
+{
+  "titulo": "Culto de celebração reúne famílias em Diamantina",
+  "slug": "culto-de-celebracao-reune-familias-em-diamantina",
+  "categoria": "Comunidade",
+  "autor": "Comunicação AD Diamantina",
+  "dataPublicacao": "2026-09-01",
+  "resumo": "Uma frase de contexto para o card e para o início da notícia.",
+  "conteudo": "Primeiro parágrafo.\n\nSegundo parágrafo.",
+  "imagemUrl": "https://firebasestorage.googleapis.com/...",
+  "imagemPath": "img/noticias/noticia-1750000000000-ab12cd-1750000000000.jpg",
+  "imagemAlt": "Descrição objetiva da imagem da notícia",
+  "ordemCarrossel": 0,
+  "publicado": true,
+  "exibirNoCarrossel": true,
+  "criadoEm": "serverTimestamp()",
+  "atualizadoEm": "serverTimestamp()"
+}
+```
+
+A página `index.html` exibe apenas notícias com `publicado == true`, `exibirNoCarrossel != false`, título, resumo e imagem válida; os oito primeiros resultados são ordenados por `ordemCarrossel`, data de publicação decrescente e título. A página `noticia.html?id={id}` exige que a notícia esteja publicada e renderiza o conteúdo como texto seguro, separando parágrafos por linhas em branco.

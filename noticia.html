@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1A3A8F" />
+  <meta name="description" content="Notícia da Assembleia de Deus Ministério de Diamantina." />
+  <link rel="manifest" href="manifest.webmanifest?v=8" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <title>Notícia — AD Diamantina</title>
+  <link rel="stylesheet" href="css/style.css?v=22" />
+  <link rel="stylesheet" href="css/noticia.css?v=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link id="site-favicon" rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <script src="js/favicon.js"></script>
+  <script src="js/pwa.js"></script>
+</head>
+<body class="news-page">
+  <header class="header" id="header">
+    <div class="container nav-container">
+      <a href="index.html#home" class="logo" aria-label="Voltar para a página inicial">
+        <img id="site-logo" src="img/logo.png" alt="Logo AD Diamantina" onerror="this.style.display='none'" />
+        <div class="logo-text"><span class="logo-title">Assembleia de Deus</span><span class="logo-sub">Ministério de Diamantina</span></div>
+      </a>
+      <nav class="nav" id="nav" aria-label="Navegação principal">
+        <ul class="nav-list">
+          <li><a href="index.html#home" class="nav-link">Início</a></li>
+          <li><a href="igreja.html" class="nav-link">A Igreja</a></li>
+          <li><a href="index.html#cultos" class="nav-link">Cultos</a></li>
+          <li><a href="index.html#ministerios" class="nav-link">Ministérios</a></li>
+          <li><a href="index.html#midia" class="nav-link">Mídia</a></li>
+          <li><a href="congregacoes.html" class="nav-link">Congregações</a></li>
+          <li><a href="index.html#contato" class="nav-link">Contato</a></li>
+        </ul>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <main>
+    <div class="news-detail-status" id="news-loading" role="status" aria-live="polite"><i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i><p>Carregando notícia…</p></div>
+
+    <div id="news-not-found" class="news-detail-not-found" hidden>
+      <i class="fas fa-newspaper" aria-hidden="true"></i>
+      <h1>Notícia não encontrada</h1>
+      <p>Não foi possível localizar esta notícia. Ela pode ter sido removida ou ainda não estar publicada.</p>
+      <a href="index.html#noticias" class="btn btn-primary"><i class="fas fa-arrow-left" aria-hidden="true"></i> Voltar para notícias</a>
+    </div>
+
+    <div id="news-content" hidden>
+      <section class="news-detail-hero" aria-labelledby="news-title">
+        <div class="container news-detail-hero__content">
+          <nav class="news-breadcrumb" aria-label="Trilha de navegação"><a href="index.html#home">Início</a><i class="fas fa-chevron-right" aria-hidden="true"></i><a href="index.html#noticias">Notícias</a><i class="fas fa-chevron-right" aria-hidden="true"></i><span id="news-breadcrumb-title">Notícia</span></nav>
+          <span class="news-detail-kicker"><i class="fas fa-newspaper" aria-hidden="true"></i><span id="news-category">Notícias</span></span>
+          <h1 class="news-detail-title" id="news-title">Notícia</h1>
+          <div class="news-detail-meta"><span id="news-date-wrap"><i class="fas fa-calendar-days" aria-hidden="true"></i><time id="news-date"></time></span><span id="news-author-wrap" hidden><i class="fas fa-user" aria-hidden="true"></i><span id="news-author"></span></span></div>
+        </div>
+      </section>
+
+      <div class="news-detail-wrap">
+        <article class="news-detail-card">
+          <figure class="news-detail-cover" id="news-cover"><img id="news-image" src="" alt="" /></figure>
+          <div class="news-detail-content">
+            <p class="news-detail-lead" id="news-summary"></p>
+            <div class="news-detail-body" id="news-body"></div>
+            <div class="news-detail-share"><span class="news-detail-share__label">Compartilhe esta notícia</span><button class="news-detail-share__button" type="button" id="news-share"><i class="fas fa-share-nodes" aria-hidden="true"></i><span>Compartilhar</span></button></div>
+          </div>
+        </article>
+        <nav class="news-detail-nav" id="news-navigation" aria-label="Navegação entre notícias" hidden><a class="news-detail-nav__link" id="news-previous" href="" hidden><span class="news-detail-nav__label"><i class="fas fa-arrow-left" aria-hidden="true"></i> Notícia mais recente</span><strong class="news-detail-nav__title"></strong></a><a class="news-detail-nav__link news-detail-nav__link--next" id="news-next" href="" hidden><span class="news-detail-nav__label">Notícia anterior <i class="fas fa-arrow-right" aria-hidden="true"></i></span><strong class="news-detail-nav__title"></strong></a></nav>
+        <a href="index.html#noticias" class="news-detail-back"><i class="fas fa-arrow-left" aria-hidden="true"></i> Ver todas as notícias</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-col"><div class="logo-text"><span class="logo-title" style="color:#fff">Assembleia de Deus</span><span class="logo-sub" style="color:#D4A017">Ministério de Diamantina</span></div><p>Pregando o Evangelho e servindo a comunidade desde 2009.</p></div>
+      <div class="footer-col"><h4>Links Rápidos</h4><ul><li><a href="index.html#home">Início</a></li><li><a href="index.html#noticias">Notícias</a></li><li><a href="index.html#agenda">Agenda</a></li><li><a href="index.html#contato">Contato</a></li></ul></div>
+      <div class="footer-col"><h4>Área da equipe</h4><p><a href="admin.html"><i class="fas fa-user-shield" aria-hidden="true"></i> Painel administrativo</a></p></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2026 Assembleia de Deus Ministério de Diamantina. Todos os direitos reservados.</p></div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script type="module" src="js/noticia.js"></script>
+</body>
+</html>

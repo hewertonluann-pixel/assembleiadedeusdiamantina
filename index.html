@@ -54,64 +54,6 @@
     </div>
   </header>
 
-  <!-- BANNER DE DESTAQUES -->
-  <section class="banner-carousel" data-banner-carousel aria-label="Destaques da Assembleia de Deus">
-    <div class="banner-carousel__viewport">
-      <article class="banner-carousel__slide is-active" data-banner-slide data-banner-label="Culto e comunhão" aria-hidden="false">
-        <img class="banner-carousel__image" src="img/banner-culto.jpg" alt="Pessoas participando de um momento de louvor" fetchpriority="high" decoding="async" />
-        <div class="banner-carousel__content">
-          <div class="banner-carousel__copy">
-            <span class="banner-carousel__eyebrow"><i class="fas fa-hands-praying" aria-hidden="true"></i> Culto e comunhão</span>
-            <h2 class="banner-carousel__title">Um lugar para renovar a fé</h2>
-            <p class="banner-carousel__description">Celebre conosco momentos de louvor, palavra e comunhão em Diamantina.</p>
-            <a class="banner-carousel__cta" href="#cultos">Ver horários de culto <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-          </div>
-        </div>
-      </article>
-
-      <article class="banner-carousel__slide" data-banner-slide data-banner-label="Nossa igreja" aria-hidden="true">
-        <img class="banner-carousel__image" data-src="img/banner-igreja.jpg" alt="Igreja iluminada vista de frente" loading="lazy" decoding="async" />
-        <div class="banner-carousel__content">
-          <div class="banner-carousel__copy">
-            <span class="banner-carousel__eyebrow"><i class="fas fa-church" aria-hidden="true"></i> Nossa igreja</span>
-            <h2 class="banner-carousel__title">Uma comunidade que acolhe</h2>
-            <p class="banner-carousel__description">Conheça nossa história, nossos valores e a missão que compartilhamos.</p>
-            <a class="banner-carousel__cta" href="igreja.html">Conheça a igreja <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-          </div>
-        </div>
-      </article>
-
-      <article class="banner-carousel__slide" data-banner-slide data-banner-label="Vida em comunidade" aria-hidden="true">
-        <img class="banner-carousel__image" data-src="img/banner-comunidade.jpg" alt="Interior de uma igreja com vitrais coloridos" loading="lazy" decoding="async" />
-        <div class="banner-carousel__content">
-          <div class="banner-carousel__copy">
-            <span class="banner-carousel__eyebrow"><i class="fas fa-heart" aria-hidden="true"></i> Vida em comunidade</span>
-            <h2 class="banner-carousel__title">Encontre seu lugar para servir</h2>
-            <p class="banner-carousel__description">Participe dos ministérios e descubra novas formas de caminhar com a gente.</p>
-            <a class="banner-carousel__cta" href="#ministerios">Conheça os ministérios <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-          </div>
-        </div>
-      </article>
-
-      <button class="banner-carousel__control banner-carousel__control--prev" type="button" data-banner-prev aria-label="Destaque anterior">
-        <i class="fas fa-chevron-left" aria-hidden="true"></i>
-      </button>
-      <button class="banner-carousel__control banner-carousel__control--next" type="button" data-banner-next aria-label="Próximo destaque">
-        <i class="fas fa-chevron-right" aria-hidden="true"></i>
-      </button>
-
-      <div class="banner-carousel__footer">
-        <span class="banner-carousel__counter" data-banner-counter aria-hidden="true">01 / 03</span>
-        <div class="banner-carousel__dots" role="group" aria-label="Selecionar destaque">
-          <button class="banner-carousel__dot" type="button" data-banner-dot aria-label="Ir para destaque 1" aria-current="true"></button>
-          <button class="banner-carousel__dot" type="button" data-banner-dot aria-label="Ir para destaque 2" aria-current="false" tabindex="-1"></button>
-          <button class="banner-carousel__dot" type="button" data-banner-dot aria-label="Ir para destaque 3" aria-current="false" tabindex="-1"></button>
-        </div>
-      </div>
-      <span class="banner-carousel__live" data-banner-live aria-live="polite">Culto e comunhão</span>
-    </div>
-  </section>
-
   <!-- HERO -->
   <section class="hero" id="home">
     <div class="hero-overlay"></div>
@@ -139,6 +81,22 @@
       </aside>
     </div>
     <div class="hero-scroll"><i class="fas fa-chevron-down"></i></div>
+  </section>
+
+  <!-- NOTÍCIAS EM DESTAQUE -->
+  <section class="news-carousel-section" id="noticias" aria-labelledby="news-carousel-title" hidden>
+    <div class="container">
+      <div class="news-carousel-section__header">
+        <span class="section-tag">Notícias e destaques</span>
+        <h2 class="news-carousel-section__title" id="news-carousel-title">Acontece na nossa igreja</h2>
+        <p class="news-carousel-section__description">Acompanhe as notícias, programações e histórias da Assembleia de Deus Ministério de Diamantina.</p>
+      </div>
+      <div class="banner-carousel" data-banner-carousel aria-label="Notícias em destaque">
+        <div class="banner-carousel__viewport">
+          <div class="banner-carousel__loading" data-banner-loading role="status"><i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>Carregando notícias…</div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- LIDERANÇA -->
@@ -501,7 +459,7 @@
   <!-- ══ FIREBASE DYNAMIC CONTENT ══ -->
   <script type="module">
     import { db } from './js/firebase-client.js';
-    import { doc, getDoc, collection, getDocs, orderBy, query }
+    import { doc, getDoc, collection, getDocs, orderBy, query, where }
       from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
     // ── Helpers ──────────────────────────────────────────────────────────────
@@ -954,7 +912,71 @@
       } catch (e) { console.warn('loadImagens:', e); }
     }
 
-    // ── 6. LIDERANÇA ──────────────────────────────────────────────────────────
+    // ── 6. NOTÍCIAS EM DESTAQUE ────────────────────────────────────────────────
+    function newsDateValue(value) {
+      const date = new Date(`${String(value || '').slice(0, 10)}T12:00:00`);
+      return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+    }
+    function formatNewsDate(value) {
+      const date = new Date(`${String(value || '').slice(0, 10)}T12:00:00`);
+      if (Number.isNaN(date.getTime())) return '';
+      return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '');
+    }
+    function safeNewsUrl(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return '';
+      try {
+        const url = new URL(raw, window.location.href);
+        return ['https:', 'http:'].includes(url.protocol) ? url.href : '';
+      } catch (_) { return ''; }
+    }
+    function normalizeNewsItem(snapshot) {
+      const data = snapshot.data() || {};
+      const title = String(data.titulo || data.title || '').trim();
+      const imageUrl = safeNewsUrl(data.imagemUrl || data.imagem || data.imageUrl || data.capaUrl);
+      const order = Number(data.ordemCarrossel);
+      return {
+        id: snapshot.id,
+        title,
+        slug: String(data.slug || '').trim(),
+        category: String(data.categoria || data.category || 'Notícias').trim(),
+        date: String(data.dataPublicacao || data.data || '').trim(),
+        summary: String(data.resumo || data.excerpt || data.linhaFina || '').trim(),
+        imageUrl,
+        imageAlt: String(data.imagemAlt || data.imageAlt || data.capaAlt || title || 'Imagem da notícia').trim(),
+        order: Number.isFinite(order) && order >= 0 ? order : 0,
+        published: data.publicado === true,
+        carousel: data.exibirNoCarrossel !== false
+      };
+    }
+    function renderNewsCarousel(items) {
+      const section = document.getElementById('noticias');
+      const carousel = section?.querySelector('[data-banner-carousel]');
+      if (!section || !carousel) return;
+      const featured = items.filter(item => item.published && item.carousel && item.title && item.summary && item.imageUrl).sort((a, b) => a.order - b.order || newsDateValue(b.date) - newsDateValue(a.date) || a.title.localeCompare(b.title, 'pt-BR')).slice(0, 8);
+      if (!featured.length) { section.hidden = true; return; }
+      const slides = featured.map((item, index) => {
+        const link = `noticia.html?id=${encodeURIComponent(item.id)}`;
+        const eyebrow = [item.category, formatNewsDate(item.date)].filter(Boolean).join(' · ');
+        return `<article class="banner-carousel__slide${index === 0 ? ' is-active' : ''}" data-banner-slide data-banner-label="${escapeHtml(item.title)}" aria-hidden="${index === 0 ? 'false' : 'true'}"><img class="banner-carousel__image" ${index === 0 ? `src="${escapeHtml(item.imageUrl)}" fetchpriority="high"` : `data-src="${escapeHtml(item.imageUrl)}" loading="lazy"`} alt="${escapeHtml(item.imageAlt)}" decoding="async" /><a class="banner-carousel__link" href="${escapeHtml(link)}" aria-label="Ler notícia: ${escapeHtml(item.title)}"><div class="banner-carousel__content"><div class="banner-carousel__copy"><span class="banner-carousel__eyebrow"><i class="fas fa-newspaper" aria-hidden="true"></i> ${escapeHtml(eyebrow || 'Notícia')}</span><h2 class="banner-carousel__title">${escapeHtml(item.title)}</h2><p class="banner-carousel__description">${escapeHtml(item.summary)}</p><span class="banner-carousel__cta">Ler notícia <i class="fas fa-arrow-right" aria-hidden="true"></i></span></div></div></a></article>`;
+      }).join('');
+      const dots = featured.map((item, index) => `<button class="banner-carousel__dot" type="button" data-banner-dot aria-label="Ir para notícia ${index + 1}: ${escapeHtml(item.title)}" aria-current="${index === 0 ? 'true' : 'false'}"${index ? ' tabindex="-1"' : ''}></button>`).join('');
+      carousel.innerHTML = `<div class="banner-carousel__viewport">${slides}<button class="banner-carousel__control banner-carousel__control--prev" type="button" data-banner-prev aria-label="Notícia anterior"><i class="fas fa-chevron-left" aria-hidden="true"></i></button><button class="banner-carousel__control banner-carousel__control--next" type="button" data-banner-next aria-label="Próxima notícia"><i class="fas fa-chevron-right" aria-hidden="true"></i></button><div class="banner-carousel__footer"><span class="banner-carousel__counter" data-banner-counter aria-hidden="true">01 / ${String(featured.length).padStart(2, '0')}</span><div class="banner-carousel__dots" role="group" aria-label="Selecionar notícia">${dots}</div></div><span class="banner-carousel__live" data-banner-live aria-live="polite">${escapeHtml(featured[0].title)}</span></div>`;
+      section.hidden = false;
+      window.initBannerCarousel?.(carousel);
+    }
+    async function loadNewsCarousel() {
+      try {
+        const snapshot = await getDocs(query(collection(db, 'noticias'), where('publicado', '==', true)));
+        renderNewsCarousel(snapshot.docs.map(normalizeNewsItem));
+      } catch (error) {
+        console.warn('loadNewsCarousel:', error);
+        const section = document.getElementById('noticias');
+        if (section) section.hidden = true;
+      }
+    }
+
+    // ── 7. LIDERANÇA ──────────────────────────────────────────────────────────
     // A seção é carregada pelo módulo js/corpo-obreiros.js para manter a index enxuta.
 
     // ── 7. CONTATO & MAPA ──────────────────────────────────────────────────────
@@ -1139,7 +1161,7 @@
     });
 
     // ── Disparar tudo em paralelo ─────────────────────────────────────────────
-    Promise.all([loadHome(), loadAgenda(), loadMins(), loadRedes(), loadImagens(), loadContato(), loadContribuicao()]);
+    Promise.all([loadHome(), loadAgenda(), loadMins(), loadRedes(), loadImagens(), loadContato(), loadContribuicao(), loadNewsCarousel()]);
   </script>
 
 </body>

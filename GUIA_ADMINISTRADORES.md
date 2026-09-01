@@ -58,3 +58,11 @@ O e-mail é convertido para minúsculas antes de ser gravado. Não é necessári
 ## Validação realizada
 
 O painel foi validado com o verificador de scripts HTML, o `node --check` do service worker e `git diff --check`. A página publicada foi inspecionada sem login: a marcação da área de administradores está disponível, mas o item do menu permanece oculto até a autenticação do administrador principal.
+
+## Notícias e carrossel
+
+Acesse **Notícias** no menu lateral do painel principal ou diretamente em `admin-noticias.html`. Crie uma notícia informando título, resumo, texto completo e imagem de capa. A imagem é enviada para o Firebase Storage em `img/noticias/` e o registro é salvo na coleção `noticias` do Firestore.
+
+Para publicar a página completa, marque **Publicar no site**. Para exibir a notícia na seção de destaques da home, marque também **Exibir no carrossel da página inicial**. O campo **Ordem no carrossel** aceita números inteiros: quanto menor o número, mais cedo a notícia aparece; em caso de empate, a notícia mais recente aparece primeiro. O visitante acessa o detalhe em `noticia.html?id=...` ao clicar no slide.
+
+O conteúdo do texto é tratado como texto seguro. Separe parágrafos com uma linha em branco; tags HTML digitadas no formulário não são interpretadas. Ao substituir ou excluir uma capa, o painel tenta remover o arquivo anterior do Storage para evitar sobras.
