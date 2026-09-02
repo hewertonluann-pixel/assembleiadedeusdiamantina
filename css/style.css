@@ -488,6 +488,7 @@ body.agenda-dialog-open { overflow: hidden; }
 .ministerio-hero__title { max-width: 850px; color: #fff; font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 5vw, 4rem); line-height: 1.08; }
 .ministerio-hero__description { max-width: 660px; margin-top: 18px; color: rgba(255,255,255,.84); font-size: 1rem; line-height: 1.7; }
 .ministerio-overview, .ministerio-galeria-section { padding: 88px 0; background: #fff; }
+.ministerio-overview[hidden], .ministerio-info-card[hidden] { display: none !important; }
 .ministerio-avisos-section { padding: 88px 0; background: var(--light); }
 .ministerio-section-heading { max-width: 720px; margin-bottom: 30px; }
 .ministerio-section-heading .section-title { margin-bottom: 10px; }

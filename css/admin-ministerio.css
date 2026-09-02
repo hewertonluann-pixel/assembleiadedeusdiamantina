@@ -122,6 +122,18 @@ img { display: block; max-width: 100%; }
 .form-textarea { min-height: 100px; resize: vertical; line-height: 1.55; }
 .form-help { color: var(--admin-muted); font-size: .72rem; line-height: 1.45; }
 .form-help strong { color: var(--admin-text); }
+.visibility-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .65rem; margin-top: .15rem; }
+.visibility-toggle { position: relative; display: flex; align-items: flex-start; gap: .65rem; min-width: 0; padding: .75rem .8rem; border: 1px solid var(--admin-border); border-radius: var(--admin-radius); color: var(--admin-muted); background: var(--admin-surface-3); cursor: pointer; transition: background var(--admin-transition),border-color var(--admin-transition),color var(--admin-transition); }
+.visibility-toggle:hover { border-color: var(--admin-primary-hover); color: var(--admin-text); background: rgba(1,105,111,.08); }
+.visibility-toggle input { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
+.visibility-toggle input:focus-visible + .visibility-toggle__switch { outline: 2px solid var(--admin-gold); outline-offset: 2px; }
+.visibility-toggle input:checked + .visibility-toggle__switch { border-color: var(--admin-primary-hover); background: var(--admin-primary-hover); }
+.visibility-toggle input:checked + .visibility-toggle__switch::after { transform: translateX(1rem); background: #fff; }
+.visibility-toggle__switch { position: relative; flex: 0 0 auto; width: 2.15rem; height: 1.25rem; margin-top: .08rem; border: 1px solid var(--admin-border); border-radius: 999px; background: var(--admin-surface-2); transition: background var(--admin-transition),border-color var(--admin-transition); }
+.visibility-toggle__switch::after { content: ''; position: absolute; top: .19rem; left: .18rem; width: .77rem; height: .77rem; border-radius: 50%; background: var(--admin-faint); transition: transform var(--admin-transition),background var(--admin-transition); }
+.visibility-toggle__copy { display: flex; min-width: 0; flex-direction: column; gap: .2rem; }
+.visibility-toggle__copy strong { color: inherit; font-size: .78rem; line-height: 1.25; }
+.visibility-toggle__copy small { color: var(--admin-faint); font-size: .68rem; line-height: 1.35; }
 .editor-preview { position: relative; min-height: 190px; overflow: hidden; display: flex; align-items: flex-end; padding: 0; border-radius: var(--admin-radius); color: #fff; background: linear-gradient(145deg,#1A3A8F,#122a6e); background-position: center; background-size: cover; }
 .editor-preview__footer { position: relative; z-index: 1; width: 100%; display: flex; align-items: center; gap: .75rem; min-height: 68px; padding: .85rem 1rem; border-top: 1px solid rgba(255,255,255,.25); background: linear-gradient(180deg,rgba(8,18,57,.18),rgba(7,15,43,.94)); backdrop-filter: blur(2px); }
 .editor-preview__copy { position: relative; z-index: 1; }
@@ -179,6 +191,7 @@ img { display: block; max-width: 100%; }
   .admin-header { flex-direction: column; }
   .admin-actions { width: 100%; justify-content: flex-start; }
   .form-grid { grid-template-columns: 1fr; }
+  .visibility-grid { grid-template-columns: 1fr; }
   .min-order-toolbar { align-items: stretch; flex-direction: column; }
   .min-order-toolbar .admin-btn { width: 100%; }
   .form-group--full { grid-column: auto; }

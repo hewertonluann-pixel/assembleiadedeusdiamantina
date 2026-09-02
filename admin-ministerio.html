@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link id="site-favicon" rel="icon" type="image/svg+xml" href="favicon.svg" />
   <script src="js/favicon.js"></script>
-  <link rel="stylesheet" href="css/admin-ministerio.css?v=2" />
+  <link rel="stylesheet" href="css/admin-ministerio.css?v=3" />
 </head>
 <body>
   <div id="login-screen">
@@ -73,7 +73,7 @@
                   <div class="form-grid">
                     <div class="form-group"><label class="form-label" for="ministry-name">Nome *</label><input class="form-input" id="ministry-name" type="text" placeholder="Ex.: Ministério de Mulheres" required /></div>
                     <div class="form-group form-group--full"><label class="form-label" for="ministry-slug">Identificador do link (opcional)</label><input class="form-input" id="ministry-slug" type="text" placeholder="Gerado automaticamente a partir do nome" /><span class="form-help">Use letras minúsculas, números e hífens. Se ficar vazio, o sistema gera o link automaticamente.</span></div>
-                    <div class="form-group form-group--full"><label class="form-label" for="ministry-description">Descrição do card e da página</label><textarea class="form-textarea" id="ministry-description" rows="3" placeholder="Apresente brevemente este ministério."></textarea></div>
+                    <div class="form-group form-group--full"><label class="form-label" for="ministry-description">Descrição do ministério</label><textarea class="form-textarea" id="ministry-description" rows="3" placeholder="Explique brevemente o propósito e as atividades deste ministério."></textarea><span class="form-help">Este texto aparecerá no topo da página pública do ministério.</span></div>
                   </div>
                 </div>
 
@@ -93,7 +93,15 @@
                   <h3><i class="fas fa-calendar-days"></i> Programação</h3>
                   <div class="form-grid">
                     <div class="form-group"><label class="form-label" for="ministry-meetings">Dias de reunião</label><textarea class="form-textarea" id="ministry-meetings" rows="4" placeholder="Ex.: Toda terça-feira, às 19h30."></textarea></div>
-                    <div class="form-group"><label class="form-label" for="ministry-rehearsals">Ensaios</label><textarea class="form-textarea" id="ministry-rehearsals" rows="4" placeholder="Ex.: Sábados, às 16h."></textarea></div>
+                    <div class="form-group"><label class="form-label" for="ministry-rehearsals">Dias de ensaio</label><textarea class="form-textarea" id="ministry-rehearsals" rows="4" placeholder="Ex.: Sábados, às 16h."></textarea></div>
+                    <div class="form-group form-group--full">
+                      <span class="form-label" id="ministry-visibility-label">Exibição na página pública</span>
+                      <div class="visibility-grid" role="group" aria-labelledby="ministry-visibility-label">
+                        <label class="visibility-toggle"><input id="ministry-show-meetings" type="checkbox" checked /><span class="visibility-toggle__switch" aria-hidden="true"></span><span class="visibility-toggle__copy"><strong>Exibir dias de reunião</strong><small>Mostrar este bloco aos visitantes.</small></span></label>
+                        <label class="visibility-toggle"><input id="ministry-show-rehearsals" type="checkbox" checked /><span class="visibility-toggle__switch" aria-hidden="true"></span><span class="visibility-toggle__copy"><strong>Exibir dias de ensaio</strong><small>Mostrar este bloco aos visitantes.</small></span></label>
+                      </div>
+                      <span class="form-help">Desative uma opção para ocultar somente esse bloco na página pública, sem apagar o texto salvo.</span>
+                    </div>
                     <div class="form-group form-group--full"><label class="form-label" for="ministry-notices">Quadro de avisos</label><textarea class="form-textarea" id="ministry-notices" rows="5" placeholder="Um aviso por linha. Ex.: Inscrições abertas para o próximo encontro."></textarea><span class="form-help">Digite um aviso por linha. Linhas vazias serão ignoradas.</span></div>
                   </div>
                 </div>
@@ -174,6 +182,14 @@
     }
     function normalizedNotices(value) {
       return (Array.isArray(value) ? value : []).map(item => typeof item === 'string' ? item.trim() : String(item?.texto || item?.text || item?.titulo || '').trim()).filter(Boolean);
+    }
+    function readVisibilityFlag(item, keys) {
+      const key = keys.find(candidate => Object.prototype.hasOwnProperty.call(item || {}, candidate));
+      if (!key) return true;
+      const value = item[key];
+      if (typeof value === 'boolean') return value;
+      if (typeof value === 'string') return !['false', '0', 'nao', 'não', 'off'].includes(value.trim().toLowerCase());
+      return value !== 0 && value !== null;
     }
     function hasImageFile(file) { return file && /^image\/(jpeg|png|webp)$/.test(file.type) && file.size <= MAX_FILE_SIZE; }
     function fileName(value) { return String(value || 'imagem').toLowerCase().replace(/[^a-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80) || 'imagem'; }
@@ -293,7 +309,7 @@
       backgroundUrl = ''; backgroundPath = ''; backgroundAlt = ''; pendingBackgroundFile = null; galleryItems = [];
       $('ministry-index').value = '-1'; $('ministry-name').value = ''; $('ministry-slug').value = '';
       $('ministry-description').value = ''; $('ministry-bg-url').value = ''; $('ministry-bg-alt').value = ''; $('ministry-bg-file').value = '';
-      $('ministry-meetings').value = ''; $('ministry-rehearsals').value = ''; $('ministry-notices').value = ''; $('gallery-file').value = '';
+      $('ministry-meetings').value = ''; $('ministry-rehearsals').value = ''; $('ministry-show-meetings').checked = true; $('ministry-show-rehearsals').checked = true; $('ministry-notices').value = ''; $('gallery-file').value = '';
       $('background-file-name').textContent = ''; $('editor-status').textContent = 'Novo cadastro'; $('delete-ministry-btn').hidden = true;
       renderGallery(); updatePreview(); renderList(); showEditor(true);
       $('ministry-name').focus();
@@ -314,6 +330,7 @@
       $('ministry-description').value = String(item.desc || item.descricao || '');
       $('ministry-bg-url').value = backgroundUrl; $('ministry-bg-alt').value = backgroundAlt; $('ministry-bg-file').value = '';
       $('ministry-meetings').value = String(item.reunioes || item.diasReuniao || item.dias || ''); $('ministry-rehearsals').value = String(item.ensaios || item.ensaio || '');
+      $('ministry-show-meetings').checked = readVisibilityFlag(item, ['mostrarReunioes', 'exibirReunioes', 'mostrarDiasReuniao']); $('ministry-show-rehearsals').checked = readVisibilityFlag(item, ['mostrarEnsaios', 'exibirEnsaios', 'mostrarDiasEnsaio']);
       $('ministry-notices').value = normalizedNotices(item.avisos).join('\n'); $('gallery-file').value = '';
       $('background-file-name').textContent = ''; $('editor-status').textContent = 'Editando'; $('delete-ministry-btn').hidden = false;
       renderGallery(); updatePreview(); renderList(); showEditor(true);
@@ -422,6 +439,8 @@
           fotoFundoAlt: $('ministry-bg-alt').value.trim(),
           reunioes: $('ministry-meetings').value.trim(),
           ensaios: $('ministry-rehearsals').value.trim(),
+          mostrarReunioes: $('ministry-show-meetings').checked,
+          mostrarEnsaios: $('ministry-show-rehearsals').checked,
           avisos: $('ministry-notices').value.split('\n').map(item => item.trim()).filter(Boolean).slice(0, 20),
           fotos: savedPhotos.slice(0, MAX_PHOTOS)
         };

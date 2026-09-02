@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <title>Ministério — AD Diamantina</title>
   <meta name="description" content="Conheça este ministério da Assembleia de Deus Ministério de Diamantina." />
-  <link rel="stylesheet" href="css/style.css?v=22" />
+  <link rel="stylesheet" href="css/style.css?v=23" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -76,12 +76,12 @@
         </div>
       </section>
 
-      <section class="ministerio-overview" aria-labelledby="ministerio-overview-title">
+      <section class="ministerio-overview" id="ministerio-programacao-section" aria-labelledby="ministerio-overview-title">
         <div class="container">
           <div class="ministerio-section-heading">
             <span class="section-tag">Nossa programação</span>
             <h2 class="section-title" id="ministerio-overview-title">Participe com a gente</h2>
-            <p>Confira os dias de reunião, ensaios e os avisos publicados para este ministério.</p>
+            <p id="ministerio-overview-intro">Confira os dias de reunião, ensaios e os avisos publicados para este ministério.</p>
           </div>
           <div class="ministerio-info-grid">
             <article class="ministerio-info-card" id="ministerio-reunioes-card">
@@ -190,6 +190,14 @@
       const el = document.getElementById(id);
       if (el) el.textContent = value || '';
     }
+    function readVisibilityFlag(item, keys) {
+      const key = keys.find(candidate => Object.prototype.hasOwnProperty.call(item || {}, candidate));
+      if (!key) return true;
+      const value = item[key];
+      if (typeof value === 'boolean') return value;
+      if (typeof value === 'string') return !['false', '0', 'nao', 'não', 'off'].includes(value.trim().toLowerCase());
+      return value !== 0 && value !== null;
+    }
     function normalizePhoto(item, index) {
       const url = safeUrl(typeof item === 'string' ? item : item?.url);
       return url ? { url, alt: String(typeof item === 'string' ? `Foto ${index + 1}` : item?.alt || `Foto ${index + 1}`).trim() } : null;
@@ -277,6 +285,16 @@
 
         const reunioes = String(ministry.reunioes || ministry.diasReuniao || ministry.dias || '').trim();
         const ensaios = String(ministry.ensaios || ministry.ensaio || '').trim();
+        const showMeetings = readVisibilityFlag(ministry, ['mostrarReunioes', 'exibirReunioes', 'mostrarDiasReuniao']);
+        const showRehearsals = readVisibilityFlag(ministry, ['mostrarEnsaios', 'exibirEnsaios', 'mostrarDiasEnsaio']);
+        document.getElementById('ministerio-reunioes-card').hidden = !showMeetings;
+        document.getElementById('ministerio-ensaios-card').hidden = !showRehearsals;
+        const overview = document.getElementById('ministerio-programacao-section');
+        const intro = document.getElementById('ministerio-overview-intro');
+        overview.hidden = !showMeetings && !showRehearsals;
+        if (showMeetings && showRehearsals) intro.textContent = 'Confira os dias de reunião e ensaios publicados para este ministério.';
+        else if (showMeetings) intro.textContent = 'Confira os dias de reunião publicados para este ministério.';
+        else if (showRehearsals) intro.textContent = 'Confira os dias de ensaio publicados para este ministério.';
         setText('ministerio-reunioes', reunioes || 'Informação ainda não cadastrada.');
         setText('ministerio-ensaios', ensaios || 'Informação ainda não cadastrada.');
         renderNotices(ministry.avisos);

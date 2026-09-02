@@ -145,6 +145,8 @@ O documento mantém uma lista de ministérios. O `slug` é o identificador está
       "fotoFundoAlt": "Crianças do ministério infantil",
       "reunioes": "Domingos, às 9h.",
       "ensaios": "Sábados, às 15h.",
+      "mostrarReunioes": true,
+      "mostrarEnsaios": true,
       "avisos": ["Aviso confirmado pela liderança."],
       "fotos": [
         { "url": "https://...", "path": "img/ministerios/ministerio-infantil/foto-0.jpg", "alt": "Encontro do ministério" }
@@ -155,7 +157,7 @@ O documento mantém uma lista de ministérios. O `slug` é o identificador está
 }
 ```
 
-O campo legado `icone`, quando existir em registros antigos, não é mais exibido nem solicitado pelo painel e é removido na próxima gravação. Os campos `fotoFundoUrl`, `fotoFundoPath`, `fotoFundoAlt`, `reunioes`, `ensaios`, `avisos` e `fotos` são opcionais. Sem foto de fundo, o card usa o gradiente institucional; sem avisos ou fotos, a página pública exibe um estado vazio e não inventa conteúdo.
+O campo legado `icone`, quando existir em registros antigos, não é mais exibido nem solicitado pelo painel e é removido na próxima gravação. Os campos `fotoFundoUrl`, `fotoFundoPath`, `fotoFundoAlt`, `reunioes`, `ensaios`, `mostrarReunioes`, `mostrarEnsaios`, `avisos` e `fotos` são opcionais. As flags `mostrarReunioes` e `mostrarEnsaios` controlam separadamente a exibição dos cartões correspondentes; quando ausentes em registros antigos, são tratadas como `true`. Desativar uma flag oculta o bloco público sem apagar o texto salvo. Sem foto de fundo, o card usa o gradiente institucional; sem avisos ou fotos, a página pública exibe um estado vazio e não inventa conteúdo.
 
 ### `site/imagens`
 ```json
