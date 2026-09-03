@@ -487,6 +487,12 @@ body.agenda-dialog-open { overflow: hidden; }
 .ministerio-hero__badge { display: inline-flex; align-items: center; gap: 7px; margin-bottom: 14px; padding: 5px 14px; border-radius: 50px; color: #fff; background: var(--gold); font-size: .72rem; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
 .ministerio-hero__title { max-width: 850px; color: #fff; font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 5vw, 4rem); line-height: 1.08; }
 .ministerio-hero__description { max-width: 660px; margin-top: 18px; color: rgba(255,255,255,.84); font-size: 1rem; line-height: 1.7; }
+.ministerio-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.ministerio-actions[hidden] { display: none; }
+.ministerio-action { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 44px; padding: 10px 17px; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; color: #fff; background: rgba(255,255,255,.12); box-shadow: 0 8px 24px rgba(4,12,45,.16); font-size: .86rem; font-weight: 700; text-decoration: none; backdrop-filter: blur(5px); transition: background var(--transition),border-color var(--transition),transform var(--transition),box-shadow var(--transition); }
+.ministerio-action i { color: var(--gold); font-size: .82rem; }
+.ministerio-action:hover { border-color: var(--gold); background: rgba(212,160,23,.2); box-shadow: 0 10px 26px rgba(4,12,45,.25); transform: translateY(-2px); }
+.ministerio-action:focus-visible { outline: 3px solid rgba(244,211,107,.85); outline-offset: 3px; }
 .ministerio-overview, .ministerio-galeria-section { padding: 88px 0; background: #fff; }
 .ministerio-overview[hidden], .ministerio-info-card[hidden] { display: none !important; }
 .ministerio-avisos-section { padding: 88px 0; background: var(--light); }
@@ -536,6 +542,8 @@ body.agenda-dialog-open { overflow: hidden; }
   .ministerio-hero { min-height: 420px; }
   .ministerio-hero__content { padding-top: 42px; padding-bottom: 42px; }
   .ministerio-overview, .ministerio-avisos-section, .ministerio-galeria-section { padding: 64px 0; }
+  .ministerio-actions { align-items: stretch; flex-direction: column; }
+  .ministerio-action { width: 100%; }
   .ministerio-gallery { grid-template-columns: 1fr; }
   .ministerio-gallery__item:first-child { grid-column: auto; }
   .ministerio-gallery__item, .ministerio-gallery__item img { min-height: 210px; }

@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <title>Ministério — AD Diamantina</title>
   <meta name="description" content="Conheça este ministério da Assembleia de Deus Ministério de Diamantina." />
-  <link rel="stylesheet" href="css/style.css?v=23" />
+  <link rel="stylesheet" href="css/style.css?v=24" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -73,6 +73,7 @@
           <span class="ministerio-hero__badge"><i class="fas fa-users" aria-hidden="true"></i> Ministério</span>
           <h1 class="ministerio-hero__title" id="ministerio-title">Ministério</h1>
           <p class="ministerio-hero__description" id="ministerio-description"></p>
+          <div class="ministerio-actions" id="ministerio-actions" hidden aria-label="Ações do ministério"></div>
         </div>
       </section>
 
@@ -198,6 +199,20 @@
       if (typeof value === 'string') return !['false', '0', 'nao', 'não', 'off'].includes(value.trim().toLowerCase());
       return value !== 0 && value !== null;
     }
+    function normalizeAction(item) {
+      if (!item || typeof item !== 'object') return null;
+      const label = String(item.label || item.texto || item.titulo || item.nome || '').trim();
+      const url = safeUrl(item.url || item.link || '');
+      if (!label || !url) return null;
+      return { label, url, newTab: item.newTab !== false && item.abrirNovaAba !== false };
+    }
+    function renderActions(value) {
+      const container = document.getElementById('ministerio-actions');
+      const actions = (Array.isArray(value) ? value : []).map(normalizeAction).filter(Boolean).slice(0, 4);
+      if (!actions.length) { container.hidden = true; container.innerHTML = ''; return; }
+      container.hidden = false;
+      container.innerHTML = actions.map(action => `<a class="ministerio-action" href="${escapeHtml(action.url)}"${action.newTab ? ' target="_blank" rel="noopener noreferrer"' : ''}><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i><span>${escapeHtml(action.label)}</span></a>`).join('');
+    }
     function normalizePhoto(item, index) {
       const url = safeUrl(typeof item === 'string' ? item : item?.url);
       return url ? { url, alt: String(typeof item === 'string' ? `Foto ${index + 1}` : item?.alt || `Foto ${index + 1}`).trim() } : null;
@@ -282,6 +297,7 @@
         setText('ministerio-description', description);
         if (!description) document.getElementById('ministerio-description').hidden = true;
         if (background) document.getElementById('ministerio-hero-bg').style.backgroundImage = `url("${escapeHtml(background)}")`;
+        renderActions(ministry.acoes || ministry.botoesAcoes || ministry.botoes || ministry.links);
 
         const reunioes = String(ministry.reunioes || ministry.diasReuniao || ministry.dias || '').trim();
         const ensaios = String(ministry.ensaios || ministry.ensaio || '').trim();

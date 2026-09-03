@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link id="site-favicon" rel="icon" type="image/svg+xml" href="favicon.svg" />
   <script src="js/favicon.js"></script>
-  <link rel="stylesheet" href="css/admin-ministerio.css?v=3" />
+  <link rel="stylesheet" href="css/admin-ministerio.css?v=4" />
 </head>
 <body>
   <div id="login-screen">
@@ -75,6 +75,13 @@
                     <div class="form-group form-group--full"><label class="form-label" for="ministry-slug">Identificador do link (opcional)</label><input class="form-input" id="ministry-slug" type="text" placeholder="Gerado automaticamente a partir do nome" /><span class="form-help">Use letras minúsculas, números e hífens. Se ficar vazio, o sistema gera o link automaticamente.</span></div>
                     <div class="form-group form-group--full"><label class="form-label" for="ministry-description">Descrição do ministério</label><textarea class="form-textarea" id="ministry-description" rows="3" placeholder="Explique brevemente o propósito e as atividades deste ministério."></textarea><span class="form-help">Este texto aparecerá no topo da página pública do ministério.</span></div>
                   </div>
+                </div>
+
+                <div class="form-section">
+                  <h3><i class="fas fa-link"></i> Botões de ação</h3>
+                  <p class="form-help form-section-intro">Adicione links importantes para este ministério, como site próprio, YouTube, formulário ou rede social. Você pode criar até quatro botões.</p>
+                  <div class="actions-admin" id="actions-admin"></div>
+                  <button class="admin-btn admin-btn--ghost" id="add-action-btn" type="button"><i class="fas fa-plus"></i> Adicionar botão</button>
                 </div>
 
                 <div class="form-section">
@@ -144,6 +151,7 @@
     const storage = getStorage(app);
     const PRIMARY_ADMIN_EMAIL = 'hewertonluann@gmail.com';
     const MAX_PHOTOS = 5;
+    const MAX_ACTIONS = 4;
     const MAX_FILE_SIZE = 10 * 1024 * 1024;
     let ministries = [];
     let editingIndex = -1;
@@ -152,6 +160,7 @@
     let backgroundAlt = '';
     let pendingBackgroundFile = null;
     let galleryItems = [];
+    let actionItems = [];
     let isPrimaryUser = false;
     let orderDirty = false;
     let dragIndex = -1;
@@ -182,6 +191,14 @@
     }
     function normalizedNotices(value) {
       return (Array.isArray(value) ? value : []).map(item => typeof item === 'string' ? item.trim() : String(item?.texto || item?.text || item?.titulo || '').trim()).filter(Boolean);
+    }
+    function normalizedActions(value) {
+      return (Array.isArray(value) ? value : []).map(item => {
+        const label = String(typeof item === 'string' ? '' : item?.label || item?.texto || item?.titulo || item?.nome || '').trim();
+        const url = safeUrl(typeof item === 'string' ? item : item?.url || item?.link || '');
+        if (!label || !url) return null;
+        return { label, url, newTab: item?.newTab !== false && item?.abrirNovaAba !== false };
+      }).filter(Boolean).slice(0, MAX_ACTIONS);
     }
     function readVisibilityFlag(item, keys) {
       const key = keys.find(candidate => Object.prototype.hasOwnProperty.call(item || {}, candidate));
@@ -295,6 +312,30 @@
       preview.style.backgroundImage = backgroundUrl ? `linear-gradient(145deg,rgba(8,18,57,.22),rgba(7,15,43,.9)),url("${backgroundUrl}")` : 'linear-gradient(145deg,#1A3A8F,#122a6e)';
     }
 
+    function renderActions(focusIndex = -1) {
+      const container = $('actions-admin');
+      container.innerHTML = actionItems.map((action, index) => `<div class="action-admin" data-action-index="${index}">
+        <div class="action-admin__header"><strong>Botão ${index + 1}</strong><button class="action-admin__remove" type="button" data-remove-action="${index}" aria-label="Remover botão ${index + 1}"><i class="fas fa-trash-can" aria-hidden="true"></i> Remover</button></div>
+        <div class="action-admin__fields">
+          <div class="form-group"><label class="form-label" for="action-label-${index}">Texto do botão</label><input class="form-input" id="action-label-${index}" type="text" data-action-label="${index}" value="${escapeHtml(action.label)}" placeholder="Ex.: Canal no YouTube" maxlength="60" /></div>
+          <div class="form-group"><label class="form-label" for="action-url-${index}">URL de destino</label><input class="form-input" id="action-url-${index}" type="url" data-action-url="${index}" value="${escapeHtml(action.url)}" placeholder="https://..." inputmode="url" /></div>
+        </div>
+        <label class="action-admin__new-tab"><input type="checkbox" data-action-new-tab="${index}" ${action.newTab !== false ? 'checked' : ''} /><span>Abrir em nova aba</span></label>
+      </div>`).join('');
+      $('add-action-btn').hidden = actionItems.length >= MAX_ACTIONS;
+      container.querySelectorAll('[data-action-label]').forEach(input => input.addEventListener('input', event => { actionItems[Number(event.currentTarget.dataset.actionLabel)].label = event.currentTarget.value; }));
+      container.querySelectorAll('[data-action-url]').forEach(input => input.addEventListener('input', event => { actionItems[Number(event.currentTarget.dataset.actionUrl)].url = event.currentTarget.value; }));
+      container.querySelectorAll('[data-action-new-tab]').forEach(input => input.addEventListener('change', event => { actionItems[Number(event.currentTarget.dataset.actionNewTab)].newTab = event.currentTarget.checked; }));
+      container.querySelectorAll('[data-remove-action]').forEach(button => button.addEventListener('click', () => { actionItems.splice(Number(button.dataset.removeAction), 1); renderActions(); }));
+      if (focusIndex >= 0) container.querySelector(`[data-action-label="${focusIndex}"]`)?.focus();
+    }
+
+    function addAction() {
+      if (actionItems.length >= MAX_ACTIONS) return;
+      actionItems.push({ label: '', url: '', newTab: true });
+      renderActions(actionItems.length - 1);
+    }
+
     function renderGallery() {
       const grid = $('gallery-admin');
       $('gallery-counter').textContent = `${galleryItems.length}/${MAX_PHOTOS}`;
@@ -306,10 +347,11 @@
     function clearEditorState() {
       revokePendingUrls();
       editingIndex = -1;
-      backgroundUrl = ''; backgroundPath = ''; backgroundAlt = ''; pendingBackgroundFile = null; galleryItems = [];
+      backgroundUrl = ''; backgroundPath = ''; backgroundAlt = ''; pendingBackgroundFile = null; galleryItems = []; actionItems = [];
       $('ministry-index').value = '-1'; $('ministry-name').value = ''; $('ministry-slug').value = '';
       $('ministry-description').value = ''; $('ministry-bg-url').value = ''; $('ministry-bg-alt').value = ''; $('ministry-bg-file').value = '';
       $('ministry-meetings').value = ''; $('ministry-rehearsals').value = ''; $('ministry-show-meetings').checked = true; $('ministry-show-rehearsals').checked = true; $('ministry-notices').value = ''; $('gallery-file').value = '';
+      renderActions();
       $('background-file-name').textContent = ''; $('editor-status').textContent = 'Novo cadastro'; $('delete-ministry-btn').hidden = true;
       renderGallery(); updatePreview(); renderList(); showEditor(true);
       $('ministry-name').focus();
@@ -326,12 +368,14 @@
       backgroundAlt = String(item.fotoFundoAlt || item.backgroundAlt || '');
       pendingBackgroundFile = null;
       galleryItems = normalizedPhotos(item.fotos);
+      actionItems = normalizedActions(item.acoes || item.botoesAcoes || item.botoes || item.links);
       $('ministry-index').value = String(index); $('ministry-name').value = name; $('ministry-slug').value = String(item.slug || slugify(name));
       $('ministry-description').value = String(item.desc || item.descricao || '');
       $('ministry-bg-url').value = backgroundUrl; $('ministry-bg-alt').value = backgroundAlt; $('ministry-bg-file').value = '';
       $('ministry-meetings').value = String(item.reunioes || item.diasReuniao || item.dias || ''); $('ministry-rehearsals').value = String(item.ensaios || item.ensaio || '');
       $('ministry-show-meetings').checked = readVisibilityFlag(item, ['mostrarReunioes', 'exibirReunioes', 'mostrarDiasReuniao']); $('ministry-show-rehearsals').checked = readVisibilityFlag(item, ['mostrarEnsaios', 'exibirEnsaios', 'mostrarDiasEnsaio']);
       $('ministry-notices').value = normalizedNotices(item.avisos).join('\n'); $('gallery-file').value = '';
+      renderActions();
       $('background-file-name').textContent = ''; $('editor-status').textContent = 'Editando'; $('delete-ministry-btn').hidden = false;
       renderGallery(); updatePreview(); renderList(); showEditor(true);
     }
@@ -405,6 +449,9 @@
       if (!slug) { toast('Informe um nome ou identificador válido.','error'); return; }
       const duplicate = ministries.some((item, index) => index !== editingIndex && slugify(item.slug || item.nome) === slug);
       if (duplicate) { toast('Já existe outro ministério com este identificador de link.','error'); return; }
+      const actions = actionItems.map(action => ({ label: String(action.label || '').trim(), url: safeUrl(action.url), newTab: action.newTab !== false }));
+      const invalidAction = actions.find(action => (action.label || action.url) && (!action.label || !action.url));
+      if (invalidAction) { toast('Preencha o texto e uma URL válida para cada botão de ação ou remova o botão incompleto.', 'error'); return; }
       const saveButton = $('save-ministry-btn');
       saveButton.disabled = true; resetProgressBars();
       const previous = editingIndex >= 0 ? ministries[editingIndex] || {} : {};
@@ -441,6 +488,7 @@
           ensaios: $('ministry-rehearsals').value.trim(),
           mostrarReunioes: $('ministry-show-meetings').checked,
           mostrarEnsaios: $('ministry-show-rehearsals').checked,
+          acoes: actions.filter(action => action.label && action.url).slice(0, MAX_ACTIONS),
           avisos: $('ministry-notices').value.split('\n').map(item => item.trim()).filter(Boolean).slice(0, 20),
           fotos: savedPhotos.slice(0, MAX_PHOTOS)
         };
@@ -501,6 +549,7 @@
 
     $('ministry-name').addEventListener('input', updatePreview);
     $('ministry-description').addEventListener('input', updatePreview);
+    $('add-action-btn').addEventListener('click', addAction);
     $('ministry-bg-url').addEventListener('input', () => { backgroundUrl = safeUrl($('ministry-bg-url').value); backgroundPath = ''; pendingBackgroundFile = null; $('background-file-name').textContent = ''; updatePreview(); });
     $('ministry-bg-alt').addEventListener('input', () => { backgroundAlt = $('ministry-bg-alt').value; });
     $('ministry-bg-file').addEventListener('change', event => chooseBackground(event.target.files[0]));

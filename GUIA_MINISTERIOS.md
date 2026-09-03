@@ -10,6 +10,8 @@ Também existe um link **Ministérios** no menu lateral do [`admin.html`](https:
 
 Clique em **Novo Ministério** e preencha o nome e a **Descrição do ministério**. A descrição explica o propósito e as atividades do ministério e aparece no topo da página pública. O identificador do link pode ficar vazio: nesse caso, o painel gera um slug a partir do nome. Esse slug aparece na URL da página individual e deve permanecer estável depois que o ministério já tiver sido divulgado.
 
+Na área **Botões de ação**, clique em **Adicionar botão** para cadastrar links importantes do ministério, como site próprio, canal no YouTube, formulário ou rede social. Informe o texto que aparecerá no botão e uma URL completa iniciada por `https://` ou `http://`. É possível criar até quatro botões e escolher se cada um abrirá em uma nova aba. Para remover um botão, use **Remover**; as alterações só chegam à página pública depois de salvar o ministério.
+
 A foto de fundo pode ser informada por uma URL pública ou enviada pelo próprio painel. Quando uma imagem é enviada, ela fica no Firebase Storage em `img/ministerios/{slug}/`, caminho compatível com a regra geral de imagens institucionais. A imagem deve ser JPG, PNG ou WEBP e ter até 10 MB. O texto alternativo deve descrever a imagem para usuários que utilizam leitores de tela.
 
 Os campos **Dias de reunião** e **Dias de ensaio** aceitam texto com quebras de linha. Isso permite informar mais de um dia ou horário sem forçar um formato único. Na área **Exibição na página pública**, use os switches **Exibir dias de reunião** e **Exibir dias de ensaio** para controlar cada bloco separadamente. Desativar um switch oculta apenas o bloco correspondente e preserva o texto salvo para uso futuro. Em cadastros antigos sem essas flags, os dois blocos permanecem ativos por compatibilidade. No **Quadro de avisos**, use um aviso por linha; linhas vazias são ignoradas e o sistema publica no máximo vinte avisos.
@@ -38,11 +40,16 @@ As informações ficam no documento `site/ministerios`, no campo `lista`. Cada i
   "ensaios": "Sábados, às 15h.",
   "mostrarReunioes": true,
   "mostrarEnsaios": true,
+  "acoes": [
+    { "label": "Canal no YouTube", "url": "https://youtube.com/...", "newTab": true }
+  ],
   "avisos": ["Aviso confirmado pela liderança."],
   "fotos": [
     { "url": "https://...", "path": "ministerios/ministerio-infantil/foto-0.jpg", "alt": "Encontro do ministério" }
   ]
 }
 ```
+
+A página pública exibe os botões de ação no hero do ministério somente quando houver ações válidas. Os destinos são tratados como links externos seguros; quando `newTab` é `true`, a nova aba usa `noopener noreferrer`.
 
 Os uploads utilizam o caminho `img/ministerios/{slug}/`, que já está coberto pelo bloco `match /img/{allPaths=**}`. O arquivo `storage.rules` também mantém um bloco explícito para `ministerios/`, caso existam arquivos antigos nessa pasta; publique a versão atualizada no Firebase Console quando possível.
