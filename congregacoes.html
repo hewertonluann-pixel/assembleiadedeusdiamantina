@@ -203,6 +203,24 @@
     }
     .busca-sem-resultado i { font-size: 2rem; margin-bottom: 10px; display: block; }
 
+    .visualizacao-toolbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 18px;
+      margin: 0 auto 24px; max-width: 960px;
+    }
+    .resultado-contagem { color: var(--gray); font-size: .82rem; }
+    .view-toggle {
+      display: inline-flex; padding: 4px; gap: 3px; border: 1px solid #dce3f3;
+      border-radius: 50px; background: #fff; box-shadow: 0 3px 12px rgba(26,58,143,.06);
+    }
+    .view-toggle button {
+      display: inline-flex; align-items: center; gap: 7px; min-height: 40px;
+      padding: 8px 14px; border: 0; border-radius: 50px; background: transparent;
+      color: var(--gray); font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer;
+      transition: var(--transition);
+    }
+    .view-toggle button:hover { color: var(--primary); background: rgba(26,58,143,.06); }
+    .view-toggle button[aria-pressed="true"] { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(26,58,143,.18); }
+
     .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
 
     /* Skeleton loader */
@@ -278,6 +296,18 @@
       transition: var(--transition); border: none; cursor: pointer;
       text-align: center;
     }
+
+    /* Visualização em lista: mesma informação, leitura mais rápida e compacta. */
+    .cards-grid.list-view { display: flex; flex-direction: column; gap: 14px; }
+    .cards-grid.list-view .cong-card { display: grid; grid-template-columns: 180px minmax(0, 1fr); min-height: 164px; border-radius: 14px; }
+    .cards-grid.list-view .cong-card-img { aspect-ratio: auto; min-height: 164px; height: 100%; }
+    .cards-grid.list-view .cong-card-body { display: grid; grid-template-columns: minmax(160px, .72fr) minmax(240px, 1.4fr) auto; align-items: center; gap: 18px 24px; padding: 20px 24px; }
+    .cards-grid.list-view .cong-card-body h3 { align-self: start; padding-top: 4px; }
+    .cards-grid.list-view .cong-address { gap: 4px; }
+    .cards-grid.list-view .cong-horario { grid-column: 2; margin-top: -8px; width: fit-content; }
+    .cards-grid.list-view .cong-card-actions { grid-column: 3; grid-row: 1 / span 2; min-width: 148px; display: flex; flex-direction: column; margin-top: 0; }
+    .cards-grid.list-view .cong-badge { top: 10px; left: 10px; font-size: .64rem; padding: 4px 9px; }
+    .cong-badge--fallback { background: rgba(26,58,143,.9); }
     .btn-perfil {
       background: var(--gold); color: #fff;
     }
@@ -359,8 +389,20 @@
       .page-hero-content { padding: 32px 0 28px; }
       .page-hero-content h1 { font-size: 1.7rem; }
 
+      .visualizacao-toolbar { align-items: stretch; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+      .view-toggle { width: 100%; }
+      .view-toggle button { flex: 1; justify-content: center; }
+
       /* Cards em coluna única */
       .cards-grid { grid-template-columns: 1fr; gap: 20px; }
+      .cards-grid.list-view { gap: 12px; }
+      .cards-grid.list-view .cong-card { grid-template-columns: 108px minmax(0, 1fr); min-height: 154px; }
+      .cards-grid.list-view .cong-card-img { min-height: 154px; }
+      .cards-grid.list-view .cong-card-body { display: flex; align-items: stretch; gap: 9px; padding: 15px 14px; }
+      .cards-grid.list-view .cong-card-body h3 { padding-top: 0; }
+      .cards-grid.list-view .cong-horario { width: auto; margin-top: 0; }
+      .cards-grid.list-view .cong-card-actions { display: grid; grid-template-columns: 1fr 1fr; min-width: 0; }
+      .cards-grid.list-view .cong-card-actions a { padding: 10px 7px; font-size: .76rem; }
 
       /* Imagem menos alta para menos scroll */
       .cong-card-img { aspect-ratio: 16 / 7; }
@@ -498,13 +540,21 @@
         <input
           type="search"
           id="busca-cong"
-          placeholder="Buscar congregação por nome..."
+          placeholder="Buscar por unidade, bairro ou cidade..."
           aria-label="Buscar congregação"
           autocomplete="off"
         />
       </div>
 
-      <div class="cards-grid" id="cards-grid">
+      <div class="visualizacao-toolbar" aria-label="Opções de visualização">
+        <span class="resultado-contagem" id="resultado-contagem" aria-live="polite">Carregando congregações…</span>
+        <div class="view-toggle" role="group" aria-label="Alternar visualização">
+          <button type="button" data-view="grid" aria-pressed="true"><i class="fas fa-grip" aria-hidden="true"></i> Grade</button>
+          <button type="button" data-view="list" aria-pressed="false"><i class="fas fa-list" aria-hidden="true"></i> Lista</button>
+        </div>
+      </div>
+
+      <div class="cards-grid" id="cards-grid" data-view="grid">
         <div class="skeleton-card">
           <div class="skeleton-img"></div>
           <div class="skeleton-body">
@@ -672,49 +722,47 @@
       window.siteFloatingActions?.setWhatsappNumber(number);
     }
 
+    const IGREJA_NOME = 'Assembleia de Deus';
+    let congregacoes = [];
+    let viewMode = localStorage.getItem('congregacoes-view') === 'list' ? 'list' : 'grid';
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+    }
+
     function renderCard(docId, cong, index) {
-      const igrejaNome = 'Assembleia de Deus';
-      const foto   = cong.foto || imgFallback(igrejaNome || `congregacao-${index}`);
-      const badge  = cong.badge || `Congregação ${String(index).padStart(2, '0')}`;
-      const mLink  = mapsUrl(cong.maps || cong.endereco);
-      const pLink  = `congregacao.html?id=${encodeURIComponent(docId)}`;
-      const cidade = cong.cidade ? `<br/>${cong.cidade}` : '';
+      const badge = String(cong.badge || `Congregação ${String(index).padStart(2, '0')}`).trim();
+      const foto = cong.foto || imgFallback(`${docId}-church`);
+      const mLink = mapsUrl(cong.maps || `${cong.endereco || ''} ${cong.cidade || ''}`);
+      const pLink = `congregacao.html?id=${encodeURIComponent(docId)}`;
+      const address = [cong.endereco, cong.cidade].filter(Boolean).join(', ');
+      const badgeClass = cong.badge ? '' : ' cong-badge--fallback';
+      const title = `${IGREJA_NOME} — ${badge}`;
+      const safeTitle = escapeHtml(title);
 
       const article = document.createElement('article');
       article.className = 'cong-card fade-in';
+      article.dataset.search = `${badge} ${address} ${cong.horario || ''}`.toLowerCase();
       article.innerHTML = `
-        <a href="${pLink}" class="cong-card-img" aria-label="Ver perfil de ${igrejaNome} — ${badge}">
-          <img src="${foto}"
-               alt="${igrejaNome} — ${badge}"
-               width="800" height="500" loading="lazy"
-               onerror="this.src='${imgFallback(igrejaNome)}'" />
-          <span class="cong-badge">${badge}</span>
+        <a href="${pLink}" class="cong-card-img" aria-label="Ver perfil de ${safeTitle}">
+          <img src="${escapeHtml(foto)}" alt="${safeTitle}" width="800" height="500" loading="lazy"
+               onerror="this.src='${imgFallback(docId + '-fallback')}'" />
+          <span class="cong-badge${badgeClass}">${escapeHtml(badge)}</span>
         </a>
         <div class="cong-card-body">
-          <h3>
-            <a href="${pLink}" style="color:inherit;">${igrejaNome}</a>
-          </h3>
+          <h3><a href="${pLink}" style="color:inherit;">${escapeHtml(IGREJA_NOME)}</a></h3>
           <div class="cong-address">
             <div class="cong-address-line">
               <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-              <span>${cong.endereco}${cidade}</span>
+              <span>${escapeHtml(address || 'Endereço não informado')}</span>
             </div>
           </div>
-          ${cong.horario ? `
-          <div class="cong-horario">
-            <i class="fas fa-clock" aria-hidden="true"></i>
-            ${cong.horario}
-          </div>` : ''}
+          ${cong.horario ? `<div class="cong-horario"><i class="fas fa-clock" aria-hidden="true"></i> ${escapeHtml(cong.horario)}</div>` : ''}
           <div class="cong-card-actions">
-            <a class="btn-perfil"
-               href="${pLink}"
-               aria-label="Ver perfil de ${igrejaNome} — ${badge}">
-              <i class="fas fa-church" aria-hidden="true"></i> Ver perfil
+            <a class="btn-perfil" href="${pLink}" aria-label="Ver perfil de ${safeTitle}">
+              <i class="fas fa-church" aria-hidden="true"></i> Perfil
             </a>
-            <a class="btn-map"
-               href="${mLink}"
-               target="_blank" rel="noopener noreferrer"
-               aria-label="Como chegar em ${igrejaNome} — ${badge}">
+            <a class="btn-map" href="${escapeHtml(mLink)}" target="_blank" rel="noopener noreferrer" aria-label="Como chegar em ${safeTitle}">
               <i class="fas fa-directions" aria-hidden="true"></i> Como chegar
             </a>
           </div>
@@ -723,10 +771,10 @@
     }
 
     function observeFadeIn(container) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, i) => {
+      const observer = new IntersectionObserver((entries, i) => {
+        entries.forEach((entry, index) => {
           if (entry.isIntersecting) {
-            setTimeout(() => entry.target.classList.add('visible'), i * 80);
+            setTimeout(() => entry.target.classList.add('visible'), index * 50);
             observer.unobserve(entry.target);
           }
         });
@@ -734,74 +782,63 @@
       container.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     }
 
-    function ativarBusca() {
+    function aplicarVisualizacao() {
+      const grid = document.getElementById('cards-grid');
+      if (!grid) return;
+      grid.classList.toggle('list-view', viewMode === 'list');
+      grid.dataset.view = viewMode;
+      document.querySelectorAll('[data-view]').forEach(button => {
+        if (button.tagName === 'BUTTON') button.setAttribute('aria-pressed', String(button.dataset.view === viewMode));
+      });
+      localStorage.setItem('congregacoes-view', viewMode);
+    }
+
+    function renderCards() {
+      const grid = document.getElementById('cards-grid');
       const input = document.getElementById('busca-cong');
-      const grid  = document.getElementById('cards-grid');
-
-      let semResultado = grid.querySelector('.busca-sem-resultado');
-      if (!semResultado) {
-        semResultado = document.createElement('div');
-        semResultado.className = 'busca-sem-resultado';
-        semResultado.innerHTML = '<i class="fas fa-search"></i><p>Nenhuma congregação encontrada para "<span id="busca-termo"></span>".</p>';
-        grid.appendChild(semResultado);
+      if (!grid) return;
+      const termo = String(input?.value || '').trim().toLowerCase();
+      const filtradas = congregacoes.filter(item => item.search.includes(termo));
+      grid.innerHTML = '';
+      if (!filtradas.length) {
+        grid.innerHTML = `<div class="busca-sem-resultado" style="display:block"><i class="fas fa-search"></i><p>${termo ? `Nenhuma unidade encontrada para <strong>“${escapeHtml(input.value.trim())}”</strong>.` : 'Nenhuma congregação cadastrada ainda.'}</p></div>`;
+      } else {
+        filtradas.forEach((item, index) => grid.appendChild(renderCard(item.id, item.data, index + 1)));
       }
+      const count = document.getElementById('resultado-contagem');
+      if (count) count.textContent = termo ? `${filtradas.length} resultado${filtradas.length === 1 ? '' : 's'}` : `${filtradas.length} unidade${filtradas.length === 1 ? '' : 's'} cadastrada${filtradas.length === 1 ? '' : 's'}`;
+      aplicarVisualizacao();
+      observeFadeIn(grid);
+    }
 
-      input.addEventListener('input', () => {
-        const termo = input.value.trim().toLowerCase();
-        const cards = grid.querySelectorAll('.cong-card');
-        let visiveis = 0;
-
-        cards.forEach(card => {
-          const nome     = card.querySelector('h3')?.textContent.toLowerCase() || '';
-          const endereco = card.querySelector('.cong-address-line span')?.textContent.toLowerCase() || '';
-          const match    = nome.includes(termo) || endereco.includes(termo);
-          card.style.display = match ? '' : 'none';
-          if (match) visiveis++;
+    function ativarBusca() {
+      document.getElementById('busca-cong')?.addEventListener('input', renderCards);
+      document.querySelectorAll('.view-toggle [data-view]').forEach(button => {
+        button.addEventListener('click', () => {
+          viewMode = button.dataset.view;
+          aplicarVisualizacao();
         });
-
-        const termoBusca = grid.querySelector('#busca-termo');
-        if (termoBusca) termoBusca.textContent = input.value.trim();
-        semResultado.style.display = (visiveis === 0 && termo.length > 0) ? 'block' : 'none';
       });
     }
 
     async function carregarCongregacoes() {
       const grid = document.getElementById('cards-grid');
       try {
-        const q    = query(collection(db, 'congregacoes'), orderBy('ordem'));
-        const snap = await getDocs(q);
-
-        grid.innerHTML = '';
-
-        if (snap.empty) {
-          grid.innerHTML = `
-            <div class="error-state">
-              <i class="fas fa-church"></i>
-              <p>Nenhuma congregação cadastrada ainda.</p>
-            </div>`;
-          document.getElementById('stat-total').textContent = '0';
-          return;
-        }
-
-        let index = 1;
-        snap.forEach(docSnap => {
-          const card = renderCard(docSnap.id, docSnap.data(), index++);
-          grid.appendChild(card);
+        let snap;
+        try { snap = await getDocs(query(collection(db, 'congregacoes'), orderBy('ordem'))); }
+        catch (_) { snap = await getDocs(collection(db, 'congregacoes')); }
+        congregacoes = snap.docs.map(docSnap => ({ id: docSnap.id, data: docSnap.data() }));
+        congregacoes.forEach(item => {
+          const c = item.data || {};
+          item.search = `${c.badge || ''} ${c.nome || ''} ${c.endereco || ''} ${c.cidade || ''} ${c.horario || ''}`.toLowerCase();
         });
-
-        document.getElementById('stat-total').textContent =
-          String(snap.size).padStart(2, '0');
-
-        observeFadeIn(grid);
+        renderCards();
+        document.getElementById('stat-total').textContent = String(congregacoes.length).padStart(2, '0');
         ativarBusca();
-
       } catch (err) {
         console.error('Erro ao carregar congregações:', err);
-        grid.innerHTML = `
-          <div class="error-state">
-            <i class="fas fa-exclamation-circle"></i>
-            <p>Não foi possível carregar as congregações. Tente novamente mais tarde.</p>
-          </div>`;
+        grid.innerHTML = `<div class="error-state"><i class="fas fa-exclamation-circle"></i><p>Não foi possível carregar as congregações. Tente novamente mais tarde.</p></div>`;
+        document.getElementById('resultado-contagem').textContent = 'Não foi possível carregar';
       }
     }
 
