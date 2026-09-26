@@ -302,16 +302,17 @@
     .cards-grid.list-view .cong-card { display: block; min-height: 0; border-radius: 12px; box-shadow: 0 2px 12px rgba(26,58,143,.07); }
     .cards-grid.list-view .cong-card:hover { transform: none; box-shadow: 0 4px 16px rgba(26,58,143,.11); }
     .cards-grid.list-view .cong-card-img { display: none; }
-    .cards-grid.list-view .cong-card-body { display: grid; grid-template-columns: minmax(112px, .72fr) minmax(0, 1.55fr) auto; align-items: center; gap: 8px 14px; padding: 12px 14px; }
+    .cards-grid.list-view .cong-card-body { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 5px 14px; padding: 12px 14px; }
     .cards-grid.list-view .cong-card-body h3 { align-self: center; padding-top: 0; font-size: .92rem; }
     .cards-grid.list-view .cong-title-grid { display: none; }
     .cong-title-list { display: none; }
     .cards-grid.list-view .cong-title-list { display: block; color: var(--primary); font-family: 'Playfair Display', serif; font-size: 1.08rem; line-height: 1.15; }
     .cong-badge--list { display: none; }
-    .cards-grid.list-view .cong-badge--list { display: inline-flex; position: static; grid-column: 1; width: fit-content; margin-bottom: 4px; padding: 3px 8px; font-size: .58rem; letter-spacing: .8px; }
-    .cards-grid.list-view .cong-address { gap: 4px; }
-    .cards-grid.list-view .cong-horario { grid-column: 2; margin-top: -4px; width: fit-content; padding: 5px 8px; font-size: .68rem; }
-    .cards-grid.list-view .cong-card-actions { grid-column: 3; grid-row: 1 / span 2; min-width: 82px; display: flex; flex-direction: column; gap: 5px; margin-top: 0; }
+    .cards-grid.list-view .cong-title-list { grid-column: 1; grid-row: 1; }
+    .cards-grid.list-view .cong-badge--list { display: inline-flex; position: static; grid-column: 1; grid-row: 2; width: fit-content; margin-bottom: 2px; padding: 3px 8px; font-size: .58rem; letter-spacing: .8px; }
+    .cards-grid.list-view .cong-address { grid-column: 1; grid-row: 3; gap: 4px; }
+    .cards-grid.list-view .cong-horario { display: none; }
+    .cards-grid.list-view .cong-card-actions { grid-column: 2; grid-row: 1 / span 3; min-width: 82px; display: flex; flex-direction: column; gap: 5px; margin-top: 0; }
     .cards-grid.list-view .cong-card-actions a { min-height: 0; padding: 6px 7px; gap: 4px; border-radius: 7px; font-size: .66rem; line-height: 1.1; }
     .cards-grid.list-view .cong-card-actions a i { font-size: .64rem; }
     .cards-grid.list-view .cong-badge { display: none; }
