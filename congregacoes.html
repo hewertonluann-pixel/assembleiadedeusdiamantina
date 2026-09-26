@@ -298,15 +298,18 @@
     }
 
     /* Visualização em lista: mesma informação, leitura mais rápida e compacta. */
-    .cards-grid.list-view { display: flex; flex-direction: column; gap: 14px; }
-    .cards-grid.list-view .cong-card { display: grid; grid-template-columns: 180px minmax(0, 1fr); min-height: 164px; border-radius: 14px; }
-    .cards-grid.list-view .cong-card-img { aspect-ratio: auto; min-height: 164px; height: 100%; }
-    .cards-grid.list-view .cong-card-body { display: grid; grid-template-columns: minmax(160px, .72fr) minmax(240px, 1.4fr) auto; align-items: center; gap: 18px 24px; padding: 20px 24px; }
-    .cards-grid.list-view .cong-card-body h3 { align-self: start; padding-top: 4px; }
+    .cards-grid.list-view { display: flex; flex-direction: column; gap: 10px; }
+    .cards-grid.list-view .cong-card { display: block; min-height: 0; border-radius: 12px; box-shadow: 0 2px 12px rgba(26,58,143,.07); }
+    .cards-grid.list-view .cong-card:hover { transform: none; box-shadow: 0 4px 16px rgba(26,58,143,.11); }
+    .cards-grid.list-view .cong-card-img { display: none; }
+    .cards-grid.list-view .cong-card-body { display: grid; grid-template-columns: minmax(160px, .8fr) minmax(240px, 1.6fr) auto; align-items: center; gap: 12px 24px; padding: 14px 18px; }
+    .cards-grid.list-view .cong-card-body h3 { align-self: center; padding-top: 0; font-size: 1rem; }
+    .cong-badge--list { display: none; }
+    .cards-grid.list-view .cong-badge--list { display: inline-flex; position: static; grid-column: 1; width: fit-content; margin-bottom: 5px; font-size: .62rem; padding: 3px 9px; }
     .cards-grid.list-view .cong-address { gap: 4px; }
     .cards-grid.list-view .cong-horario { grid-column: 2; margin-top: -8px; width: fit-content; }
     .cards-grid.list-view .cong-card-actions { grid-column: 3; grid-row: 1 / span 2; min-width: 148px; display: flex; flex-direction: column; margin-top: 0; }
-    .cards-grid.list-view .cong-badge { top: 10px; left: 10px; font-size: .64rem; padding: 4px 9px; }
+    .cards-grid.list-view .cong-badge { display: none; }
     .cong-badge--fallback { background: rgba(26,58,143,.9); }
     .btn-perfil {
       background: var(--gold); color: #fff;
@@ -395,10 +398,8 @@
 
       /* Cards em coluna única */
       .cards-grid { grid-template-columns: 1fr; gap: 20px; }
-      .cards-grid.list-view { gap: 12px; }
-      .cards-grid.list-view .cong-card { grid-template-columns: 108px minmax(0, 1fr); min-height: 154px; }
-      .cards-grid.list-view .cong-card-img { min-height: 154px; }
-      .cards-grid.list-view .cong-card-body { display: flex; align-items: stretch; gap: 9px; padding: 15px 14px; }
+      .cards-grid.list-view { gap: 10px; }
+      .cards-grid.list-view .cong-card-body { display: flex; align-items: stretch; gap: 9px; padding: 13px 14px; }
       .cards-grid.list-view .cong-card-body h3 { padding-top: 0; }
       .cards-grid.list-view .cong-horario { width: auto; margin-top: 0; }
       .cards-grid.list-view .cong-card-actions { display: grid; grid-template-columns: 1fr 1fr; min-width: 0; }
@@ -750,6 +751,7 @@
           <span class="cong-badge${badgeClass}">${escapeHtml(badge)}</span>
         </a>
         <div class="cong-card-body">
+          <span class="cong-badge cong-badge--list${badgeClass}">${escapeHtml(badge)}</span>
           <h3><a href="${pLink}" style="color:inherit;">${escapeHtml(IGREJA_NOME)}</a></h3>
           <div class="cong-address">
             <div class="cong-address-line">
