@@ -39,7 +39,7 @@ function toggleCard(list, card) {
   if (!wasActive) card.classList.add('is-active');
 }
 
-const photoDialogState = { trigger: null };
+const photoDialogState = { trigger: null, cards: [], index: -1 };
 
 function cardHasPhoto(card) {
   return Boolean(card?.querySelector('.corpo-obreiros__photo img'));
@@ -57,16 +57,17 @@ function closePhotoDialog(restoreFocus = true) {
   document.body.classList.remove('corpo-obreiros-dialog-open');
   const trigger = photoDialogState.trigger;
   photoDialogState.trigger = null;
+  photoDialogState.cards = [];
+  photoDialogState.index = -1;
   if (restoreFocus && trigger?.isConnected) trigger.focus();
 }
 
-function openPhotoDialog(card) {
+function updatePhotoDialog(card) {
   const source = card?.querySelector('.corpo-obreiros__photo img');
   const dialog = document.getElementById('obreiro-photo-dialog');
   const image = document.getElementById('obreiro-photo-dialog-image');
   const title = document.getElementById('obreiro-photo-dialog-title');
   const role = document.getElementById('obreiro-photo-dialog-role');
-  const close = dialog?.querySelector('[data-obreiro-dialog-close]');
   if (!source || !dialog || !image || !title || !role) return;
 
   const name = card.querySelector('.corpo-obreiros__info strong')?.textContent.trim() || 'Pastor';
@@ -75,10 +76,32 @@ function openPhotoDialog(card) {
   image.alt = source.alt || `Foto de ${name}`;
   title.textContent = name;
   role.textContent = details;
+  const hasNavigation = photoDialogState.cards.length > 1;
+  dialog.querySelector('[data-obreiro-dialog-prev]')?.toggleAttribute('hidden', !hasNavigation);
+  dialog.querySelector('[data-obreiro-dialog-next]')?.toggleAttribute('hidden', !hasNavigation);
+}
+
+function openPhotoDialog(card) {
+  const dialog = document.getElementById('obreiro-photo-dialog');
+  const close = dialog?.querySelector('[data-obreiro-dialog-close]');
+  const list = card?.closest('.corpo-obreiros__rail') || document.getElementById('lideranca-list');
+  if (!card || !dialog || !list) return;
+  photoDialogState.cards = activeCards(list).filter(cardHasPhoto);
+  photoDialogState.index = Math.max(0, photoDialogState.cards.indexOf(card));
   photoDialogState.trigger = card;
+  updatePhotoDialog(photoDialogState.cards[photoDialogState.index]);
   dialog.hidden = false;
   document.body.classList.add('corpo-obreiros-dialog-open');
   close?.focus();
+}
+
+function navigatePhotoDialog(direction) {
+  if (photoDialogState.cards.length < 2) return;
+  photoDialogState.index = (photoDialogState.index + direction + photoDialogState.cards.length) % photoDialogState.cards.length;
+  const card = photoDialogState.cards[photoDialogState.index];
+  photoDialogState.trigger = card;
+  updatePhotoDialog(card);
+  document.querySelector(direction < 0 ? '[data-obreiro-dialog-prev]' : '[data-obreiro-dialog-next]')?.focus();
 }
 
 function initPhotoDialog() {
@@ -86,6 +109,8 @@ function initPhotoDialog() {
   const close = dialog?.querySelector('[data-obreiro-dialog-close]');
   if (!dialog || !close) return;
   close.addEventListener('click', () => closePhotoDialog());
+  dialog.querySelector('[data-obreiro-dialog-prev]')?.addEventListener('click', () => navigatePhotoDialog(-1));
+  dialog.querySelector('[data-obreiro-dialog-next]')?.addEventListener('click', () => navigatePhotoDialog(1));
   dialog.addEventListener('click', event => {
     if (event.target === dialog) closePhotoDialog();
   });
@@ -94,6 +119,12 @@ function initPhotoDialog() {
     if (event.key === 'Escape') {
       event.preventDefault();
       closePhotoDialog();
+    } else if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      navigatePhotoDialog(-1);
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      navigatePhotoDialog(1);
     }
   });
 }

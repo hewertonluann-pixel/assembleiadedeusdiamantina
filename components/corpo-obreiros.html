@@ -10,7 +10,11 @@
   <div class="corpo-obreiros__photo-dialog" id="obreiro-photo-dialog" role="dialog" aria-modal="true" aria-labelledby="obreiro-photo-dialog-title" aria-describedby="obreiro-photo-dialog-caption" hidden>
     <div class="corpo-obreiros__photo-dialog-panel" role="document">
       <button type="button" class="corpo-obreiros__photo-dialog-close" data-obreiro-dialog-close aria-label="Fechar visualização da foto" title="Fechar visualização"><i class="fas fa-times" aria-hidden="true"></i></button>
-      <div class="corpo-obreiros__photo-dialog-image-wrap"><img id="obreiro-photo-dialog-image" alt="" /></div>
+      <div class="corpo-obreiros__photo-dialog-image-wrap">
+        <button type="button" class="corpo-obreiros__photo-dialog-nav corpo-obreiros__photo-dialog-nav--prev" data-obreiro-dialog-prev aria-label="Obreiro anterior" title="Foto anterior"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
+        <img id="obreiro-photo-dialog-image" alt="" />
+        <button type="button" class="corpo-obreiros__photo-dialog-nav corpo-obreiros__photo-dialog-nav--next" data-obreiro-dialog-next aria-label="Próximo obreiro" title="Próxima foto"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
+      </div>
       <div class="corpo-obreiros__photo-dialog-caption" id="obreiro-photo-dialog-caption"><strong id="obreiro-photo-dialog-title"></strong><span id="obreiro-photo-dialog-role"></span></div>
     </div>
   </div>
