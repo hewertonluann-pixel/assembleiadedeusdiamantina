@@ -159,14 +159,8 @@ function initAutoAdvance(list) {
   const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion || list.scrollWidth <= list.clientWidth) return;
 
-  let hovering = false;
-  let focused = false;
-  let pausedUntil = 0;
+  let hoveredCard = null;
   let autoScrolling = false;
-
-  const pauseAfterInteraction = (duration = 5000) => {
-    if (!autoScrolling) pausedUntil = Date.now() + duration;
-  };
 
   const getCurrentIndex = cards => {
     const left = list.scrollLeft + 12;
@@ -175,9 +169,9 @@ function initAutoAdvance(list) {
   };
 
   const advance = () => {
-    if (hovering || focused || Date.now() < pausedUntil || document.body.classList.contains('corpo-obreiros-dialog-open')) return;
     const cards = activeCards(list);
     if (cards.length < 2) return;
+    if (hoveredCard || cards.some(card => card.classList.contains('is-active')) || document.body.classList.contains('corpo-obreiros-dialog-open')) return;
     const current = getCurrentIndex(cards);
     const next = current + 1 < cards.length ? current + 1 : 0;
     autoScrolling = true;
@@ -185,14 +179,11 @@ function initAutoAdvance(list) {
     window.setTimeout(() => { autoScrolling = false; }, 450);
   };
 
-  list.addEventListener('mouseenter', () => { hovering = true; });
-  list.addEventListener('mouseleave', () => { hovering = false; pauseAfterInteraction(1200); });
-  list.addEventListener('focusin', () => { focused = true; });
-  list.addEventListener('focusout', event => {
-    if (!list.contains(event.relatedTarget)) { focused = false; pauseAfterInteraction(1200); }
-  });
-  ['pointerdown', 'touchstart', 'wheel'].forEach(type => {
-    list.addEventListener(type, () => pauseAfterInteraction(), { passive: true });
+  activeCards(list).forEach(card => {
+    card.addEventListener('mouseenter', () => { hoveredCard = card; });
+    card.addEventListener('mouseleave', () => {
+      if (hoveredCard === card) hoveredCard = null;
+    });
   });
 
   window.setInterval(advance, 2000);
