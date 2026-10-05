@@ -155,6 +155,49 @@ function initInteractions(list) {
   });
 }
 
+function initAutoAdvance(list) {
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion || list.scrollWidth <= list.clientWidth) return;
+
+  let hovering = false;
+  let focused = false;
+  let pausedUntil = 0;
+  let autoScrolling = false;
+
+  const pauseAfterInteraction = (duration = 5000) => {
+    if (!autoScrolling) pausedUntil = Date.now() + duration;
+  };
+
+  const getCurrentIndex = cards => {
+    const left = list.scrollLeft + 12;
+    return cards.reduce((closest, card, index) =>
+      Math.abs(card.offsetLeft - left) < Math.abs(cards[closest].offsetLeft - left) ? index : closest, 0);
+  };
+
+  const advance = () => {
+    if (hovering || focused || Date.now() < pausedUntil || document.body.classList.contains('corpo-obreiros-dialog-open')) return;
+    const cards = activeCards(list);
+    if (cards.length < 2) return;
+    const current = getCurrentIndex(cards);
+    const next = current + 1 < cards.length ? current + 1 : 0;
+    autoScrolling = true;
+    cards[next].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    window.setTimeout(() => { autoScrolling = false; }, 450);
+  };
+
+  list.addEventListener('mouseenter', () => { hovering = true; });
+  list.addEventListener('mouseleave', () => { hovering = false; pauseAfterInteraction(1200); });
+  list.addEventListener('focusin', () => { focused = true; });
+  list.addEventListener('focusout', event => {
+    if (!list.contains(event.relatedTarget)) { focused = false; pauseAfterInteraction(1200); }
+  });
+  ['pointerdown', 'touchstart', 'wheel'].forEach(type => {
+    list.addEventListener(type, () => pauseAfterInteraction(), { passive: true });
+  });
+
+  window.setInterval(advance, 2000);
+}
+
 function renderPresident(presidente) {
   const heroPresident = document.getElementById('hero-president');
   if (!heroPresident) return false;
@@ -224,6 +267,7 @@ async function loadCorpoObreiros() {
 
     renderObreiros(list, obreiros);
     initInteractions(list);
+    initAutoAdvance(list);
     if (hasPresident) section.dataset.hasPresident = 'true';
   } catch (error) {
     section.hidden = true;
