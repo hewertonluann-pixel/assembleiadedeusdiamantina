@@ -157,25 +157,19 @@ function initInteractions(list) {
 
 function initAutoAdvance(list) {
   const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  if (reduceMotion || list.scrollWidth <= list.clientWidth) return;
+  const cards = activeCards(list);
+  if (reduceMotion || cards.length < 2) return;
 
   let hoveredCard = null;
   let autoScrolling = false;
-
-  const getCurrentIndex = cards => {
-    const left = list.scrollLeft + 12;
-    return cards.reduce((closest, card, index) =>
-      Math.abs(card.offsetLeft - left) < Math.abs(cards[closest].offsetLeft - left) ? index : closest, 0);
-  };
+  let autoIndex = 0;
 
   const advance = () => {
-    const cards = activeCards(list);
-    if (cards.length < 2) return;
     if (hoveredCard || cards.some(card => card.classList.contains('is-active')) || document.body.classList.contains('corpo-obreiros-dialog-open')) return;
-    const current = getCurrentIndex(cards);
-    const next = current + 1 < cards.length ? current + 1 : 0;
+    autoIndex = (autoIndex + 1) % cards.length;
+    const nextCard = cards[autoIndex];
     autoScrolling = true;
-    cards[next].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    list.scrollTo({ left: Math.max(0, nextCard.offsetLeft - 10), behavior: 'smooth' });
     window.setTimeout(() => { autoScrolling = false; }, 450);
   };
 
