@@ -113,7 +113,8 @@ O documento mantém `eventos` como uma lista. Eventos novos usam datas ISO (`YYY
       "dataInicio": "2026-05-15",
       "dataFim": "2026-05-17",
       "titulo": "Congresso de Jovens",
-      "local": "Sede Central",
+      "local": "Rua Getúlio Vargas, 235, Diamantina - MG",
+      "localPersonalizado": false,
       "congregacaoId": "id-do-documento-da-congregacao",
       "congregacaoNome": "Assembleia de Deus",
       "congregacaoBadge": "Sede",
@@ -127,7 +128,7 @@ O documento mantém `eventos` como uma lista. Eventos novos usam datas ISO (`YYY
 }
 ```
 
-`congregacaoId` é a referência estável ao documento em `congregacoes/{id}` e é o único campo usado para filtrar eventos na página da congregação. `congregacaoNome` permanece como o nome institucional fixo `Assembleia de Deus`; `congregacaoBadge` identifica a unidade, como `Sede` ou `Pedra Grande`. O painel também consegue recuperar o badge diretamente do documento da congregação, mantendo compatibilidade com eventos antigos. `cartazUrl` e `cartazPath` são preenchidos pelo upload do painel. O arquivo é armazenado em `img/agenda/`, respeitando as regras de imagem do Firebase Storage. Registros antigos que tenham apenas `data`, `titulo` e `local` continuam sendo exibidos; ao editá-los, o painel preserva a data legada até que datas inicial e final sejam informadas.
+`congregacaoId` é a referência estável ao documento em `congregacoes/{id}` e é o único campo usado para filtrar eventos na página da congregação. Quando `congregacaoId` está definido e `localPersonalizado` é `false` (padrão do painel), a agenda usa `endereco` e `cidade` da congregação como endereço do evento. Para eventos realizados em outro local, o painel permite marcar a personalização; nesse caso, `localPersonalizado` fica `true` e `local` é exibido como informado manualmente. `congregacaoNome` permanece como o nome institucional fixo `Assembleia de Deus`; `congregacaoBadge` identifica a unidade, como `Sede` ou `Pedra Grande`. O painel também consegue recuperar o badge diretamente do documento da congregação, mantendo compatibilidade com eventos antigos. `cartazUrl` e `cartazPath` são preenchidos pelo upload do painel. O arquivo é armazenado em `img/agenda/`, respeitando as regras de imagem do Firebase Storage. Registros antigos que tenham apenas `data`, `titulo` e `local` continuam sendo exibidos; ao editá-los, o painel preserva a data legada até que datas inicial e final sejam informadas.
 
 ### `site/ministerios`
 

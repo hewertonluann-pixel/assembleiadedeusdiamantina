@@ -653,6 +653,17 @@
       const href = `congregacao.html?id=${encodeURIComponent(id)}#eventos`;
       return `<a class="agenda-card__congregation" href="${escapeHtml(href)}" aria-label="Ver página da congregação ${escapeHtml(label)}"><i class="fas fa-church" aria-hidden="true"></i>Congregação: ${escapeHtml(label)}</a>`;
     }
+    function agendaCongregacaoAddress(ev) {
+      const customAddress = String(ev?.localPersonalizado ? ev?.local : '').trim();
+      if (customAddress) return customAddress;
+      const id = String(ev?.congregacaoId || '').trim();
+      const congregacao = agendaCongregacoes.get(id) || {};
+      const address = [congregacao.endereco, congregacao.cidade]
+        .map(value => String(value || '').trim())
+        .filter(Boolean)
+        .join(', ');
+      return address || String(ev?.local || '').trim();
+    }
     function updateAgendaPosterNavigation() {
       const previousButton = document.getElementById('agenda-poster-prev');
       const nextButton = document.getElementById('agenda-poster-next');
@@ -753,7 +764,7 @@
           const titulo = escapeHtml(tituloTexto);
           const congregacaoLabel = agendaCongregacaoLabel(ev);
           const congregacao = escapeHtml(congregacaoLabel);
-          const enderecoTexto = String(ev?.local || '').trim();
+          const enderecoTexto = agendaCongregacaoAddress(ev);
           const endereco = escapeHtml(enderecoTexto);
           const descricaoTexto = String(ev?.descricao || '').trim();
           const descricao = escapeHtml(descricaoTexto);
