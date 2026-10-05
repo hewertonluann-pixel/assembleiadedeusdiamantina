@@ -68,6 +68,7 @@
   overflow-x: auto;
   overflow-y: visible;
   padding: 22px 10px 34px;
+  scroll-behavior: smooth;
   scrollbar-color: var(--gold) rgba(26,58,143,.1);
   scroll-snap-type: x proximity;
 }

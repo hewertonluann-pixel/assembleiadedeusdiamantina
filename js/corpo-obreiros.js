@@ -161,16 +161,16 @@ function initAutoAdvance(list) {
   if (reduceMotion || cards.length < 2) return;
 
   let hoveredCard = null;
-  let autoScrolling = false;
   let autoIndex = 0;
+  let autoDirection = 1;
 
   const advance = () => {
     if (hoveredCard || cards.some(card => card.classList.contains('is-active')) || document.body.classList.contains('corpo-obreiros-dialog-open')) return;
-    autoIndex = (autoIndex + 1) % cards.length;
+    if (autoIndex === cards.length - 1) autoDirection = -1;
+    else if (autoIndex === 0) autoDirection = 1;
+    autoIndex += autoDirection;
     const nextCard = cards[autoIndex];
-    autoScrolling = true;
     list.scrollTo({ left: Math.max(0, nextCard.offsetLeft - 10), behavior: 'smooth' });
-    window.setTimeout(() => { autoScrolling = false; }, 450);
   };
 
   activeCards(list).forEach(card => {
