@@ -155,34 +155,6 @@ function initInteractions(list) {
   });
 }
 
-function initAutoAdvance(list) {
-  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  const cards = activeCards(list);
-  if (reduceMotion || cards.length < 2) return;
-
-  let hoveredCard = null;
-  let autoIndex = 0;
-  let autoDirection = 1;
-
-  const advance = () => {
-    if (hoveredCard || cards.some(card => card.classList.contains('is-active')) || document.body.classList.contains('corpo-obreiros-dialog-open')) return;
-    if (autoIndex === cards.length - 1) autoDirection = -1;
-    else if (autoIndex === 0) autoDirection = 1;
-    autoIndex += autoDirection;
-    const nextCard = cards[autoIndex];
-    list.scrollTo({ left: Math.max(0, nextCard.offsetLeft - 10), behavior: 'smooth' });
-  };
-
-  activeCards(list).forEach(card => {
-    card.addEventListener('mouseenter', () => { hoveredCard = card; });
-    card.addEventListener('mouseleave', () => {
-      if (hoveredCard === card) hoveredCard = null;
-    });
-  });
-
-  window.setInterval(advance, 2000);
-}
-
 function renderPresident(presidente) {
   const heroPresident = document.getElementById('hero-president');
   if (!heroPresident) return false;
@@ -252,7 +224,6 @@ async function loadCorpoObreiros() {
 
     renderObreiros(list, obreiros);
     initInteractions(list);
-    initAutoAdvance(list);
     if (hasPresident) section.dataset.hasPresident = 'true';
   } catch (error) {
     section.hidden = true;
