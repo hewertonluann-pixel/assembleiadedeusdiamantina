@@ -369,6 +369,12 @@
   height: auto;
   margin: .8rem 0;
   border-radius: .45rem;
+  cursor: pointer;
+}
+
+.news-rich-content img.is-selected {
+  outline: 2px solid var(--admin-primary);
+  outline-offset: 3px;
 }
 
 .news-rich-content h2,
@@ -467,6 +473,11 @@
   .news-admin-item__actions .admin-btn {
     flex: 1;
     justify-content: center;
+  }
+
+  .news-rich-select.news-image-size {
+    max-width: 100%;
+    flex: 1 1 150px;
   }
 
   .news-admin-actions__right {
