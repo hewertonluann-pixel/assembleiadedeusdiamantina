@@ -206,10 +206,18 @@
       return clean.innerHTML;
     }
     function safeColor(value) { return /^#[0-9a-f]{3,8}$/i.test(String(value || '').trim()) ? String(value).trim() : ''; }
-    function editorHtml() { return sanitizeRichHtml(newsEditor?.getContents() || '').trim(); }
+    function editorWysiwyg() {
+      const rootKey = newsEditor?.rootId ?? null;
+      const frame = newsEditor?.frameRoots?.get?.(rootKey);
+      return frame?.get?.('wysiwyg') || null;
+    }
+    function editorHtml() { return sanitizeRichHtml(editorWysiwyg()?.innerHTML || '').trim(); }
     function setEditorHtml(value) {
       const raw = String(value || '').trim();
-      newsEditor?.setContents(/<[a-z][\s\S]*>/i.test(raw) ? sanitizeRichHtml(raw) : legacyTextToHtml(raw));
+      const wysiwyg = editorWysiwyg();
+      if (!wysiwyg) return;
+      wysiwyg.innerHTML = /<[a-z][\s\S]*>/i.test(raw) ? sanitizeRichHtml(raw) : legacyTextToHtml(raw);
+      wysiwyg.dispatchEvent(new Event('input', { bubbles: true }));
     }
     function handleSunEditorImageUpload({ info, handler }) {
       const files = Array.from(info?.files || []);
@@ -293,7 +301,11 @@
       pendingImageFile = null;
       editingId = '';
       $('news-form').reset();
-      newsEditor?.setContents('');
+      const wysiwyg = editorWysiwyg();
+      if (wysiwyg) {
+        wysiwyg.innerHTML = '';
+        wysiwyg.dispatchEvent(new Event('input', { bubbles: true }));
+      }
       $('news-id').value = '';
       $('news-image-url').value = '';
       $('news-image-path').value = '';
@@ -410,7 +422,7 @@
       if (!title) { toast('Informe o título da notícia.', 'error'); $('news-title').focus(); return; }
       if (!summary) { toast('Informe o resumo da notícia.', 'error'); $('news-summary').focus(); return; }
       const contentText = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-      if (!content || (!contentText && !/<img\b/i.test(content))) { toast('Informe o texto completo da notícia.', 'error'); newsEditor?.core?.context?.element?.wysiwyg?.focus?.(); return; }
+      if (!content || (!contentText && !/<img\b/i.test(content))) { toast('Informe o texto completo da notícia.', 'error'); editorWysiwyg()?.focus?.(); return; }
       if (!pendingImageFile && !$('news-image-url').value.trim()) { toast('Envie uma imagem de capa antes de salvar.', 'error'); $('news-image-file').focus(); return; }
       const id = editingId || `noticia-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
       const oldPath = current?.imagemPath || $('news-original-path').value.trim();
