@@ -211,13 +211,15 @@
       const frame = newsEditor?.frameRoots?.get?.(rootKey);
       return frame?.get?.('wysiwyg') || null;
     }
-    function editorHtml() { return sanitizeRichHtml(editorWysiwyg()?.innerHTML || '').trim(); }
+    function editorHtml() {
+      const raw = newsEditor?.$?.html?.get?.() ?? editorWysiwyg()?.innerHTML ?? '';
+      return sanitizeRichHtml(raw).trim();
+    }
     function setEditorHtml(value) {
       const raw = String(value || '').trim();
-      const wysiwyg = editorWysiwyg();
-      if (!wysiwyg) return;
-      wysiwyg.innerHTML = /<[a-z][\s\S]*>/i.test(raw) ? sanitizeRichHtml(raw) : legacyTextToHtml(raw);
-      wysiwyg.dispatchEvent(new Event('input', { bubbles: true }));
+      const html = /<[a-z][\s\S]*>/i.test(raw) ? sanitizeRichHtml(raw) : legacyTextToHtml(raw);
+      if (newsEditor?.$?.html?.set) newsEditor.$.html.set(html);
+      else if (editorWysiwyg()) editorWysiwyg().innerHTML = html;
     }
     async function handleSunEditorImageUpload({ $, info }) {
       if (info?.url) return true;
@@ -307,11 +309,8 @@
       pendingImageFile = null;
       editingId = '';
       $('news-form').reset();
-      const wysiwyg = editorWysiwyg();
-      if (wysiwyg) {
-        wysiwyg.innerHTML = '';
-        wysiwyg.dispatchEvent(new Event('input', { bubbles: true }));
-      }
+      if (newsEditor?.$?.html?.set) newsEditor.$.html.set('');
+      else if (editorWysiwyg()) editorWysiwyg().innerHTML = '';
       $('news-id').value = '';
       $('news-image-url').value = '';
       $('news-image-path').value = '';
