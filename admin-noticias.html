@@ -189,8 +189,8 @@
             element.setAttribute('loading', 'lazy');
             const width = safeDimension(node.getAttribute('width'));
             const height = safeDimension(node.getAttribute('height'));
-            if (width) element.setAttribute('width', width);
-            if (height) element.setAttribute('height', height);
+            if (width) { element.setAttribute('width', width); element.style.width = width; }
+            if (height) { element.setAttribute('height', height); element.style.height = height; }
           }
           if (tag !== 'A') {
             const style = String(node.getAttribute('style') || '').split(';').map(rule => rule.trim()).filter(rule => RICH_STYLES.test(rule)).join('; ');

@@ -56,7 +56,7 @@ function normalizeNews(snapshot) {
     publicado: data.publicado === true
   };
 }
-const RICH_TAGS = new Set(['P', 'BR', 'STRONG', 'B', 'EM', 'I', 'U', 'S', 'H2', 'H3', 'UL', 'OL', 'LI', 'A', 'IMG', 'SPAN', 'DIV', 'FONT']);
+const RICH_TAGS = new Set(['P', 'BR', 'STRONG', 'B', 'EM', 'I', 'U', 'S', 'H2', 'H3', 'UL', 'OL', 'LI', 'A', 'IMG', 'SPAN', 'DIV', 'FONT', 'FIGURE', 'FIGCAPTION', 'BLOCKQUOTE', 'PRE', 'CODE', 'TABLE', 'THEAD', 'TBODY', 'TR', 'TH', 'TD']);
 const RICH_STYLES = /^(font-size|color|text-align|width|height)\s*:\s*(?:[a-z#(),.%\s-]+)$/i;
 function safeDimension(value) { return /^(?:\d{1,4}(?:\.\d+)?)(?:px|%|em|rem|vw|vh)?$/i.test(String(value || '').trim()) ? String(value).trim() : ''; }
 function safeColor(value) { return /^#[0-9a-f]{3,8}$/i.test(String(value || '').trim()) ? String(value).trim() : ''; }
@@ -83,8 +83,8 @@ function sanitizeRichHtml(value) {
         element.setAttribute('loading', 'lazy');
         const width = safeDimension(node.getAttribute('width'));
         const height = safeDimension(node.getAttribute('height'));
-        if (width) element.setAttribute('width', width);
-        if (height) element.setAttribute('height', height);
+        if (width) { element.setAttribute('width', width); element.style.width = width; }
+        if (height) { element.setAttribute('height', height); element.style.height = height; }
       }
       if (tag !== 'A') {
         const style = String(node.getAttribute('style') || '').split(';').map(rule => rule.trim()).filter(rule => RICH_STYLES.test(rule)).join('; ');
