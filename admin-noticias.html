@@ -501,7 +501,7 @@
     }
     function showLoginError(message) { $('login-error').textContent = message; $('login-error').classList.add('show'); }
 
-    newsEditor = SUNEDITOR.create('news-content-editor', {
+    newsEditor = SUNEDITOR.create($('news-content-editor'), {
       lang: window.SUNEDITOR_LANG?.pt_br,
       height: '360px',
       minHeight: '280px',
