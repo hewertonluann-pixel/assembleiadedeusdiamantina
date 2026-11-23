@@ -12,6 +12,9 @@
   <script src="js/favicon.js"></script>
   <link rel="stylesheet" href="css/admin-ministerio.css?v=2" />
   <link rel="stylesheet" href="css/admin-noticias.css?v=1" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/suneditor@3.4.3/dist/suneditor.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/suneditor@3.4.3/dist/suneditor.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/suneditor@3.4.3/src/langs/pt_br.js"></script>
 </head>
 <body>
   <div id="login-screen">
@@ -99,7 +102,7 @@
                 <div class="news-admin-section">
                   <h3><i class="fas fa-align-left" aria-hidden="true"></i> Conteúdo</h3>
                   <div class="form-group"><label class="form-label" for="news-summary">Resumo ou linha fina *</label><textarea class="form-textarea" id="news-summary" rows="3" placeholder="Uma frase que contextualiza a notícia no carrossel e no início da página."></textarea></div>
-                  <div class="form-group"><label class="form-label" for="news-content-editor">Texto completo *</label><div class="news-rich-editor" id="news-rich-editor"><div class="news-rich-toolbar" role="toolbar" aria-label="Ferramentas de formatação"><button type="button" class="news-rich-tool" data-command="bold" title="Negrito" aria-label="Negrito"><i class="fas fa-bold"></i></button><button type="button" class="news-rich-tool" data-command="italic" title="Itálico" aria-label="Itálico"><i class="fas fa-italic"></i></button><button type="button" class="news-rich-tool" data-command="underline" title="Sublinhado" aria-label="Sublinhado"><i class="fas fa-underline"></i></button><select class="news-rich-select" id="news-format-block" aria-label="Estilo do texto"><option value="P">Parágrafo</option><option value="H2">Título</option><option value="H3">Subtítulo</option></select><select class="news-rich-select" id="news-font-size" aria-label="Tamanho da fonte"><option value="3">Tamanho normal</option><option value="2">Pequena</option><option value="4">Grande</option><option value="5">Muito grande</option></select><button type="button" class="news-rich-tool" data-command="insertUnorderedList" title="Lista com marcadores" aria-label="Lista com marcadores"><i class="fas fa-list-ul"></i></button><button type="button" class="news-rich-tool" data-command="insertOrderedList" title="Lista numerada" aria-label="Lista numerada"><i class="fas fa-list-ol"></i></button><button type="button" class="news-rich-tool" data-command="justifyLeft" title="Alinhar à esquerda" aria-label="Alinhar à esquerda"><i class="fas fa-align-left"></i></button><button type="button" class="news-rich-tool" data-command="justifyCenter" title="Centralizar" aria-label="Centralizar"><i class="fas fa-align-center"></i></button><button type="button" class="news-rich-tool" data-command="justifyRight" title="Alinhar à direita" aria-label="Alinhar à direita"><i class="fas fa-align-right"></i></button><label class="news-rich-color" title="Cor do texto" aria-label="Cor do texto"><i class="fas fa-font"></i><input id="news-font-color" type="color" value="#1c2d5d" /></label><button type="button" class="news-rich-tool" id="news-link-btn" title="Inserir link" aria-label="Inserir link"><i class="fas fa-link"></i></button><button type="button" class="news-rich-tool" id="news-image-btn" title="Inserir imagem no texto" aria-label="Inserir imagem no texto"><i class="fas fa-image"></i></button><select class="news-rich-select news-image-size" id="news-image-size" aria-label="Tamanho da imagem" title="Selecione uma imagem para alterar o tamanho" disabled><option value="100%">Imagem: original</option><option value="75%">Imagem: grande</option><option value="50%">Imagem: média</option><option value="25%">Imagem: pequena</option></select><button type="button" class="news-rich-tool" data-command="removeFormat" title="Limpar formatação" aria-label="Limpar formatação"><i class="fas fa-eraser"></i></button></div><div id="news-content-editor" class="news-rich-content" contenteditable="true" role="textbox" aria-multiline="true" aria-describedby="news-content-help" data-placeholder="Escreva o conteúdo da notícia..."></div><input id="news-inline-image-file" type="file" accept="image/jpeg,image/png,image/webp" hidden /></div><span class="form-help" id="news-content-help">Use a barra para formatar o texto e inserir imagens no corpo da notícia. Clique em uma imagem inserida para escolher o tamanho. Imagens: JPG, PNG ou WEBP de até 10 MB.</span></div>
+                  <div class="form-group"><label class="form-label" for="news-content-editor">Texto completo *</label><textarea id="news-content-editor" aria-describedby="news-content-help"></textarea><span class="form-help" id="news-content-help">Use a barra do editor para formatar o texto, inserir imagens, alterar tamanho e alinhar elementos. Imagens: JPG, PNG ou WEBP de até 10 MB.</span></div>
                 </div>
 
                 <div class="news-admin-section">
@@ -149,8 +152,7 @@
     let pendingImageFile = null;
     let pendingPreviewUrl = '';
     let isPrimaryUser = false;
-    let savedEditorRange = null;
-    let selectedEditorImage = null;
+    let newsEditor = null;
 
     const $ = id => document.getElementById(id);
     const show = (id, visible) => { const el = $(id); if (el) el.hidden = !visible; };
@@ -158,7 +160,7 @@
     function escapeHtml(value) {
       return String(value ?? '').replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
     }
-    const RICH_TAGS = new Set(['P', 'BR', 'STRONG', 'B', 'EM', 'I', 'U', 'S', 'H2', 'H3', 'UL', 'OL', 'LI', 'A', 'IMG', 'SPAN', 'DIV', 'FONT']);
+    const RICH_TAGS = new Set(['P', 'BR', 'STRONG', 'B', 'EM', 'I', 'U', 'S', 'H2', 'H3', 'UL', 'OL', 'LI', 'A', 'IMG', 'SPAN', 'DIV', 'FONT', 'FIGURE', 'FIGCAPTION', 'BLOCKQUOTE', 'PRE', 'CODE', 'TABLE', 'THEAD', 'TBODY', 'TR', 'TH', 'TD']);
     const RICH_STYLES = /^(font-size|color|text-align|width)\s*:\s*(?:[a-z#(),.%\s-]+)$/i;
     function legacyTextToHtml(value) {
       return String(value || '').trim().split(/\n\s*\n/).map(item => item.trim()).filter(Boolean).map(item => `<p>${escapeHtml(item).replace(/\n/g, '<br>')}</p>`).join('');
@@ -204,40 +206,22 @@
       return clean.innerHTML;
     }
     function safeColor(value) { return /^#[0-9a-f]{3,8}$/i.test(String(value || '').trim()) ? String(value).trim() : ''; }
-    function editorHtml() { return sanitizeRichHtml($('news-content-editor').innerHTML).trim(); }
+    function editorHtml() { return sanitizeRichHtml(newsEditor?.getContents() || '').trim(); }
     function setEditorHtml(value) {
       const raw = String(value || '').trim();
-      $('news-content-editor').innerHTML = /<[a-z][\s\S]*>/i.test(raw) ? sanitizeRichHtml(raw) : legacyTextToHtml(raw);
+      newsEditor?.setContents(/<[a-z][\s\S]*>/i.test(raw) ? sanitizeRichHtml(raw) : legacyTextToHtml(raw));
     }
-    function focusEditor() { $('news-content-editor').focus(); }
-    function restoreEditorSelection() {
-      focusEditor();
-      if (!savedEditorRange) return;
-      const selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(savedEditorRange);
-    }
-    function saveEditorSelection() {
-      const selection = window.getSelection();
-      if (selection.rangeCount && $('news-content-editor').contains(selection.anchorNode)) savedEditorRange = selection.getRangeAt(0).cloneRange();
-    }
-    function execEditorCommand(command, value = null) { restoreEditorSelection(); document.execCommand(command, false, value); saveEditorSelection(); }
-    function selectEditorImage(image) {
-      selectedEditorImage?.classList.remove('is-selected');
-      selectedEditorImage = image;
-      selectedEditorImage?.classList.add('is-selected');
-      const control = $('news-image-size');
-      control.disabled = !image;
-      if (!image) { control.value = '100%'; return; }
-      const width = image.style.width || '100%';
-      control.value = ['25%', '50%', '75%', '100%'].includes(width) ? width : '100%';
-    }
-    function resizeSelectedImage(width) {
-      if (!selectedEditorImage) return;
-      selectedEditorImage.style.width = width;
-      selectedEditorImage.style.height = 'auto';
-      selectedEditorImage.style.maxWidth = '100%';
-      saveEditorSelection();
+    function handleSunEditorImageUpload({ info, handler }) {
+      const files = Array.from(info?.files || []);
+      if (!files.length) return false;
+      Promise.all(files.map(async file => {
+        if (!isImageFile(file)) throw new Error('Imagem inválida. Use JPG, PNG ou WEBP de até 10 MB.');
+        const path = `img/noticias/conteudo/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${extensionFor(file)}`;
+        const uploadedRef = storageRef(storage, path);
+        await uploadBytes(uploadedRef, file, { contentType: file.type, cacheControl: 'public,max-age=31536000' });
+        return { url: await getDownloadURL(uploadedRef), name: file.name, size: file.size };
+      })).then(result => handler({ result })).catch(error => toast(`Não foi possível inserir a imagem: ${error.message}`, 'error'));
+      return false;
     }
     function safeUrl(value) {
       const raw = String(value || '').trim();
@@ -310,7 +294,7 @@
       editingId = '';
       selectEditorImage(null);
       $('news-form').reset();
-      $('news-content-editor').innerHTML = '';
+      newsEditor?.setContents('');
       $('news-id').value = '';
       $('news-image-url').value = '';
       $('news-image-path').value = '';
@@ -414,26 +398,6 @@
         });
       });
     }
-    async function insertInlineImage(file) {
-      if (!isImageFile(file)) { toast('Imagem inválida. Use JPG, PNG ou WEBP de até 10 MB.', 'error'); return; }
-      const path = `img/noticias/conteudo/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${extensionFor(file)}`;
-      const button = $('news-image-btn');
-      button.disabled = true;
-      try {
-        toast('Enviando imagem do conteúdo…', 'info');
-        const uploadedRef = storageRef(storage, path);
-        await uploadBytes(uploadedRef, file, { contentType: file.type, cacheControl: 'public,max-age=31536000' });
-        const url = await getDownloadURL(uploadedRef);
-        restoreEditorSelection();
-        document.execCommand('insertImage', false, url);
-        const images = $('news-content-editor').querySelectorAll(`img[src="${CSS.escape(url)}"]`);
-        const image = images[images.length - 1];
-        if (image) { image.alt = window.prompt('Texto alternativo da imagem:', file.name.replace(/\.[^.]+$/, '')) || 'Imagem inserida na notícia'; image.loading = 'lazy'; }
-        saveEditorSelection();
-        toast('Imagem inserida no conteúdo.');
-      } catch (error) { toast(`Não foi possível inserir a imagem: ${error.message}`, 'error'); }
-      finally { button.disabled = false; $('news-inline-image-file').value = ''; }
-    }
     async function deleteImage(path) {
       if (!path || !String(path).startsWith('img/noticias/')) return;
       try { await deleteObject(storageRef(storage, path)); } catch (error) { console.warn('Não foi possível remover a capa antiga:', error); }
@@ -446,7 +410,8 @@
       const current = newsItems.find(item => item.id === editingId) || null;
       if (!title) { toast('Informe o título da notícia.', 'error'); $('news-title').focus(); return; }
       if (!summary) { toast('Informe o resumo da notícia.', 'error'); $('news-summary').focus(); return; }
-      if (!content || !$('news-content-editor').textContent.trim() && !$('news-content-editor').querySelector('img')) { toast('Informe o texto completo da notícia.', 'error'); $('news-content-editor').focus(); return; }
+      const contentText = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+      if (!content || (!contentText && !/<img\b/i.test(content))) { toast('Informe o texto completo da notícia.', 'error'); newsEditor?.core?.context?.element?.wysiwyg?.focus?.(); return; }
       if (!pendingImageFile && !$('news-image-url').value.trim()) { toast('Envie uma imagem de capa antes de salvar.', 'error'); $('news-image-file').focus(); return; }
       const id = editingId || `noticia-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
       const oldPath = current?.imagemPath || $('news-original-path').value.trim();
@@ -536,22 +501,17 @@
     }
     function showLoginError(message) { $('login-error').textContent = message; $('login-error').classList.add('show'); }
 
-    document.querySelectorAll('.news-rich-tool[data-command]').forEach(button => button.addEventListener('click', () => execEditorCommand(button.dataset.command)));
-    $('news-format-block').addEventListener('change', event => execEditorCommand('formatBlock', event.target.value));
-    $('news-font-size').addEventListener('change', event => execEditorCommand('fontSize', event.target.value));
-    $('news-font-color').addEventListener('input', event => { const color = safeColor(event.target.value); if (color) execEditorCommand('foreColor', color); });
-    $('news-link-btn').addEventListener('click', () => {
-      const url = window.prompt('Endereço do link (https://...)');
-      if (url && safeUrl(url)) execEditorCommand('createLink', safeUrl(url));
-      else if (url) toast('Informe um endereço válido iniciado por http:// ou https://.', 'error');
+    newsEditor = SUNEDITOR.create('news-content-editor', {
+      lang: window.SUNEDITOR_LANG?.pt_br,
+      height: '360px',
+      minHeight: '280px',
+      maxHeight: '620px',
+      placeholder: 'Escreva o conteúdo da notícia...',
+      resizingBar: true,
+      buttonList: [['undo', 'redo', 'formatBlock', 'fontSize', 'bold', 'italic', 'underline', 'strike', 'fontColor', 'hiliteColor', 'align', 'list', 'horizontalRule', 'link', 'image', 'table', 'removeFormat', 'fullScreen', 'codeView']],
+      image: { canResize: true, percentageOnlySize: true, showHeightInput: false, acceptedFormats: 'jpg,jpeg,png,webp', uploadSingleSizeLimit: MAX_FILE_SIZE, uploadSizeLimit: MAX_FILE_SIZE },
+      events: { onImageUploadBefore: handleSunEditorImageUpload }
     });
-    $('news-image-btn').addEventListener('click', () => { saveEditorSelection(); $('news-inline-image-file').click(); });
-    $('news-image-size').addEventListener('change', event => resizeSelectedImage(event.target.value));
-    $('news-inline-image-file').addEventListener('change', event => { const file = event.target.files?.[0]; if (file) insertInlineImage(file); });
-    $('news-content-editor').addEventListener('keyup', saveEditorSelection);
-    $('news-content-editor').addEventListener('mouseup', saveEditorSelection);
-    $('news-content-editor').addEventListener('click', event => selectEditorImage(event.target.closest('img')));
-    document.querySelectorAll('.news-rich-tool, .news-rich-select, .news-rich-color').forEach(control => control.addEventListener('mousedown', event => event.preventDefault()));
 
     $('theme-toggle').addEventListener('click', () => {
       const html = document.documentElement;
