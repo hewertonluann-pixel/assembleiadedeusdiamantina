@@ -1,8 +1,8 @@
 /* Tela dedicada de gerenciamento de notícias */
 .news-admin-layout {
   display: grid;
-  grid-template-columns: minmax(270px, .78fr) minmax(0, 1.22fr);
-  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
   align-items: start;
 }
 
@@ -36,8 +36,8 @@
 }
 
 .news-admin-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
   gap: .7rem;
 }
 
@@ -76,6 +76,15 @@
   border-radius: .75rem;
   background: var(--admin-surface);
   transition: border-color var(--admin-transition), background var(--admin-transition);
+}
+
+.news-admin-panel:last-child .news-admin-panel__body {
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.news-admin-panel:last-child .news-admin-form {
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
 .news-admin-item:hover,
@@ -370,12 +379,6 @@
   display: flex;
   gap: .6rem;
   margin-left: auto;
-}
-
-@media (max-width: 1050px) {
-  .news-admin-layout {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 620px) {
