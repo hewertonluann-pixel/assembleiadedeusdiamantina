@@ -508,6 +508,7 @@
       maxHeight: '620px',
       placeholder: 'Escreva o conteúdo da notícia...',
       resizingBar: true,
+      plugins: SUNEDITOR.plugins,
       buttonList: [['undo', 'redo', 'blockStyle', 'font', 'bold', 'italic', 'underline', 'strike', 'fontColor', 'backgroundColor', 'align', 'list', 'hr', 'link', 'image', 'table', 'removeFormat', 'fullScreen', 'codeView']],
       image: { canResize: true, percentageOnlySize: true, showHeightInput: false, acceptedFormats: 'jpg,jpeg,png,webp', uploadSingleSizeLimit: MAX_FILE_SIZE, uploadSizeLimit: MAX_FILE_SIZE },
       events: { onImageUploadBefore: handleSunEditorImageUpload }
