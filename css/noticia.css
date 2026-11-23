@@ -136,6 +136,16 @@
 
 .news-detail-body p { margin: 0 0 1.3rem; }
 .news-detail-body p:last-child { margin-bottom: 0; }
+.news-detail-body h2,
+.news-detail-body h3 { margin: 2rem 0 .75rem; color: #1c2d5d; font-family: 'Playfair Display', serif; line-height: 1.25; }
+.news-detail-body h2 { font-size: 1.65rem; }
+.news-detail-body h3 { font-size: 1.3rem; }
+.news-detail-body ul,
+.news-detail-body ol { margin: 0 0 1.3rem; padding-left: 1.5rem; }
+.news-detail-body li + li { margin-top: .35rem; }
+.news-detail-body a { color: #1a3a8f; font-weight: 600; text-decoration: underline; text-decoration-color: rgba(26, 58, 143, .35); text-underline-offset: .16em; }
+.news-detail-body a:hover { color: #b18416; }
+.news-detail-body img { display: block; max-width: 100%; height: auto; margin: 1.4rem auto; border-radius: .75rem; }
 
 .news-detail-share {
   display: flex;

@@ -99,7 +99,7 @@
                 <div class="news-admin-section">
                   <h3><i class="fas fa-align-left" aria-hidden="true"></i> Conteúdo</h3>
                   <div class="form-group"><label class="form-label" for="news-summary">Resumo ou linha fina *</label><textarea class="form-textarea" id="news-summary" rows="3" placeholder="Uma frase que contextualiza a notícia no carrossel e no início da página."></textarea></div>
-                  <div class="form-group"><label class="form-label" for="news-content">Texto completo *</label><textarea class="form-textarea" id="news-content" rows="12" placeholder="Escreva o conteúdo da notícia. Separe os parágrafos com uma linha em branco."></textarea><span class="form-help">O conteúdo é publicado como texto seguro. Linhas em branco separam os parágrafos e HTML não é interpretado.</span></div>
+                  <div class="form-group"><label class="form-label" for="news-content-editor">Texto completo *</label><div class="news-rich-editor" id="news-rich-editor"><div class="news-rich-toolbar" role="toolbar" aria-label="Ferramentas de formatação"><button type="button" class="news-rich-tool" data-command="bold" title="Negrito" aria-label="Negrito"><i class="fas fa-bold"></i></button><button type="button" class="news-rich-tool" data-command="italic" title="Itálico" aria-label="Itálico"><i class="fas fa-italic"></i></button><button type="button" class="news-rich-tool" data-command="underline" title="Sublinhado" aria-label="Sublinhado"><i class="fas fa-underline"></i></button><select class="news-rich-select" id="news-format-block" aria-label="Estilo do texto"><option value="P">Parágrafo</option><option value="H2">Título</option><option value="H3">Subtítulo</option></select><select class="news-rich-select" id="news-font-size" aria-label="Tamanho da fonte"><option value="3">Tamanho normal</option><option value="2">Pequena</option><option value="4">Grande</option><option value="5">Muito grande</option></select><button type="button" class="news-rich-tool" data-command="insertUnorderedList" title="Lista com marcadores" aria-label="Lista com marcadores"><i class="fas fa-list-ul"></i></button><button type="button" class="news-rich-tool" data-command="insertOrderedList" title="Lista numerada" aria-label="Lista numerada"><i class="fas fa-list-ol"></i></button><button type="button" class="news-rich-tool" data-command="justifyLeft" title="Alinhar à esquerda" aria-label="Alinhar à esquerda"><i class="fas fa-align-left"></i></button><button type="button" class="news-rich-tool" data-command="justifyCenter" title="Centralizar" aria-label="Centralizar"><i class="fas fa-align-center"></i></button><button type="button" class="news-rich-tool" data-command="justifyRight" title="Alinhar à direita" aria-label="Alinhar à direita"><i class="fas fa-align-right"></i></button><label class="news-rich-color" title="Cor do texto" aria-label="Cor do texto"><i class="fas fa-font"></i><input id="news-font-color" type="color" value="#1c2d5d" /></label><button type="button" class="news-rich-tool" id="news-link-btn" title="Inserir link" aria-label="Inserir link"><i class="fas fa-link"></i></button><button type="button" class="news-rich-tool" id="news-image-btn" title="Inserir imagem no texto" aria-label="Inserir imagem no texto"><i class="fas fa-image"></i></button><button type="button" class="news-rich-tool" data-command="removeFormat" title="Limpar formatação" aria-label="Limpar formatação"><i class="fas fa-eraser"></i></button></div><div id="news-content-editor" class="news-rich-content" contenteditable="true" role="textbox" aria-multiline="true" aria-describedby="news-content-help" data-placeholder="Escreva o conteúdo da notícia..."></div><input id="news-inline-image-file" type="file" accept="image/jpeg,image/png,image/webp" hidden /></div><span class="form-help" id="news-content-help">Use a barra para formatar o texto e inserir imagens no corpo da notícia. Imagens: JPG, PNG ou WEBP de até 10 MB.</span></div>
                 </div>
 
                 <div class="news-admin-section">
@@ -128,7 +128,7 @@
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
     import { getAuth, signInWithEmailAndPassword, signInWithRedirect, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
     import { getFirestore, doc, getDoc, setDoc, getDocs, collection, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-    import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
+    import { getStorage, ref as storageRef, uploadBytes, uploadBytesResumable, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
 
     const firebaseConfig = {
       apiKey: 'AIzaSyBtMB9qs34H8qMjaA_XavJdrUSpOASYBos',
@@ -149,6 +149,7 @@
     let pendingImageFile = null;
     let pendingPreviewUrl = '';
     let isPrimaryUser = false;
+    let savedEditorRange = null;
 
     const $ = id => document.getElementById(id);
     const show = (id, visible) => { const el = $(id); if (el) el.hidden = !visible; };
@@ -156,6 +157,70 @@
     function escapeHtml(value) {
       return String(value ?? '').replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
     }
+    const RICH_TAGS = new Set(['P', 'BR', 'STRONG', 'B', 'EM', 'I', 'U', 'S', 'H2', 'H3', 'UL', 'OL', 'LI', 'A', 'IMG', 'SPAN', 'DIV', 'FONT']);
+    const RICH_STYLES = /^(font-size|color|text-align)\s*:\s*(?:[a-z#(),.%\s-]+)$/i;
+    function legacyTextToHtml(value) {
+      return String(value || '').trim().split(/\n\s*\n/).map(item => item.trim()).filter(Boolean).map(item => `<p>${escapeHtml(item).replace(/\n/g, '<br>')}</p>`).join('');
+    }
+    function sanitizeRichHtml(value) {
+      const template = document.createElement('template');
+      template.innerHTML = String(value || '');
+      const clean = document.createElement('div');
+      const visit = (source, target) => {
+        source.childNodes.forEach(node => {
+          if (node.nodeType === Node.TEXT_NODE) { target.appendChild(document.createTextNode(node.nodeValue || '')); return; }
+          if (node.nodeType !== Node.ELEMENT_NODE) return;
+          const tag = node.tagName.toUpperCase();
+          if (!RICH_TAGS.has(tag)) { visit(node, target); return; }
+          const element = document.createElement(tag.toLowerCase());
+          if (tag === 'A') {
+            const href = safeUrl(node.getAttribute('href'));
+            if (href) { element.setAttribute('href', href); element.setAttribute('target', '_blank'); element.setAttribute('rel', 'noopener noreferrer'); }
+          }
+          if (tag === 'IMG') {
+            const src = safeUrl(node.getAttribute('src'));
+            if (!src) return;
+            element.setAttribute('src', src);
+            element.setAttribute('alt', String(node.getAttribute('alt') || 'Imagem inserida na notícia').slice(0, 180));
+            element.setAttribute('loading', 'lazy');
+          }
+          if (tag !== 'A' && tag !== 'IMG') {
+            const style = String(node.getAttribute('style') || '').split(';').map(rule => rule.trim()).filter(rule => RICH_STYLES.test(rule)).join('; ');
+            if (style) element.setAttribute('style', style);
+          }
+          if (tag === 'FONT') {
+            const color = safeColor(node.getAttribute('color'));
+            if (color) element.setAttribute('style', `color: ${color}`);
+            const fontSizes = { '1': '0.75rem', '2': '0.875rem', '3': '1rem', '4': '1.25rem', '5': '1.5rem', '6': '1.875rem', '7': '2.25rem' };
+            const size = fontSizes[node.getAttribute('size') || ''];
+            if (size) element.setAttribute('style', `${element.getAttribute('style') || ''}${element.getAttribute('style') ? '; ' : ''}font-size: ${size}`);
+          }
+          visit(node, element);
+          target.appendChild(element);
+        });
+      };
+      visit(template.content, clean);
+      return clean.innerHTML;
+    }
+    function safeColor(value) { return /^#[0-9a-f]{3,8}$/i.test(String(value || '').trim()) ? String(value).trim() : ''; }
+    function editorHtml() { return sanitizeRichHtml($('news-content-editor').innerHTML).trim(); }
+    function setEditorHtml(value) {
+      const raw = String(value || '').trim();
+      $('news-content-editor').innerHTML = /<[a-z][\s\S]*>/i.test(raw) ? sanitizeRichHtml(raw) : legacyTextToHtml(raw);
+    }
+    function focusEditor() { $('news-content-editor').focus(); }
+    function restoreEditorSelection() {
+      focusEditor();
+      if (!savedEditorRange) return;
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(savedEditorRange);
+    }
+    function saveEditorSelection() {
+      const selection = window.getSelection();
+      if (selection.rangeCount && $('news-content-editor').contains(selection.anchorNode)) savedEditorRange = selection.getRangeAt(0).cloneRange();
+    }
+    function execEditorCommand(command, value = null) { restoreEditorSelection(); document.execCommand(command, false, value); saveEditorSelection(); }
     function safeUrl(value) {
       const raw = String(value || '').trim();
       if (!raw) return '';
@@ -226,6 +291,7 @@
       pendingImageFile = null;
       editingId = '';
       $('news-form').reset();
+      $('news-content-editor').innerHTML = '';
       $('news-id').value = '';
       $('news-image-url').value = '';
       $('news-image-path').value = '';
@@ -260,7 +326,7 @@
       $('news-original-path').value = item.imagemPath;
       $('news-image-alt').value = item.imagemAlt;
       $('news-summary').value = item.resumo;
-      $('news-content').value = item.conteudo;
+      setEditorHtml(item.conteudo);
       $('news-published').checked = item.publicado;
       $('news-carousel').checked = item.exibirNoCarrossel;
       $('news-image-file').value = '';
@@ -329,6 +395,26 @@
         });
       });
     }
+    async function insertInlineImage(file) {
+      if (!isImageFile(file)) { toast('Imagem inválida. Use JPG, PNG ou WEBP de até 10 MB.', 'error'); return; }
+      const path = `img/noticias/conteudo/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${extensionFor(file)}`;
+      const button = $('news-image-btn');
+      button.disabled = true;
+      try {
+        toast('Enviando imagem do conteúdo…', 'info');
+        const uploadedRef = storageRef(storage, path);
+        await uploadBytes(uploadedRef, file, { contentType: file.type, cacheControl: 'public,max-age=31536000' });
+        const url = await getDownloadURL(uploadedRef);
+        restoreEditorSelection();
+        document.execCommand('insertImage', false, url);
+        const images = $('news-content-editor').querySelectorAll(`img[src="${CSS.escape(url)}"]`);
+        const image = images[images.length - 1];
+        if (image) { image.alt = window.prompt('Texto alternativo da imagem:', file.name.replace(/\.[^.]+$/, '')) || 'Imagem inserida na notícia'; image.loading = 'lazy'; }
+        saveEditorSelection();
+        toast('Imagem inserida no conteúdo.');
+      } catch (error) { toast(`Não foi possível inserir a imagem: ${error.message}`, 'error'); }
+      finally { button.disabled = false; $('news-inline-image-file').value = ''; }
+    }
     async function deleteImage(path) {
       if (!path || !String(path).startsWith('img/noticias/')) return;
       try { await deleteObject(storageRef(storage, path)); } catch (error) { console.warn('Não foi possível remover a capa antiga:', error); }
@@ -337,11 +423,11 @@
       event.preventDefault();
       const title = $('news-title').value.trim();
       const summary = $('news-summary').value.trim();
-      const content = $('news-content').value.trim();
+      const content = editorHtml();
       const current = newsItems.find(item => item.id === editingId) || null;
       if (!title) { toast('Informe o título da notícia.', 'error'); $('news-title').focus(); return; }
       if (!summary) { toast('Informe o resumo da notícia.', 'error'); $('news-summary').focus(); return; }
-      if (!content) { toast('Informe o texto completo da notícia.', 'error'); $('news-content').focus(); return; }
+      if (!content || !$('news-content-editor').textContent.trim() && !$('news-content-editor').querySelector('img')) { toast('Informe o texto completo da notícia.', 'error'); $('news-content-editor').focus(); return; }
       if (!pendingImageFile && !$('news-image-url').value.trim()) { toast('Envie uma imagem de capa antes de salvar.', 'error'); $('news-image-file').focus(); return; }
       const id = editingId || `noticia-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
       const oldPath = current?.imagemPath || $('news-original-path').value.trim();
@@ -430,6 +516,21 @@
       }
     }
     function showLoginError(message) { $('login-error').textContent = message; $('login-error').classList.add('show'); }
+
+    document.querySelectorAll('.news-rich-tool[data-command]').forEach(button => button.addEventListener('click', () => execEditorCommand(button.dataset.command)));
+    $('news-format-block').addEventListener('change', event => execEditorCommand('formatBlock', event.target.value));
+    $('news-font-size').addEventListener('change', event => execEditorCommand('fontSize', event.target.value));
+    $('news-font-color').addEventListener('input', event => { const color = safeColor(event.target.value); if (color) execEditorCommand('foreColor', color); });
+    $('news-link-btn').addEventListener('click', () => {
+      const url = window.prompt('Endereço do link (https://...)');
+      if (url && safeUrl(url)) execEditorCommand('createLink', safeUrl(url));
+      else if (url) toast('Informe um endereço válido iniciado por http:// ou https://.', 'error');
+    });
+    $('news-image-btn').addEventListener('click', () => { saveEditorSelection(); $('news-inline-image-file').click(); });
+    $('news-inline-image-file').addEventListener('change', event => { const file = event.target.files?.[0]; if (file) insertInlineImage(file); });
+    $('news-content-editor').addEventListener('keyup', saveEditorSelection);
+    $('news-content-editor').addEventListener('mouseup', saveEditorSelection);
+    document.querySelectorAll('.news-rich-tool, .news-rich-select, .news-rich-color').forEach(control => control.addEventListener('mousedown', event => event.preventDefault()));
 
     $('theme-toggle').addEventListener('click', () => {
       const html = document.documentElement;
